@@ -19,9 +19,7 @@ public abstract class BaseCharacter : MonoBehaviour {
 	[SerializeField] protected CharacterStatsModule charStats;
 	[SerializeField] protected BaseMovementModule charMovement;
 	[SerializeField] protected BaseEquipmentLoadoutModule charEquipment;
-
-//	protected IInput charInput;
-
+	
 	//Primary Vital Bars
 	protected VitalBar healthBar;
 	protected VitalBar staminaBar;

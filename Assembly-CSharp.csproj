@@ -35,10 +35,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
+      <HintPath>Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>..\..\..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.dll</HintPath>
+      <HintPath>Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Ionic.Zip.Reduced">
@@ -263,23 +263,6 @@
     <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\PlayerCamera.cs" />
     <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\TargettingPrototype.cs" />
     <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\VitalBar.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Character\Character Base\BaseEnemy.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Character\Character Base\BasePlayer.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Character\Character Base\__Base\BaseCharacter.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Environment\Spawners\CharacterGenerator.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Environment\Spawners\EnemyGenerator.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Consumable\Item.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\BuffItem.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\1H Weapon\Sword1.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\Derived Interfaces\GenericInterfaces.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\Monster Weapons\Goblin Weapon.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\Monster Weapons\MonsterWeapon.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\OH Weapon\Shield1.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\Weapon Stats\AttackStat.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\Weapon Stats\WeaponStats.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\_Base MonoBehaviour\BaseShield.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\_Base MonoBehaviour\BaseSword.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Component Classes\Item\Equipable\_Base MonoBehaviour\__Base\BaseEquipment.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Trait Classes\Stat\BaseStat.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Trait Classes\Ability\Equipment Abilities\Special Abilities\SpecialAbility.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Trait Classes\Ability\Equipment Abilities\Special Abilities\Stinger.cs" />
@@ -290,6 +273,23 @@
     <Compile Include="Assets\Scripts\Gameplay\Trait Classes\Ability\Equipment Abilities\Weapon Abilities\WeaponAbility.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Trait Classes\Ability\Monster Abilities\MonsterAbility.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Trait Classes\Ability\__Base\BaseAbility.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BaseEnemy.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BasePlayer.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\__Base\BaseCharacter.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Consumable\Item.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\BuffItem.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\1H Weapon\Sword1.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Derived Interfaces\GenericInterfaces.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Monster Weapons\Goblin Weapon.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Monster Weapons\MonsterWeapon.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\OH Weapon\Shield1.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Stats\AttackStat.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Stats\WeaponStats.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\_Base MonoBehaviour\BaseShield.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\_Base MonoBehaviour\BaseSword.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\_Base MonoBehaviour\__Base\BaseEquipment.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Input Module\AIInput.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Input Module\PlayerInput.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Input Module\PlayerTargetting.cs" />
@@ -317,13 +317,12 @@
     <Folder Include="Assets\Scripts\Editor Attributes\_Class Attributes\" />
     <Folder Include="Assets\Scripts\Settings Scripts\HUD Classes\" />
     <Folder Include="Assets\Scripts\Gameplay\" />
-    <Folder Include="Assets\Scripts\Gameplay\Component Classes\" />
-    <Folder Include="Assets\Scripts\Gameplay\Module Classes\" />
-    <Folder Include="Assets\Scripts\Gameplay\Trait Classes\" />
     <Folder Include="Assets\Scripts\Gameplay\Trait Classes\" />
     <Folder Include="Assets\Scripts\Gameplay\Trait Classes\Stat\" />
     <Folder Include="Assets\Scripts\Gameplay\Trait Classes\Ability\" />
-    <Folder Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\" />
     <Folder Include="Assets\Scripts\State Machines\" />
+    <Folder Include="Assets\Scripts\Gameplay\Base Component Classes\" />
+    <Folder Include="Assets\Scripts\Gameplay\Module Classes\" />
+    <Folder Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\" />
   </ItemGroup>
 </Project>
