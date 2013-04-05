@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-[System.Serializable] public class PlayerInput : BaseCharacter.IInput {
+[System.Serializable] public class PlayerInput : IInput {
 	//Player inputs
 	private BasePlayer _user;
 	[SerializeField] private PlayerTargetting _targetting;

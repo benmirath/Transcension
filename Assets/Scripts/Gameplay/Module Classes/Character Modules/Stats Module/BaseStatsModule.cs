@@ -174,6 +174,33 @@ using System.Collections.Generic;
 			return att;
 		}*/
 	#endregion
+
+	#region Combat Maintenance
+
+	/// <summary>
+	/// Applies damage to the character. </summary>
+	/// <param name='atkStrength'> Strength of attack being received. </param>
+	public void ApplyDamage(float atkStrength) 
+	{
+		float damage = atkStrength;
+		Health.CurValue -= damage;
+	}
+	/// <summary>
+	/// Decreases the current value of the character's stamina vital. </summary>
+	/// <param name='cost'> The value to be decreased from character's vital, from an ability used or an attack received. </param>
+	public void ApplyStaminaUse(float cost)
+	{
+		Stamina.CurValue -= cost;
+	}
+	/// <summary>
+	/// Decreases the current value of the character's energy vital. </summary>
+	/// <param name='cost'> The value to be decreased from character's vital, typically from using a special ability. </param>
+	public void ApplyEnergyUse(float cost)
+	{
+		Energy.CurValue -= cost;
+	}
+
+
 	
 	public enum AttributeName 
 	{

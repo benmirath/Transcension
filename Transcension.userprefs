@@ -1,15 +1,41 @@
 ﻿<Properties GitUserInfo="UsingMD">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Module Classes/Character Modules/Equipment Loadout Module/BaseEquipmentLoadoutModule.cs">
+    <Files>
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/__Base/BaseCharacter.cs" Line="20" Column="42" />
+      <File FileName="Assets/Scripts/Gameplay/Module Classes/Character Modules/Equipment Loadout Module/BaseEquipmentLoadoutModule.cs" Line="19" Column="55" />
+      <File FileName="Assets/Scripts/Gameplay/Module Classes/Character Modules/State Module/BaseStateMachineModule.cs" Line="88" Column="26" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/Interface/ICharacter.cs" Line="4" Column="2" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
+            <Node name="References" expanded="True" />
             <Node name="Assets" expanded="True">
+              <Node name="AstarPathfindingProject" expanded="True">
+                <Node name="Core" expanded="True">
+                  <Node name="AI" expanded="True" />
+                </Node>
+              </Node>
               <Node name="Scripts" expanded="True">
-                <Node name="Gameplay" expanded="True" selected="True">
-                  <Node name="Component Classes" expanded="True">
-                    <Node name="Character" expanded="True" />
+                <Node name="Gameplay" expanded="True">
+                  <Node name="Base Component Classes" expanded="True">
+                    <Node name="Character" expanded="True">
+                      <Node name="Character Base" expanded="True">
+                        <Node name="__Base" expanded="True" />
+                        <Node name="Interface" expanded="True" />
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node name="Module Classes" expanded="True">
+                    <Node name="Character Modules" expanded="True">
+                      <Node name="Equipment Loadout Module" expanded="True">
+                        <Node name="BaseEquipmentLoadoutModule.cs" selected="True" />
+                      </Node>
+                      <Node name="Input Module" expanded="True" />
+                      <Node name="State Module" expanded="True" />
+                    </Node>
                   </Node>
                 </Node>
                 <Node name="Settings Scripts" expanded="True">
@@ -19,11 +45,15 @@
             </Node>
           </Node>
           <Node name="Assembly-CSharp-Editor" expanded="True">
+            <Node name="References" expanded="True" />
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
                 <Node name="Editor" expanded="True" />
               </Node>
             </Node>
+          </Node>
+          <Node name="Assembly-CSharp-firstpass" expanded="True">
+            <Node name="References" expanded="True" />
           </Node>
         </State>
       </Pad>

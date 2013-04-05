@@ -3,7 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-[System.Serializable] public class BaseEquipmentModule
+public interface IEquipmentLoadoutModule {
+
+}
+
+[System.Serializable] public class BaseEquipmentLoadoutModule
 {
 	public enum EquipmentStance {
 		Balanced,
@@ -16,8 +20,8 @@ using System.Collections.Generic;
 	
 	#region Fields
 	//	public IBaseEquipment<IBaseEquipment> primary;
-	private IMoveset primaryMoveSet;
-	private IMoveset secondaryMoveSet;
+	//private IMoveset primaryMoveSet;
+	//private IMoveset secondaryMoveSet;
 	
 	private BaseCharacter _user;
 	//	[SerializeField] EquipmentLoadoutType combatStance;
@@ -57,7 +61,7 @@ using System.Collections.Generic;
 	#endregion Properties
 	
 	#region Initialization
-	public BaseEquipmentModule () {}
+	public BaseEquipmentLoadoutModule () {}
 	public void Setup (BaseCharacter user)
 	{
 		_user = user;

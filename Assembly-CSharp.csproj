@@ -35,10 +35,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine">
-      <HintPath>Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
+      <HintPath>Temp\bin\Debug\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.dll</HintPath>
+      <HintPath>Temp\bin\Debug\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Ionic.Zip.Reduced">
@@ -296,6 +296,9 @@
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Movement Module\BaseMovementModule.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Stats Module\BaseStatsModule.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Equipment Loadout Module\BaseEquipmentLoadoutModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\State Module\BaseStateMachineModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\Interface\ICharacter.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Input Module\IInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
@@ -324,5 +327,7 @@
     <Folder Include="Assets\Scripts\Gameplay\Base Component Classes\" />
     <Folder Include="Assets\Scripts\Gameplay\Module Classes\" />
     <Folder Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\" />
+    <Folder Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\State Module\" />
+    <Folder Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\Interface\" />
   </ItemGroup>
 </Project>

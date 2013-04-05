@@ -16,10 +16,8 @@ public abstract class BaseCharacter : MonoBehaviour {
 	//Inspector Fields - values are initialized, but are set via the instructor view in Unity.
 	[SerializeField] protected CharState state;
 
-	[SerializeField] protected CharacterStatsModule charStats;
-	[SerializeField] protected BaseMovementModule charMovement;
-	[SerializeField] protected BaseEquipmentLoadoutModule charEquipment;
-	
+
+
 	//Primary Vital Bars
 	protected VitalBar healthBar;
 	protected VitalBar staminaBar;
@@ -35,7 +33,7 @@ public abstract class BaseCharacter : MonoBehaviour {
 	private Animation _charAnimation3D;
 
 	//Internal State Flags
-	private bool _hasTarget;
+	private bool _hasTarget ;
 	private bool _weaponReady;
 
 	private bool _isRunning;
@@ -45,22 +43,63 @@ public abstract class BaseCharacter : MonoBehaviour {
 	
 	//private Vector3 _moveDir;											//internal movement coordinates
 	//private Vector3 _lookDir;											//internal aiming coordinates
-	private Vector3 _knockDir;											//internal knockback coordinates
+	private Vector3 _knockDir;										//internal knockback coordinates
 	#endregion Fields
+
+	#region Functionality Modules
+	//Input (created, but needs to be revised, and reworked to a base interface declared here, but instantiated in derived classes)
+	//Animation (Still iffy on how this is all setup, need to research. Should plug into equipment and state machine to determine what animations are played)
+	//Physics (will tie into character movement, non-statistical combat calculations, and many core unity functions)
+	//State Machine (will tie into the majority of the modules, looking at equipment and MoveSet for available actions, animation to cue the correct animation, physics for calculations, etc.)
+	//ActionsModule (This will connect to charEquipment to become a list of all available actions a character may perform.)
+
+
+	[SerializeField] protected CharacterStatsModule charStats; //This holds all gameplay and combat stats that are inherent to the character
+	[SerializeField] protected BaseMovementModule charMovement; //This will likely get wrapped up into character stats and physics
+	[SerializeField] protected BaseEquipmentLoadoutModule charEquipment; //This holds all gameplay and combat stats that are inherent to the loadout
+	protected IInput charInput;
+	protected AnimationsModule charAnimation;
+	protected PhysicsModule charPhysics;
+	protected StateMachineModule charState;
+	protected ActionsModule charActions;
+
+	public class AnimationsModule {
+
+	}
 	
+	public class PhysicsModule {
+		private Transform _coordinates;										//The primary identifier for Unity game objects
+		private CharacterController _controller;									//Used for rudimentary collider and physics. Mainly used for movement and detecting collisions.
+		private Rigidbody _body;										//Used for more complex physics and collisions. Mainly used for combat.
+
+		private Vector3 _knockDir;										//internal knockback coordinates
+	}
+	
+	public class StateMachineModule {
+
+	}
+	
+	public class ActionsModule {
+		
+	}
+
+	public CharacterStatsModule CharStats {
+		get {return charStats;}
+	}
+
+	public BaseMovementModule CharMovement {
+		get { return charMovement;}
+	}
+
+	#endregion
+
 	#region Properties
 	public abstract IInput CharInput {
 		get;
 	}
 
-	public CharacterStatsModule CharStats 
-	{
-		get {return charStats;}
-	}
-	public BaseMovementModule CharMovement 
-	{
-		get { return charMovement;}
-	}
+
+
 //	public BaseCharacter.BaseCharacterEquipmentModule CharEquipment 
 //	{
 //		get {return charEquipment;}
@@ -94,6 +133,11 @@ public abstract class BaseCharacter : MonoBehaviour {
 	{
 		get {return _target;}
 		set {_target = value;}
+	}
+
+	public Vector3 KnockDir {
+		get {return _knockDir;}
+		set {_knockDir = value;}
 	}
 	
 	//Internal State
@@ -265,6 +309,7 @@ public abstract class BaseCharacter : MonoBehaviour {
 	}
 	#endregion
 
+	//TODO: convert into State Module
 	#region State Transitions
 	public enum CharState {
 		Stunned,													//will disrupt character's ability to react when activated
@@ -507,15 +552,15 @@ public abstract class BaseCharacter : MonoBehaviour {
 //		}
 //		#endregion Loadout Specilization
 //	}
-
-	public interface IInput {
-		//protected Vector3 _moveDir;
-		Vector3 MoveDir {get;}
-
-		//protected Vector3 _lookDir;
-		Vector3 LookDir {get;}
-	}
-
+//
+//	public interface IInput {
+//		//protected Vector3 _moveDir;
+//		Vector3 MoveDir {get;}
+//
+//		//protected Vector3 _lookDir;
+//		Vector3 LookDir {get;}
+//	}
+//
 //	///<summary>
 //	/// Character Movement Module. Holds movement-related values, as well as the relevant functions that use them. </summary>
 //	[System.Serializable] public class CharacterMovementModule {
