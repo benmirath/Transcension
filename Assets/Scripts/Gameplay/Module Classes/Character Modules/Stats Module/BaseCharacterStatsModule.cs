@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public interface IStats {
+public interface ICharacterStats {
 	IAttribute Vitality {get;}
 	IAttribute Endurance {get;}
 	IAttribute Spirit{get;}
@@ -21,7 +21,7 @@ public interface IStats {
 
 /// <summary>
 /// Character Stat Module. Holds all relevant in-mechanics values, especially those (down the line) visible to the player. </summary>
-[System.Serializable] public class BaseStatsModule {
+[System.Serializable] public class BaseCharacterStatsModule {
 //	public interface IAttribute {
 //		int BaseValue				{get; set;}
 //		float BuffValue				{get; set;}
@@ -127,7 +127,7 @@ public interface IStats {
 	
 	
 	#region Initializers
-	public BaseStatsModule (BaseCharacter user) {
+	public BaseCharacterStatsModule (BaseCharacter user) {
 		_user=user;
 
 	}

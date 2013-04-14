@@ -10,7 +10,7 @@ public class Sword1 : BaseSword
 //	}
 
 	//protected Stinger special;
-	public Stinger.AttackStats specialStat;
+	//public Stinger.AttackStats specialStat;
 	
 	#region Getters and Setters
 //	public Stinger Special

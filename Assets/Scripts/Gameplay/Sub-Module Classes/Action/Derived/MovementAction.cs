@@ -1,12 +1,10 @@
 using System;
 
-namespace AssemblyCSharp
+
+public class MovementAction
 {
-		public class MovementAction
-		{
-				public MovementAction ()
-				{
-				}
-		}
+	public MovementAction ()
+	{
+	}
 }
 

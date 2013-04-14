@@ -1,12 +1,13 @@
 using System;
 
-namespace AssemblyCSharp
+public interface IStealth {
+
+}
+
+public class BaseStealthModule
 {
-		public class BaseStealthModule
-		{
-				public BaseStealthModule ()
-				{
-				}
-		}
+	public BaseStealthModule ()
+	{
+	}
 }
 

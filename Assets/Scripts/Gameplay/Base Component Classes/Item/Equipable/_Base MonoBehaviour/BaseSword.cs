@@ -16,9 +16,9 @@ public abstract class BaseSword : BaseEquipment
 //	}
 	//private MovelistSelection _currentMove;
 
-	[SerializeField] protected WeaponAbility.StandardAttack.ComboAttack comboAttack2;
-	protected WeaponAbility.StandardAttack.ComboAttack comboAttack3;
-	protected WeaponAbility.StandardAttack.FinisherAttack comboAttack4;
+//	[SerializeField] protected WeaponAbility.StandardAttack.ComboAttack comboAttack2;
+//	protected WeaponAbility.StandardAttack.ComboAttack comboAttack3;
+//	protected WeaponAbility.StandardAttack.FinisherAttack comboAttack4;
 
 	//public  MovelistSelection CurrentMove {get {return _currentMove;}}
 
@@ -74,7 +74,7 @@ public abstract class BaseSword : BaseEquipment
 //	public class SwordMoveset_Finesse : BaseEquipment.BaseEquipmentMovelist.MeleeMovelist.DoubleSlotMovelist.DualWieldedMovelist {
 //
 //	}
-	public class SwordStats : BaseEquipment.BaseEquipmentStats
+	public class SwordStats : BaseEquipmentStats
 	{
 
 	}

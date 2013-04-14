@@ -1,36 +1,27 @@
 using UnityEngine;
 using System.Collections;
 
-[System.Serializable] public class PlayerInput : IInput {
+[System.Serializable] public class PlayerInput : BaseInputModule {
 	//Player inputs
-	private BasePlayer _user;
-	[SerializeField] private PlayerTargetting _targetting;
-	
-	private float x;							//Horizontal movement input.
-	private float y;							//Vertical movement input.
-	[SerializeField] protected Vector3 dir;				//Overall movement input.
-	
+//	private BasePlayer _user;
+	//private float x;							//Horizontal movement input.
+	//private float y;							//Vertical movement input.
+	//[SerializeField] protected Vector3 dir;				//Overall movement input.
+	private PlayerTargetting _targetting;	
 	public PlayerTargetting Targetting {
 		get {return _targetting;}
-	}
-	public Vector3 MoveDir {
-		get {return dir;}
-	}
-	public Vector3 LookDir {
-		get {return _targetting.UpdateTargetting();}
 	}
 	
 	//delegate methods called when their attached event is activate from player input
 	public ButtonInput stance;													//used for drawing weapon and locking on
-	public ButtonInput evasion;												//used for running and dodging
+	public ButtonInput evasion;													//used for running and dodging
 	public ButtonInput mainHand;												//used for mainhand input
-	public ButtonInput offHand;												//used for offhand input
+	public ButtonInput offHand;													//used for offhand input
 	public ButtonInput special1;
 	public ButtonInput special2;
 	public ButtonInput special3;
 	
 	public PlayerInput () {
-		//_user = user;
 		stance = new ButtonInput("DrawWeapon");
 		evasion = new ButtonInput("Evasion");
 		mainHand = new ButtonInput("MainHand");
@@ -38,31 +29,33 @@ using System.Collections;
 		special1 = new ButtonInput("Special1");
 		special2 = new ButtonInput("Special2");
 		special3 = new ButtonInput("Special3");
+
+		//ActivateRun += evasion;
 	}
 	
-	public void Setup (BasePlayer user) {
-		_user = user;
-		_targetting.Setup(_user);
-		_user.StartCoroutine (UpdateInputs());
+	public void Setup (ICharacter _user) {
+		user = _user;
+		//_targetting.Setup(user);
+		user.CharBase.StartCoroutine (UpdateInputs());
 	}
 	
 	// Update is called once per frame
 	private IEnumerator UpdateInputs () {
 		while (true) {
 			_targetting.UpdateTargetting();
-			dir = UpdateDirection();
+			moveDir = UpdateDirection();
 			
 			//dodge
-			if (Input.GetButtonDown(evasion.name)) _user.StartCoroutine(evasion.CheckInput(1)); // ChargeInput(evasion);
-			if (Input.GetButtonDown(stance.name)) _user.StartCoroutine(stance.CheckInput(1));
+			if (Input.GetButtonDown(evasion.name)) user.CharBase.StartCoroutine(evasion.CheckInput(1)); // ChargeInput(evasion);
+			if (Input.GetButtonDown(stance.name)) user.CharBase.StartCoroutine(stance.CheckInput(1));
 			
 			if (Input.GetButtonDown (mainHand.name)) {
-				if (Input.GetButton(special1.name)) _user.StartCoroutine(special1.CheckInput(0));
-				if (Input.GetButton(special2.name)) _user.StartCoroutine(special2.CheckInput(0));
-				if (Input.GetButton(special3.name)) _user.StartCoroutine(special3.CheckInput(0));
-				else _user.StartCoroutine(mainHand.CheckInput(1));
+				if (Input.GetButton(special1.name)) user.CharBase.StartCoroutine(special1.CheckInput(0));
+				if (Input.GetButton(special2.name)) user.CharBase.StartCoroutine(special2.CheckInput(0));
+				if (Input.GetButton(special3.name)) user.CharBase.StartCoroutine(special3.CheckInput(0));
+				else user.CharBase.StartCoroutine(mainHand.CheckInput(1));
 			}
-			if (Input.GetButtonDown (offHand.name)) _user.StartCoroutine(offHand.CheckInput(0));
+			if (Input.GetButtonDown (offHand.name)) user.CharBase.StartCoroutine(offHand.CheckInput(0));
 			
 			yield return null;
 		}
@@ -171,7 +164,7 @@ using System.Collections;
 		
 		//updates location of mouse cursor
 		private Vector3 UpdateMouse() {										//player aim
-			Plane playerPlane = new Plane(Vector3.back, _user.Coordinates.position);
+			Plane playerPlane = new Plane(Vector3.back, _user.CharPhysics.Coordinates.position);
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			float hitdist = 0.0f;	
 			
@@ -229,7 +222,7 @@ using System.Collections;
 		/// </summary>
 		/// <returns>The view target.</returns>
 		protected Vector3 SetViewTarget () {
-			if(_hasTarget == true) return target.Coordinates.position;								//if locked on, will set location to target
+			if(_hasTarget == true) return target.CharPhysics.Coordinates.position;								//if locked on, will set location to target
 			else return UpdateMouse();																//if not locked on, will set location to mouse
 		}	
 		

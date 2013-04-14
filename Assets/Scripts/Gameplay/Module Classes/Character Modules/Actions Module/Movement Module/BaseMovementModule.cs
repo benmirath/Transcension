@@ -7,14 +7,18 @@ public interface IMovement {
 	void Walk ();
 	void Strafe ();
 	void Run ();
-	void Dodge ();
+	//void DodgeEffect (Vector3 dir);
+	BaseAbility Dodge {
+		get;
+	}
+	//IEnumerator Dodge ();
 	void Aim ();
 
 }
 
 ///<summary>
 /// Character Movement Module. Holds movement-related values, as well as the relevant functions that use them. </summary>
-[System.Serializable] public class BaseMovementModule {
+[System.Serializable] public class BaseMovementModule : IMovement{
 	#region Fields
 	//Inspector Fields
 	[SerializeField, Range (0,10)] private float turnSpeed = 3;
@@ -24,7 +28,9 @@ public interface IMovement {
 	
 	[SerializeField, Range (0,20)] private float runSpeed = 7;
 	[SerializeField, Range (0,10)] private float runCost = 1;
-	
+
+	private BaseAbility dodge;
+
 	[SerializeField, Range (0,60)] private float dodgeSpeed = 30;
 	[SerializeField, Range (0,20)] private float dodgeCost = 15;
 	[SerializeField, Range (0,2)] private float dodgeStartup;
@@ -64,6 +70,9 @@ public interface IMovement {
 	public float DodgeCooldown {
 		get {return dodgeCooldown;}
 	}
+	public BaseAbility Dodge {
+		get {return dodge;}
+	}
 	public float WalkingBlockSpeed {
 		get {return walkingBlockSpeed;}
 	}
@@ -78,6 +87,8 @@ public interface IMovement {
 	public void Setup (BaseCharacter user) {
 		_user = user;
 		_coordinates = _user.CharPhysics.Coordinates;
+
+		//dodge.SetMovementValues(dodgeStartup, dodgeDuration, dodgeCooldown, _user.CharStats.Stamina, dodgeCost, DodgeEffect, dodgeSpeed);
 	}
 	#endregion
 	
@@ -101,8 +112,7 @@ public interface IMovement {
 	
 	/// <summary>
 	/// Turn the character based on the direction they're moving. </summary>
-	public void Turn ()
-	{
+	public void Turn () {
 		Vector3 dir = _user.CharInput.MoveDir;
 		if (dir == Vector3.zero) return;
 		
@@ -111,8 +121,7 @@ public interface IMovement {
 	}
 	/// <summary>
 	/// Turns the character based on the direction of they're desired target. </summary>
-	public void Aim ()
-	{
+	public void Aim () {
 		Vector3 target = _user.CharInput.LookDir;
 		float angleX = target.x - _coordinates.position.x;
 		float angleY = target.y - _coordinates.position.y;
@@ -123,36 +132,39 @@ public interface IMovement {
 		_coordinates.rotation = Quaternion.RotateTowards(fromRotation, finalRotation, turnSpeed);
 	}
 
-	public void ActivateDodge () {
-
+	protected void DodgeEffect (Vector3 dir) {
+		if (_user.CharState.State == BaseStateMachineModule.CharState.Idle) Turn();
+		if (_user.CharState.State == BaseStateMachineModule.CharState.CombatReady) Aim();
+		
+		_user.CharPhysics.Controller.Move (dir * DodgeSpeed * Time.deltaTime);		
 	}
 
 	/// <summary>
 	/// Causes the character to Dodge. </summary>
-	public IEnumerator Dodge ()
-	{
-		if (_user.CharStats.Stamina.CurValue < dodgeCost) yield break;
-		else _user.CharStats.Stamina.CurValue -= dodgeCost;
-		
-		Vector3 dir = Char.CharInput.MoveDir;
-		
-		if (dodgeStartup > 0) yield return new WaitForSeconds(dodgeStartup);
-		
-		float curDuration = Time.time + dodgeDuration;												
-		do {
-			if (_user.State == ICharacter.CharState.Idle) Turn();
-			if (_user.State == ICharacter.CharState.CombatReady) Aim();
-			_user.Body.Move (dir * DodgeSpeed * Time.deltaTime);																		
-			yield return null;
-		} while (curDuration > Time.time);
-		_user.IsEvading = false;
-		
-		if (dodgeCooldown > 0) yield return new WaitForSeconds(dodgeCooldown);
-		
-		if (_user.WeaponReady) _user.State = BaseCharacter.CharState.CombatReady;
-		else _user.State = BaseCharacter.CharState.Idle;
-		
-		yield break;
-	}
+//	public IEnumerator Dodge () {
+//		if (_user.CharStats.Stamina.CurValue < dodgeCost) yield break;
+//		else _user.CharStats.Stamina.CurValue -= dodgeCost;
+//		
+//		Vector3 dir = Char.CharInput.MoveDir;
+//		
+//		if (dodgeStartup > 0) yield return new WaitForSeconds(dodgeStartup);
+//		
+//		float curDuration = Time.time + dodgeDuration;												
+//		do {
+//			if (_user.CharState.State == BaseStateMachineModule.CharState.Idle) Turn();
+//			if (_user.CharState.State == BaseStateMachineModule.CharState.CombatReady) Aim();
+//
+//			_user.CharPhysics.Controller.Move (dir * DodgeSpeed * Time.deltaTime);																		
+//			yield return null;
+//		} while (curDuration > Time.time);
+//		//_user.CharState.IsEvading = false;
+//		
+//		if (dodgeCooldown > 0) yield return new WaitForSeconds(dodgeCooldown);
+//		
+//		//if (_user.CharState.WeaponReady) _user.CharState.State = BaseStateMachineModule.CharState.CombatReady;
+//		//else _user.CharState.State = BaseStateMachineModule.CharState.Idle;
+//		
+//		yield break;
+//	}
 	#endregion
 }

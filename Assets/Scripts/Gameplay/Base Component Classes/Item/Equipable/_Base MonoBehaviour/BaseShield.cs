@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class BaseShield : BaseEquipment
 {
-	protected ShieldAbility block;
+	//protected ShieldAbility block;
 //	public float blockStrength;														//percentage of damage mitigated by blocking with shield
 	public Vector3 shieldSize;														//size of collider for the shield
 	
@@ -21,7 +21,7 @@ public abstract class BaseShield : BaseEquipment
 		base.Awake ();
 		hitBox.isTrigger = true;
 		
-		block = gameObject.AddComponent<ShieldAbility>();
+		//block = gameObject.AddComponent<ShieldAbility>();
 	}
 	
 	protected override void Start ()
@@ -33,11 +33,11 @@ public abstract class BaseShield : BaseEquipment
 	//	block.Effect = ShieldEffect;
 	}
 	
-	public IEnumerator StartBlock()
-	{
-		yield return block.ActivateAbility();
-		yield break;
-	}
+//	public IEnumerator StartBlock()
+//	{
+//		yield return block.CheckActivation();
+//		yield break;
+//	}
 //	public override IEnumerator StartCombo ()
 //	{
 //		Debug.LogError("No OffHand ability found for this weapon :" + name);		

@@ -6,7 +6,7 @@ public class CharacterAttAttribute : PropertyAttribute {
 	//public string name;						//Name of Attribute
 	public float value;						//Base Value of Attribute
 
-	public CharacterAttAttribute (CharacterStatsModule.AttributeName n) {
+	public CharacterAttAttribute (Attribute.AttributeName n) {
 		name = n.ToString();
 	//	value = att.BaseValue
 	}

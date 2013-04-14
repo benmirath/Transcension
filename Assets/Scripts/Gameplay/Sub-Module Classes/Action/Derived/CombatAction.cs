@@ -1,12 +1,10 @@
 using System;
+using UnityEngine;
 
-namespace AssemblyCSharp
+public class CombatAction
 {
-		public class CombatAction
-		{
-				public CombatAction ()
-				{
-				}
-		}
+	public CombatAction ()
+	{
+	}
 }
 

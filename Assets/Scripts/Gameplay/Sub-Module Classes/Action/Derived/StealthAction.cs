@@ -1,12 +1,10 @@
 using System;
+using UnityEngine;
 
-namespace AssemblyCSharp
+public class StealthAction
 {
-		public class StealthAction
-		{
-				public StealthAction ()
-				{
-				}
-		}
+	public StealthAction ()
+	{
+	}
 }
 

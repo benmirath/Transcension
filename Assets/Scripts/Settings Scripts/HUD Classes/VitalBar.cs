@@ -37,7 +37,7 @@ public class VitalBar : MonoBehaviour {
 	void Start () {
 		_display = GetComponent<GUITexture>();
 			
-		BaseCharacter user;
+		ICharacter user;
 		
 		if (isPlayerBar)
 		{
@@ -98,7 +98,7 @@ public class VitalBar : MonoBehaviour {
 	}*/
 	
 	
-	void UpdateBar(CharacterStatsModule.Vital v)
+	void UpdateBar(Vital v)
 	{
 //		Debug.LogError("UpdateBar: " + v.CurValue);
 		_curBarLength = (v.CurValue / v.MaxValue) * _maxBarLength;		//this calculates the current bar length based on player's health %

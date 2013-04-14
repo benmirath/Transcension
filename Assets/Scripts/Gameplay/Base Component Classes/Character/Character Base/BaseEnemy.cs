@@ -41,7 +41,7 @@ public class BaseEnemy : BaseCharacter {
 	#region Initialization
 	protected override void Awake () {
 		base.Awake();	
-		_input = GetComponent<AIInput>();
+		//_input = GetComponent<AIInput>();
 	}
 	protected override void Start ()
 	{
@@ -95,14 +95,14 @@ public class BaseEnemy : BaseCharacter {
 	#endregion State Transitions
 	
 	#region States
-	protected override IEnumerator IdleState ()
+/*	protected override IEnumerator IdleState ()
 	{
 		while (state == CharState.Idle)
 		{	
 			//Transitions
 			if (_input.AIPath != null) if(_input.AIPath.vectorPath.Length <= _input.alertRange) {
 				CharMovement.Turn ();
-				Body.Move (CharMovement.WalkSpeed * _input.MoveDir.normalized *Time.deltaTime);
+				CharPhysics.Controller.Move (CharMovement.WalkSpeed * _input.MoveDir.normalized *Time.deltaTime);
 			}
 
 			//if detects suspicious activity
@@ -162,7 +162,7 @@ public class BaseEnemy : BaseCharacter {
 	/// <returns>
 	/// The ready state.
 	/// </returns>
-	protected override IEnumerator CombatReadyState ()
+/*	protected override IEnumerator CombatReadyState ()
 	{
 		while (state == CharState.CombatReady)
 		{
@@ -170,7 +170,7 @@ public class BaseEnemy : BaseCharacter {
 			CharMovement.Aim ();
 
 			if(_input.AIPath.vectorPath.Length >= _input.combatRange) {
-				Body.Move (CharMovement.WalkSpeed * _input.MoveDir.normalized * Time.deltaTime);
+				CharPhysics.Controller.Move (CharMovement.WalkSpeed * _input.MoveDir.normalized * Time.deltaTime);
 			}
 			else if (_input.AIPath.vectorPath.Length <= _input.attackRange) {
 				//Launch attack
@@ -188,7 +188,7 @@ public class BaseEnemy : BaseCharacter {
 
 
 			//Effect
-			else Body.Move(CharMovement.WalkSpeed * _input.MoveDir.normalized * Time.deltaTime);
+			else CharPhysics.Controller.Move(CharMovement.WalkSpeed * _input.MoveDir.normalized * Time.deltaTime);
 
 			yield return null;
 		}
@@ -240,8 +240,8 @@ public class BaseEnemy : BaseCharacter {
 	}*/
 	#endregion States
 	
-	protected override IEnumerator DecideAnimation ()
-	{
-		yield return null;
-	}
+//	protected override IEnumerator DecideAnimation ()
+//	{
+//		yield return null;
+//	}
 }

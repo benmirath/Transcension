@@ -4,7 +4,7 @@ using Pathfinding;
 
 //[RequireComponent (typeof(Movement))]
 //[RequireComponent (typeof(SphereCollider))]
-public class AIInput : MonoBehaviour, BaseCharacter.IInput {
+public class AIInput : BaseInputModule {
 	#region Fields
 	enum AIState {idle, seeking, attacking, falling, dead}	
 	
@@ -43,9 +43,9 @@ public class AIInput : MonoBehaviour, BaseCharacter.IInput {
 	#endregion
 	// Use this for initialization
 	void Awake () {
-		_seeker = GetComponent <Seeker>();
-		_char = GetComponent<BaseCharacter>();
-		_tr = transform;					
+		_seeker = user.CharBase.GetComponent <Seeker>();
+		_char = user.CharBase.GetComponent<BaseCharacter>();
+		_tr = user.CharBase.transform;					
 		_seeker.pathCallback += OnPathComplete;
 		
 		GameObject go = GameObject.FindGameObjectWithTag("Player");	
@@ -58,13 +58,13 @@ public class AIInput : MonoBehaviour, BaseCharacter.IInput {
 		
 		//navController = GetComponent<NavmeshController>();
 		//rigid = rigidbody;		
-		StartCoroutine (RepeatTrySearchPath ());	
+		user.CharBase.StartCoroutine (RepeatTrySearchPath ());	
 		
 	}
 	private void Start ()
 	{
-		_body = _char.Body;
-		_rigid = _char.CharPhysics;
+		//_body = _char.Body;
+		//_rigid = _char.CharPhysics;
 //		_controller = _char.Body;
 //		StartCoroutine (RepeatTrySearchPath ());	
 	}
@@ -140,7 +140,7 @@ public class AIInput : MonoBehaviour, BaseCharacter.IInput {
 		if (Time.time - lastRepath >= repathRate && canSearchAgain) {
 			SearchPath ();
 		} else {
-			StartCoroutine (WaitForRepath ());
+			user.CharBase.StartCoroutine (WaitForRepath ());
 		}
 	}
 	

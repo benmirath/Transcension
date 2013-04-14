@@ -1,12 +1,10 @@
 using System;
+using UnityEngine;
 
-namespace AssemblyCSharp
+public class EquipmentAction
 {
-		public class EquipmentAction
-		{
-				public EquipmentAction ()
-				{
-				}
-		}
+	public EquipmentAction ()
+	{
+	}
 }
 

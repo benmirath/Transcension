@@ -2,10 +2,13 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public abstract class AbilityStats {
+public interface IAbilityStats {
+
+}
+
+public class AbilityStats {
 	#region Fields
-	//[SerializeField] protected string name;												//Name of the attack
-	protected IVital vitalType;
+	[SerializeField] protected string name;												//Name of the attack
 	[SerializeField] protected float cost;
 
 	[SerializeField] protected float startupLength;										//length of time between when ability is activated, and when it takes effect.
@@ -14,11 +17,6 @@ public abstract class AbilityStats {
 	#endregion
 	
 	#region Initialization
-	public AbilityStats () {
-
-	}
-	//public abstract void SetValues (ICharacter user);
-
 	public AbilityStats (float start, float mid, float end, float c) {
 		startupLength=start;
 		durationLength=mid;
@@ -28,9 +26,6 @@ public abstract class AbilityStats {
 	#endregion
 	
 	#region  Properties
-	public IVital VitalType {
-		get {return vitalType;}
-	}
 	public float Cost {
 		get {return cost;}
 		set {cost = value;}
@@ -48,22 +43,10 @@ public abstract class AbilityStats {
 		set {cooldownLength = value;}
 	}
 	#endregion Properties
-
-	#region Ability Effects
-	protected abstract void StartupEffect ();
-	protected abstract void DurationEffect ();
-	protected abstract void CooldownEffect ();
-	#endregion
 }
 
 
 public class MovementAbilityStats : AbilityStats {
-	public enum MovementType {
-		constant,
-		burst
-	}
-
-	protected MovementType type;
 	[SerializeField] protected float speed;
 	public float Speed {
 		get {return speed;}
@@ -72,18 +55,6 @@ public class MovementAbilityStats : AbilityStats {
 
 	public MovementAbilityStats (float start, float mid, float end, float c, float sp) : base (start, mid, end, c) {
 		speed=sp;
-	}
-
-
-	//these will all move the character in a desired direction, with their effect determined by the movement type, either constant movement, or a quick burst
-	protected override void StartupEffect () {
-
-	}
-	protected override void DurationEffect () {
-
-	}
-	protected override void CooldownEffect () {
-
 	}
 }
 
@@ -124,9 +95,6 @@ public class MovementAbilityStats : AbilityStats {
 		attackStrength=atkStr;
 		comboWindow=combo;
 	}
-	//public AttackStats () {}
+	public AttackStats () {}
 	#endregion Initialization
 }
-//public class StealthStats : AbilityStats {
-//
-//}

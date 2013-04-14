@@ -4,27 +4,29 @@ using System.Collections;
 using System.Collections.Generic;
 
 public interface IEquipmentLoadout {
-
+	BaseEquipmentLoadoutModule.EquipmentStance Stance {
+		get;
+	}
+	BaseEquipmentLoadoutModule.IMoveSetModule MoveSet {
+		get;
+	}
 }
 
 [System.Serializable] public class BaseEquipmentLoadoutModule
 {
 	public enum EquipmentStance {
-		Balanced,
-		Power,
-		Finesse
+		Balanced,				//two weapon slots available, for mainhand and offhand weapon.
+		Focused					//one weapon slot available, for two-handed and dualwielded weapons.
 	}
-	[SerializeField] private EquipmentStance combatStance;
-	[SerializeField] private BaseEquipment equipmentSlot1;
-	[SerializeField] private BaseEquipment equipmentSlot2;
+	//[SerializeField] private BaseEquipment equipmentSlot1;
+	//[SerializeField] private BaseEquipment equipmentSlot2;
 	
-	#region Fields
-	//	public IBaseEquipment<IBaseEquipment> primary;
-	//private IMoveset primaryMoveSet;
-	//private IMoveset secondaryMoveSet;
-	
+	#region Fields	
 	private BaseCharacter _user;
-	//	[SerializeField] EquipmentLoadoutType combatStance;
+	[SerializeField] private EquipmentStance combatStance;
+	private IEquippable primary;
+	private IEquippable secondary;
+
 	
 	// Class Abilities (Class Ability)
 	
@@ -37,79 +39,101 @@ public interface IEquipmentLoadout {
 	// Special Abilities (Specific Moveset)
 	
 	
-	[SerializeField] protected WeaponAbility.SpecialAttack special1;
-	[SerializeField] protected WeaponAbility.SpecialAttack special2;
-	[SerializeField] protected WeaponAbility.SpecialAttack special3;
+//	[SerializeField] protected WeaponAbility.SpecialAttack special1;
+//	[SerializeField] protected WeaponAbility.SpecialAttack special2;
+//	[SerializeField] protected WeaponAbility.SpecialAttack special3;
 	#endregion Fields
 	
 	#region Properties
-	public virtual WeaponAbility.SpecialAttack Special1 
-	{
-		get {return special1;}
-		set {special1 = value;}
-	}
-	public virtual WeaponAbility.SpecialAttack Special2 
-	{
-		get {return special2;}
-		set {special2 = value;}
-	}
-	public virtual WeaponAbility.SpecialAttack Special3 
-	{
-		get {return special3;}
-		set {special3 = value;}
-	}
+//	public virtual WeaponAbility.SpecialAttack Special1 
+//	{
+//		get {return special1;}
+//		set {special1 = value;}
+//	}
+//	public virtual WeaponAbility.SpecialAttack Special2 
+//	{
+//		get {return special2;}
+//		set {special2 = value;}
+//	}
+//	public virtual WeaponAbility.SpecialAttack Special3 
+//	{
+//		get {return special3;}
+//		set {special3 = value;}
+//	}
 	#endregion Properties
-	
+
 	#region Initialization
 	public BaseEquipmentLoadoutModule () {}
-	public void Setup (BaseCharacter user)
-	{
+	public void Setup (BaseCharacter user) {
 		_user = user;
+
+		//primary = _user.GetComponent();
+
 		
-		switch (combatStance) {
-		case EquipmentStance.Balanced:
-			
-			break;
-			
-		case EquipmentStance.Power:
-			
-			break;
-			
-		case EquipmentStance.Finesse:
-			
-			break;
-		}
+//		switch (combatStance) {
+//		case EquipmentStance.Balanced:
+//			
+//			break;
+//			
+//		case EquipmentStance.Power:
+//			
+//			break;
+//			
+//		case EquipmentStance.Finesse:
+//			
+//			break;
+//		}
 		
 		//			Primary = equipmentSlot1;
 		//			Secondary = equipmentSlot2;
 	}
 	#endregion Initialization
 	
-	#region Setup
+	#region Methods
+	public void SetMoveset () {
+
+	}
+	public void ActivatePrimary () {
+
+
+	}
+	public void ActivateSecondary () {
+
+	}
 	
 	#endregion
-	
-	#region Loadout Specialization
-	interface IMoveset {
-		IEquippable Primary {get;}
-		IEquippable Secondary {get;}
-	}
-	public class OneWeaponMoveset : IMoveset {
-		[SerializeField] protected BaseEquipment primary;
-		
-		public virtual IEquippable Primary {
-			get {return primary;}
+	public interface IMoveSetModule {
+		IEquippable Primary {
+			get;
 		}
-		public virtual IEquippable Secondary {
-			get {return primary;}
+		IEquippable Secondary {
+			get;
 		}
 	}
-	public class TwoWeaponMoveset : OneWeaponMoveset {
-		private IEquippable secondary;
-		
-		public override IEquippable Secondary {
+	///<summary>
+	/// Equipment Module that will contain the weapon(s) currently equipped, and translate them into a moveset that the character's
+	/// state machine can utilize. </summary>
+	///
+	private class MoveSetModule : IMoveSetModule {
+		IEquipmentLoadout loadout;
+		EquipmentStance stance;
+
+		IEquippable primary;
+		IEquippable secondary;
+
+		public IEquippable Primary {
+			get {return primary;}
+		}
+		public IEquippable Secondary {
 			get {return secondary;}
 		}
+
+		MoveSetModule (IEquipmentLoadout _loadout) {
+			loadout = _loadout;
+			stance = _loadout.Stance;
+
+
+
+		}
 	}
-	#endregion Loadout Specilization
 }

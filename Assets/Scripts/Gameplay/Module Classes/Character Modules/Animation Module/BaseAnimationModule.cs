@@ -1,12 +1,14 @@
 using System;
 
-namespace AssemblyCSharp
-{
-		public class BaseAnimationModule
-		{
-				public BaseAnimationModule ()
-				{
-				}
-		}
+public interface IAnimation {
+
 }
+
+public class BaseAnimationModule
+{
+	public BaseAnimationModule ()
+	{
+	}
+}
+
 
