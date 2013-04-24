@@ -3,22 +3,41 @@ using System;
 using System.Collections;
 
 public interface IMovement {
-	void Turn ();
-	void Walk ();
-	void Strafe ();
-	void Run ();
-	//void DodgeEffect (Vector3 dir);
-	BaseAbility Dodge {
+	IAbility Walk {
 		get;
 	}
-	//IEnumerator Dodge ();
-	void Aim ();
+	IAbility Strafe {
+		get;
+	}
+	IAbility Run {
+		get;
+	}
+	IAbility Dodge {
+		get;
+	}
 
+//	void Turn ();
+//	void Walk ();
+//	void Strafe ();
+//	void Run ();
+//	//void DodgeEffect (Vector3 dir);
+//	BaseAbility Dodge {
+//		get;
+//	}
+//	//IEnumerator Dodge ();
+//	void Aim ();
+//
 }
 
 ///<summary>
 /// Character Movement Module. Holds movement-related values, as well as the relevant functions that use them. </summary>
 [System.Serializable] public class BaseMovementModule : IMovement{
+	protected IAbility walk;
+	protected IAbility strafe;
+	protected IAbility run;
+	protected IAbility dodge;
+
+
 	#region Fields
 	//Inspector Fields
 	[SerializeField, Range (0,10)] private float turnSpeed = 3;
@@ -29,7 +48,7 @@ public interface IMovement {
 	[SerializeField, Range (0,20)] private float runSpeed = 7;
 	[SerializeField, Range (0,10)] private float runCost = 1;
 
-	private BaseAbility dodge;
+	//private BaseAbility dodge;
 
 	[SerializeField, Range (0,60)] private float dodgeSpeed = 30;
 	[SerializeField, Range (0,20)] private float dodgeCost = 15;
@@ -43,6 +62,19 @@ public interface IMovement {
 	#endregion
 	
 	#region Properties
+	public IAbility Walk {
+		get {return walk;}
+	}
+	public IAbility Strafe {
+		get {return strafe;}
+	}
+	public IAbility Run {
+		get {return run;} 
+	}
+	public IAbility Dodge {
+		get {return dodge;}
+	}
+
 	public float TurnSpeed {
 		get {return turnSpeed;}
 	}
@@ -70,9 +102,9 @@ public interface IMovement {
 	public float DodgeCooldown {
 		get {return dodgeCooldown;}
 	}
-	public BaseAbility Dodge {
-		get {return dodge;}
-	}
+//	public BaseAbility Dodge {
+//		get {return dodge;}
+//	}
 	public float WalkingBlockSpeed {
 		get {return walkingBlockSpeed;}
 	}
@@ -93,51 +125,51 @@ public interface IMovement {
 	#endregion
 	
 	#region Character Movements
-	public void Walk () {
-		Turn ();
-		_user.CharPhysics.Controller.Move (WalkSpeed * _user.CharInput.MoveDir.normalized * Time.deltaTime);		
-	}
-	
-	public void Strafe () {
-		Aim ();
-		_user.CharPhysics.Controller.Move (WalkSpeed * _user.CharInput.MoveDir.normalized * Time.deltaTime);		
-	}
-	
-	public void Run () {
-		//if (CharMovement.RunCost > CharStats.Stamina.CurrentValue) return;
-		_user.CharStats.Stamina.CurValue -= RunCost * Time.deltaTime;
-		Turn ();
-		_user.CharPhysics.Controller.Move (RunSpeed * _user.CharInput.MoveDir * Time.deltaTime);
-	}
-	
-	/// <summary>
-	/// Turn the character based on the direction they're moving. </summary>
-	public void Turn () {
-		Vector3 dir = _user.CharInput.MoveDir;
-		if (dir == Vector3.zero) return;
-		
-		float aim = Mathf.Atan2(-dir.x, dir.y) * Mathf.Rad2Deg;						//holds direction the character should be facing
-		_coordinates.rotation = Quaternion.Euler(0, 0, aim);
-	}
-	/// <summary>
-	/// Turns the character based on the direction of they're desired target. </summary>
-	public void Aim () {
-		Vector3 target = _user.CharInput.LookDir;
-		float angleX = target.x - _coordinates.position.x;
-		float angleY = target.y - _coordinates.position.y;
-		float targetAngle = Mathf.Atan2 (angleY, angleX) * Mathf.Rad2Deg;
-		
-		Quaternion fromRotation = _coordinates.rotation;
-		Quaternion finalRotation = Quaternion.AngleAxis(targetAngle - 90, Vector3.forward);
-		_coordinates.rotation = Quaternion.RotateTowards(fromRotation, finalRotation, turnSpeed);
-	}
-
-	protected void DodgeEffect (Vector3 dir) {
-		if (_user.CharState.State == BaseStateMachineModule.CharState.Idle) Turn();
-		if (_user.CharState.State == BaseStateMachineModule.CharState.CombatReady) Aim();
-		
-		_user.CharPhysics.Controller.Move (dir * DodgeSpeed * Time.deltaTime);		
-	}
+//	public void Walk () {
+//		Turn ();
+//		_user.CharPhysics.Controller.Move (WalkSpeed * _user.CharInput.MoveDir.normalized * Time.deltaTime);		
+//	}
+//	
+//	public void Strafe () {
+//		Aim ();
+//		_user.CharPhysics.Controller.Move (WalkSpeed * _user.CharInput.MoveDir.normalized * Time.deltaTime);		
+//	}
+//	
+//	public void Run () {
+//		//if (CharMovement.RunCost > CharStats.Stamina.CurrentValue) return;
+//		_user.CharStats.Stamina.CurValue -= RunCost * Time.deltaTime;
+//		Turn ();
+//		_user.CharPhysics.Controller.Move (RunSpeed * _user.CharInput.MoveDir * Time.deltaTime);
+//	}
+//	
+//	/// <summary>
+//	/// Turn the character based on the direction they're moving. </summary>
+//	public void Turn () {
+//		Vector3 dir = _user.CharInput.MoveDir;
+//		if (dir == Vector3.zero) return;
+//		
+//		float aim = Mathf.Atan2(-dir.x, dir.y) * Mathf.Rad2Deg;						//holds direction the character should be facing
+//		_coordinates.rotation = Quaternion.Euler(0, 0, aim);
+//	}
+//	/// <summary>
+//	/// Turns the character based on the direction of they're desired target. </summary>
+//	public void Aim () {
+//		Vector3 target = _user.CharInput.LookDir;
+//		float angleX = target.x - _coordinates.position.x;
+//		float angleY = target.y - _coordinates.position.y;
+//		float targetAngle = Mathf.Atan2 (angleY, angleX) * Mathf.Rad2Deg;
+//		
+//		Quaternion fromRotation = _coordinates.rotation;
+//		Quaternion finalRotation = Quaternion.AngleAxis(targetAngle - 90, Vector3.forward);
+//		_coordinates.rotation = Quaternion.RotateTowards(fromRotation, finalRotation, turnSpeed);
+//	}
+//
+//	protected void DodgeEffect (Vector3 dir) {
+//		if (_user.CharState.State == BaseStateMachineModule.CharState.Idle) Turn();
+//		if (_user.CharState.State == BaseStateMachineModule.CharState.CombatReady) Aim();
+//		
+//		_user.CharPhysics.Controller.Move (dir * DodgeSpeed * Time.deltaTime);		
+//	}
 
 	/// <summary>
 	/// Causes the character to Dodge. </summary>

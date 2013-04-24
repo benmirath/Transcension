@@ -11,6 +11,7 @@ public interface ICharacter {
 	IAnimation CharAnimation {get;}
 	IPhysics CharPhysics {get;}
 	ICharacterStateMachine CharState {get;}
+	//IGUI (will turn into a full module down the line, handle health bars and other gui elements)
 
 	//USER
 	ICharacterStats CharStats {get;}
@@ -18,8 +19,8 @@ public interface ICharacter {
 }
 
 
-[RequireComponent (typeof(CharacterController))]						//the active "body" of the character, used for movement and collision detection
-[RequireComponent (typeof(Rigidbody))]									//the passive "body" of the character, used for physics effects such as in combat
+//[RequireComponent (typeof(CharacterController))]						//the active "body" of the character, used for movement and collision detection
+//[RequireComponent (typeof(Rigidbody))]									//the passive "body" of the character, used for physics effects such as in combat
 //[RequireComponent (typeof(IRagePixel))]									//the animation plugin for the character
 
 /// <summary>
@@ -46,7 +47,6 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter {
 //
 //	private IRagePixel _charAnimation;									//Contains sprite and animations for unit
 //	private Animation _charAnimation3D;
-
 	//Internal State Flags
 //	private bool _hasTarget ;
 //	private bool _weaponReady;
@@ -245,7 +245,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter {
 //		set {_lookDir = value;}
 //	}
 	
-	//State Flags
+//	State Flags
 //	public CharState State {
 //		get {return state;}
 //		set {state = value;}

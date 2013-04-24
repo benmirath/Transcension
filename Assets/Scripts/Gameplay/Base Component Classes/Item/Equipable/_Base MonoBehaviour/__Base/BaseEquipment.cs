@@ -14,7 +14,7 @@ public interface IEquippable
 	Collider HitBox {
 		get;
 	}
-	IEquipmentStats Stats {
+	IEquipmentProperties Stats {
 		get;
 	}
 
@@ -35,7 +35,7 @@ public abstract class BaseEquipment : MonoBehaviour, IEquippable
 	protected ICharacter user;
 	protected Collider hitBox;
 
-	[SerializeField] protected IEquipmentStats stats;
+	[SerializeField] protected IEquipmentProperties stats;
 
 
 	#region Properties
@@ -45,7 +45,7 @@ public abstract class BaseEquipment : MonoBehaviour, IEquippable
 	/// <summary>
 	/// Acts as the available states (attacks) of this weapon </summary>
 
-	public IEquipmentStats Stats {
+	public IEquipmentProperties Stats {
 		get {return stats;}
 	}
 	public ICharacter User {

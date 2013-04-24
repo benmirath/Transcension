@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;	
 
+/// <summary>
+/// Moveset component of weapon, housing all of its attack abilities. </summary>
 public interface IMoveSet {
 	MoveSet.MoveSetType type {
 		get;

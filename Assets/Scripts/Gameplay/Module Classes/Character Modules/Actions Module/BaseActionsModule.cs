@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IActions {
+	//IAbility CurrentAction {get;}
+
 	IMovement CharMovement {get;}
 	IEquipmentLoadout CharEquipment {get;}
 	ICombat CharCombat {get;}

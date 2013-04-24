@@ -100,10 +100,11 @@ public abstract class BaseStateMachineModule : ICharacterStateMachine {
 
 	#region Internal Fields
 	protected CharState state;
-	protected CharSubState subState;
+	//protected CharSubState subState;
+	protected IAbility currentAction;
 	#endregion
 
-	
+	//these are constants for the character that factor in but operate independently of the current state and action.
 	#region State Flags
 	private bool hasTarget;
 	private bool weaponReady;
@@ -159,6 +160,10 @@ public abstract class BaseStateMachineModule : ICharacterStateMachine {
 	protected IEnumerator Idle () {
 		while (state == CharState.Idle) {
 			if (User.CharInput.MoveDir != Vector3.zero) {
+				if (isEvading == true) charActions.CharMovement.Dodge.Activate();
+				else if (isRunning == true) charActions.CharMovement.Run.Activate();
+				else charActions.CharMovement.Walk.Activate();
+
 				//if () charActions.CharMovement.Dodge
 
 //				if (IsEvading == true && charActions.CharMovement.DodgeCooldown < CharStats.Stamina.CurValue) yield return StartCoroutine (CharMovement.Dodge ());

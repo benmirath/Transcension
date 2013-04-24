@@ -74,7 +74,7 @@ public abstract class BaseSword : BaseEquipment
 //	public class SwordMoveset_Finesse : BaseEquipment.BaseEquipmentMovelist.MeleeMovelist.DoubleSlotMovelist.DualWieldedMovelist {
 //
 //	}
-	public class SwordStats : BaseEquipmentStats
+	public class SwordStats : BaseEquipmentProperties
 	{
 
 	}

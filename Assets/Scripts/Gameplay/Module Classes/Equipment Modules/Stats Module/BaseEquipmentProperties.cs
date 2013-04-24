@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public interface IEquipmentStats {
+public interface IEquipmentProperties {
 	float BaseDamage {
 		get;
 	}
@@ -37,7 +37,7 @@ public interface IEquipmentStats {
 /// -Weapon Buff (determined based on any abilities/items/effects that boost the weapons damage)
 /// -Real Damage (((base damage * scaling buff) * ability buff) + Weapon Buff)
 /// </summary>	  	
-[System.Serializable] public class BaseEquipmentStats {
+[System.Serializable] public class BaseEquipmentProperties {
 //	public enum EquipmentType {
 //		//DW only
 //		PrayerSeal,
@@ -103,7 +103,7 @@ public interface IEquipmentStats {
 	#endregion
 	
 	#region Initializers
-	public BaseEquipmentStats () {
+	public BaseEquipmentProperties () {
 		//abilityBuff = 0;
 	}
 	public void Setup (BaseEquipment thisWeapon) {

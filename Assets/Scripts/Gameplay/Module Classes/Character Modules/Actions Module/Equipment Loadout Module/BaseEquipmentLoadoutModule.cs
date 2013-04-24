@@ -7,7 +7,7 @@ public interface IEquipmentLoadout {
 	BaseEquipmentLoadoutModule.EquipmentStance Stance {
 		get;
 	}
-	BaseEquipmentLoadoutModule.IMoveSetModule MoveSet {
+	BaseEquipmentLoadoutModule.IMovesetHandler MoveSet {
 		get;
 	}
 }
@@ -102,7 +102,7 @@ public interface IEquipmentLoadout {
 	}
 	
 	#endregion
-	public interface IMoveSetModule {
+	public interface IMovesetHandler {
 		IEquippable Primary {
 			get;
 		}
@@ -114,7 +114,7 @@ public interface IEquipmentLoadout {
 	/// Equipment Module that will contain the weapon(s) currently equipped, and translate them into a moveset that the character's
 	/// state machine can utilize. </summary>
 	///
-	private class MoveSetModule : IMoveSetModule {
+	private class MovesetHandler : IMovesetHandler {
 		IEquipmentLoadout loadout;
 		EquipmentStance stance;
 
@@ -128,7 +128,7 @@ public interface IEquipmentLoadout {
 			get {return secondary;}
 		}
 
-		MoveSetModule (IEquipmentLoadout _loadout) {
+		MovesetHandler (IEquipmentLoadout _loadout) {
 			loadout = _loadout;
 			stance = _loadout.Stance;
 

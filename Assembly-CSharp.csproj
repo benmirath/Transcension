@@ -296,7 +296,6 @@
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Actions Module\Equipment Loadout Module\BaseEquipmentLoadoutModule.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Actions Module\Combat Module\BaseCombatModule.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Actions Module\Stealth Module\BaseStealthModule.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Module Classes\Equipment Modules\Stats Module\BaseEquipmentStats.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Character Modules\Stats Module\BaseCharacterStatsModule.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Module Classes\Equipment Modules\Moveset Module\MoveSet.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Equipment Abilities\Special Abilities\SpecialAbility.cs" />
@@ -307,13 +306,14 @@
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Equipment Abilities\Weapon Abilities\FinisherAbility.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Equipment Abilities\Weapon Abilities\WeaponAbility.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Monster Abilities\MonsterAbility.cs" />
-    <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Ability Stats\AbilityStats.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Derived\MovementAction.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Derived\CombatAction.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Derived\StealthAction.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Derived\EquipmentAction.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\__Base\BaseAbility.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Modules\Stats\[DEPRECATED]BaseActionStats.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Module Classes\Equipment Modules\Stats Module\BaseEquipmentProperties.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Sub-Module Classes\Action\Ability Stats\AbilityProperties.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">

@@ -8,6 +8,19 @@ using UnityEngine;
 
 public interface IAbility {
 	void Activate ();
+
+	ICharacter User {
+		get;
+	}
+	IVital VitalType {
+		get;
+	}
+	IPhysics UserPhysics {
+		get;
+	}
+	AbilityProperties Stats {
+		get;
+	}
 }
 
 /// <summary>
@@ -16,67 +29,97 @@ public interface IAbility {
 /// are filled in by the ability's stat module.
 /// </summary>
 public class BaseAbility : MonoBehaviour {
+	public enum AbilityType {
+		//General
+		Movement,		//moves(or restricts movement of) character
+		Combat,			//initiates the effect of a combat result (being hit, status effect, etc.)
+		Stealth,		//initiates a stealth-oriented period
+		//Attacks (Combat Equipment)
+		Melee,			//initiates a melee attack
+		Ranged,			//initiates a ranged attack
+		Defend,			//initiates a damage reducing period
+		Counter,		//initiates a counter period
+		Throw,
+		//Player Specific
+		Class,
+	}
+	
 	#region External Fields
-	[SerializeField] protected AbilityStats stats;
-	//private IVital vitalType;
+	[SerializeField] protected AbilityType abiltyType;				//determines the type of stat created, and the general role of the ability
+	[SerializeField] protected AbilityProperties stats;
 
-	protected Action startupEffect;
-	protected Action durationEffect;
-	protected Action cooldownEffect;
+	//Action delegates that execute the ability's functionality
+	public delegate void StartupEffect();
+	public delegate void DurationEffect();
+	public delegate void CooldownEffect();
+
+	protected StartupEffect Start;
+	protected DurationEffect Middle;
+	protected CooldownEffect End;
 	#endregion
 
-	#region Internal Fields    //Action delegates that dictate the nature 
-//	private Action effect;															//empty delegate that will hold the end effect of the created ability
-//	private Action<Vector3> movementEffect;
-
-
-
+	#region Internal Fields   
 	private ICharacter user;
-	private CharacterController controller;													//Controller of character. Used for movement.
+	private IVital userVital;
+	private IPhysics userPhysics;
+	//private CharacterController controller;													//Controller of character. Used for movement.
 	#endregion
 
 	#region Properties
-	public AbilityStats Stats {
+	public AbilityProperties Stats {
 		get {return stats;}
 	}
-//	public virtual Vector3 Target {				//will indicate the desired direction of the ability, plugging in either user's move or look direction (movement or attacks respectively) 
-//		get;
-//	}
-
-
-//	public Action Effect {
-//		get {return effect;}
-//		set {effect = value;}
-//	}
-//	public Action<Vector3> MovementEffect {
-//		get {return movementEffect;}
-//	}
-//	public IVital VitalType {
-//		get {return vitalType;}
-//		set {vitalType = value;}
-//	}
-//	
 	public ICharacter User {
 		get {return user;}
-		set {user = value;}
 	}
-	public CharacterController Controller {
-		get {return controller;}
-		set {controller = value;}
+	public IVital VitalType {
+		get {return userVital;}
+	}
+	public IPhysics UserPhysics {
+		get {return userPhysics;}
+	}
+	#endregion
+
+	#region Initialization
+	protected void Setup () {
+		switch (abiltyType) {
+		case AbilityType.Movement:
+			stats = ScriptableObject.CreateInstance<MovementProperties>();
+			break;
+			
+		case AbilityType.Melee:
+			stats = ScriptableObject.CreateInstance<MeleeProperties>();
+			break;
+
+		case AbilityType.Ranged:
+			break;
+			
+		case AbilityType.Defend:
+			
+			break;
+			
+		case AbilityType.Counter:
+			
+			break;
+			
+		case AbilityType.Stealth:
+			
+			break;
+		}
 	}
 	#endregion
 	
 	#region Initialization
-	protected virtual void Awake () {
+	protected void Awake () {
 		user = GetComponent<BaseCharacter>();
-		controller = GetComponent<CharacterController>();
+		//controller = GetComponent<CharacterController>();
 
 		name = "default";
-		stats.Cost = 0;
-		//stats.Speed = 0;
-		stats.StartupLength = 0;
-		stats.DurationLength = 0;
-		stats.CooldownLength = 0;
+//		stats.Cost = 0;
+//		//stats.Speed = 0;
+//		stats.StartupLength = 0;
+//		stats.DurationLength = 0;
+//		stats.CooldownLength = 0;
 //		SetValues();
 	}
 
@@ -93,11 +136,13 @@ public class BaseAbility : MonoBehaviour {
 //		stats=new AbilityStats(start, mid, end, cost);
 //	}
 
-	#endregion Initialization
+	#endregion
+
+	#region Effects
 	protected virtual IEnumerator ActivateAbilityStartup () {
 		float dur = Time.time + stats.StartupLength;											//Sets length of time at which ability's duration will be finished
 		do {
-			startupEffect();
+			Start ();
 			yield return null;
 		} while (dur > Time.time);
 		//if (stats.StartupLength > 0) yield return new WaitForSeconds(stats.StartupLength);				//checks if ability has a startup time, and pauses script for appropriate length
@@ -107,7 +152,7 @@ public class BaseAbility : MonoBehaviour {
 		float dur = Time.time + stats.DurationLength;											//Sets length of time at which ability's duration will be finished
 
 		do {
-			durationEffect();
+			Middle ();
 			yield return null;
 		} while (dur > Time.time);
 		yield break;
@@ -115,7 +160,7 @@ public class BaseAbility : MonoBehaviour {
 	protected virtual IEnumerator ActivateAbilityCooldown () {
 		float dur = Time.time + stats.CooldownLength;
 		do {
-			cooldownEffect();
+			End ();
 			yield return null;
 		} while (dur > Time.time);
 		//if (stats.CooldownLength > 0) yield return new WaitForSeconds(stats.CooldownLength);	
@@ -128,20 +173,22 @@ public class BaseAbility : MonoBehaviour {
 	protected virtual IEnumerator ActivateAbility () {
 		if (stats.StartupLength != 0)	yield return StartCoroutine(ActivateAbilityStartup());
 
-		if (stats.DurationLength != 0) yield return StartCoroutine(ActivateAbilityDuration());
-		else durationEffect();
-		
+		yield return StartCoroutine(ActivateAbilityDuration());
+
 		if (stats.CooldownLength != 0) yield return StartCoroutine(ActivateAbilityCooldown());
 
 		yield break;
 	}
 	
 	public void Activate () {
-		if (stats.VitalType.CurValue < stats.Cost) return;
+		if (VitalType.CurValue < stats.Cost) return;
 		if (stats.Cost != 0) {
-			stats.VitalType.CurValue -= stats.Cost;
-			stats.VitalType.StopRegen = true;
+			VitalType.CurValue -= stats.Cost;
+			VitalType.StopRegen = true;
 		}
-		StartCoroutine(ActivateAbility());
+
+		if (stats.DurationLength>0) StartCoroutine(ActivateAbility());
+		else Middle ();
 	}
+	#endregion
 }
