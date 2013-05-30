@@ -23,7 +23,7 @@ public interface IEquipmentLoadout {
 	
 	#region Fields	
 	private BaseCharacter _user;
-	[SerializeField] private EquipmentStance combatStance;
+//	[SerializeField] private EquipmentStance combatStance;
 	private IEquippable primary;
 	private IEquippable secondary;
 

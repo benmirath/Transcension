@@ -1,12 +1,11 @@
 using System;
+using UnityEngine;
 
-namespace AssemblyCSharp
+public class BaseEquipmentMovesetModule : MonoBehaviour
 {
-		public class BaseEquipmentMovesetModule
+		public BaseEquipmentMovesetModule ()
 		{
-				public BaseEquipmentMovesetModule ()
-				{
-				}
 		}
 }
+
 

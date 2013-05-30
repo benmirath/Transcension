@@ -8,11 +8,17 @@ public class ObjectPlacer : MonoBehaviour {
 	public GameObject go; /** GameObject to place. Make sure the layer it is in is included in the collision mask on the GridGraph settings (assuming a GridGraph) */
 	public bool direct = false; /** Flush Graph Updates directly after placing. Slower, but updates are applied immidiately */
 	
+	void Start () {
+	}
+	
 	// Update is called once per frame
 	void Update () {
 		
 		if (Input.GetKeyDown ("p")) {
 			PlaceObject ();
+		}
+		if (Input.GetKeyDown ("r")) {
+			RemoveObject ();
 		}
 	}
 	
@@ -26,14 +32,33 @@ public class ObjectPlacer : MonoBehaviour {
 			GameObject obj = (GameObject)GameObject.Instantiate (go,p,Quaternion.identity);
 			
 			Bounds b = obj.collider.bounds;
-			GraphUpdateObject ob = new GraphUpdateObject(b);
-			
-			AstarPath.active.UpdateGraphs (ob);
-			
+			//Pathfinding.Console.Write ("// Placing Object\n");
+			GraphUpdateObject guo = new GraphUpdateObject(b);
+			AstarPath.active.UpdateGraphs (guo);
 			if (direct) {
+				//Pathfinding.Console.Write ("// Flushing\n");
 				AstarPath.active.FlushGraphUpdates();
 			}
+		}
+	}
+	
+	public void RemoveObject () {
+		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		RaycastHit hit;
+		if ( Physics.Raycast (ray, out hit, Mathf.Infinity)) {
+			if (hit.collider.isTrigger || hit.transform.gameObject.name == "Ground") return;
 			
+			Bounds b = hit.collider.bounds;
+			Destroy (hit.collider);
+			Destroy (hit.collider.gameObject);
+			
+			//Pathfinding.Console.Write ("// Placing Object\n");
+			GraphUpdateObject guo = new GraphUpdateObject(b);
+			AstarPath.active.UpdateGraphs (guo,0.0f);
+			if (direct) {
+				//Pathfinding.Console.Write ("// Flushing\n");
+				AstarPath.active.FlushGraphUpdates();
+			}
 		}
 	}
 }

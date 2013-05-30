@@ -17,7 +17,7 @@ public interface IInput {
 	event Action secondarySignal;
 
 	event Action sheatheSignal;
-	event Action targetSignal;
+	event Action lockOnSignal;
 
 	//event Action walkSignal;
 	//event Action runSignal;
@@ -74,16 +74,19 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 	protected void ActivateSecondary() {
 		secondarySignal();
 	}
+	
+	public event Action lockOnSignal;
+	protected void ActivateLockOn() {
+		lockOnSignal();
+	}
 
 	public event Action sheatheSignal;
 	protected void ActivateSheathe() {
 		sheatheSignal();
 	}
 
-	public event Action targetSignal;
-	protected void ActivateTarget() {
-		targetSignal();
-	}
+
+
 	#endregion
 }
 

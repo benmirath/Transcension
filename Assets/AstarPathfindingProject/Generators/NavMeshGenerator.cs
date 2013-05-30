@@ -1,9 +1,8 @@
-//#define SafeIntMath  //Deprectated
-//#define DEBUG    //Some debugging
+//#define ASTARDEBUG    //Some debugging
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using JsonFx.Json;
+using Pathfinding.Serialization.JsonFx;
 
 namespace Pathfinding {
 	public interface INavmesh {
@@ -45,6 +44,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 			MeshNode[] tmp = new MeshNode[number];
 			for (int i=0;i<number;i++) {
 				tmp[i] = new MeshNode ();
+				tmp[i].penalty = initialPenalty;
 			}
 			return tmp as Node[];
 		}
@@ -198,7 +198,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 				
 				if (accurateNearestNode) {
 					
-					Vector3 closest = Polygon.ClosesPointOnTriangle((Vector3)vertices[node.v1],(Vector3)vertices[node.v2],(Vector3)vertices[node.v3],position);
+					Vector3 closest = Polygon.ClosestPointOnTriangle((Vector3)vertices[node.v1],(Vector3)vertices[node.v2],(Vector3)vertices[node.v3],position);
 					float dist = ((Vector3)pos-closest).sqrMagnitude;
 					
 					if (minNode == null || dist < minDist) {
@@ -257,7 +257,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 			if (nninfo.node != null) {
 				MeshNode node = nninfo.node as MeshNode;//minNode2 as MeshNode;
 				
-				Vector3 clP = Polygon.ClosesPointOnTriangle ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2],(Vector3)vertices[node.v3],position);
+				Vector3 clP = Polygon.ClosestPointOnTriangle ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2],(Vector3)vertices[node.v3],position);
 				
 				nninfo.clampedPosition = clP;
 			}
@@ -266,7 +266,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 			if (nninfo.constrainedNode != null) {
 				MeshNode node = nninfo.constrainedNode as MeshNode;//minNode2 as MeshNode;
 				
-				Vector3 clP = Polygon.ClosesPointOnTriangle ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2],(Vector3)vertices[node.v3],position);
+				Vector3 clP = Polygon.ClosestPointOnTriangle ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2],(Vector3)vertices[node.v3],position);
 				
 				nninfo.constClampedPosition = clP;
 			}
@@ -274,11 +274,11 @@ and have a low memory footprint because of their smaller size to describe the sa
 			return nninfo;
 		}
 		
-		public void BuildFunnelCorridor (Node[] path, int startIndex, int endIndex, List<Vector3> left, List<Vector3> right) {
+		public void BuildFunnelCorridor (List<Node> path, int startIndex, int endIndex, List<Vector3> left, List<Vector3> right) {
 			BuildFunnelCorridor (this,path,startIndex,endIndex,left,right);
 		}
 		
-		public static void BuildFunnelCorridor (INavmesh graph, Node[] path, int startIndex, int endIndex, List<Vector3> left, List<Vector3> right) {
+		public static void BuildFunnelCorridor (INavmesh graph, List<Node> path, int startIndex, int endIndex, List<Vector3> left, List<Vector3> right) {
 			
 			if (graph == null) {
 				Debug.LogError ("Couldn't cast graph to the appropriate type (graph isn't a Navmesh type graph, it doesn't implement the INavmesh interface)");
@@ -379,7 +379,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 				return;// new NNInfo ();
 			}
 			
-			//System.DateTime startTime = System.DateTime.Now;
+			//System.DateTime startTime = System.DateTime.UtcNow;
 				
 			Bounds bounds = o.bounds;
 			
@@ -459,7 +459,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 				//Debug.Break ();
 			}
 			
-			//System.DateTime endTime = System.DateTime.Now;
+			//System.DateTime endTime = System.DateTime.UtcNow;
 			//float theTime = (endTime-startTime).Ticks*0.0001F;
 			//Debug.Log ("Intersecting bounds with navmesh took "+theTime.ToString ("0.000")+" ms");
 		
@@ -467,12 +467,14 @@ and have a low memory footprint because of their smaller size to describe the sa
 		
 		/** Returns the closest point of the node */
 		public static Vector3 ClosestPointOnNode (MeshNode node, Int3[] vertices, Vector3 pos) {
-			return Polygon.ClosesPointOnTriangle ((Vector3)vertices[node[0]],(Vector3)vertices[node[1]],(Vector3)vertices[node[2]],pos);
+			return Polygon.ClosestPointOnTriangle ((Vector3)vertices[node[0]],(Vector3)vertices[node[1]],(Vector3)vertices[node[2]],pos);
 		}
 		
 		/** Returns if the point is inside the node in XZ space */
 		public bool ContainsPoint (MeshNode node, Vector3 pos) {
-			if (Polygon.IsClockwise ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2], pos) && Polygon.IsClockwise ((Vector3)vertices[node.v2],(Vector3)vertices[node.v3], pos) && Polygon.IsClockwise ((Vector3)vertices[node.v3],(Vector3)vertices[node.v1], pos)) {
+			if (	Polygon.IsClockwise ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2], pos)
+			    && 	Polygon.IsClockwise ((Vector3)vertices[node.v2],(Vector3)vertices[node.v3], pos)
+			    && 	Polygon.IsClockwise ((Vector3)vertices[node.v3],(Vector3)vertices[node.v1], pos)) {
 				return true;
 			}
 			return false;
@@ -480,13 +482,19 @@ and have a low memory footprint because of their smaller size to describe the sa
 		
 		/** Returns if the point is inside the node in XZ space */
 		public static bool ContainsPoint (MeshNode node, Vector3 pos, Int3[] vertices) {
-			if (Polygon.IsClockwiseMargin ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2], pos) && Polygon.IsClockwiseMargin ((Vector3)vertices[node.v2],(Vector3)vertices[node.v3], pos) && Polygon.IsClockwiseMargin ((Vector3)vertices[node.v3],(Vector3)vertices[node.v1], pos)) {
+			if (!Polygon.IsClockwiseMargin ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2], (Vector3)vertices[node.v3])) {
+				Debug.LogError ("Noes!");
+			}
+			
+			if ( 	Polygon.IsClockwiseMargin ((Vector3)vertices[node.v1],(Vector3)vertices[node.v2], pos)
+			    && 	Polygon.IsClockwiseMargin ((Vector3)vertices[node.v2],(Vector3)vertices[node.v3], pos)
+			    && 	Polygon.IsClockwiseMargin ((Vector3)vertices[node.v3],(Vector3)vertices[node.v1], pos)) {
 				return true;
 			}
 			return false;
 		}
 		
-		/** Scanns the graph using the path to an .obj mesh */
+		/** Scans the graph using the path to an .obj mesh */
 		public void Scan (string objMeshPath) {
 			
 			Mesh mesh = ObjImporter.ImportFile (objMeshPath);
@@ -711,7 +719,7 @@ and have a low memory footprint because of their smaller size to describe the sa
 		
 		/** Rebuilds the BBTree on a NavGraph.
 		 * \astarpro
-		 * \see NavMeshGraph::bbTree */
+		 * \see NavMeshGraph.bbTree */
 		public static void RebuildBBTree (NavGraph graph) {
 			//BBTrees is a A* Pathfinding Project Pro only feature - The Pro version can be bought on the Unity Asset Store or on arongranberg.com
 		}

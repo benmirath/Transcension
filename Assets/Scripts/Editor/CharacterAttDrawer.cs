@@ -1,12 +1,14 @@
 using System;
+using UnityEditor;
 
-namespace AssemblyCSharpEditor
+
+
+public class CharacterAttDrawer : PropertyDrawer
 {
-		public class CharacterAttDrawer
+
+		public CharacterAttDrawer ()
 		{
-				public CharacterAttDrawer ()
-				{
-				}
+
 		}
 }
 

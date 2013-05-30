@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
-using JsonFx.Json;
+using Pathfinding.Util;
+using Pathfinding.Serialization.JsonFx;
 
 namespace Pathfinding {
 	
@@ -67,7 +68,7 @@ namespace Pathfinding {
 		private static Color[] AreaColors;
 		
 		/** Returns an color for an area, uses both user set ones and calculated.
-		 * If the user has set a color for the area, it is used, but otherwise the color is calculated using Mathfx::IntToColor
+		 * If the user has set a color for the area, it is used, but otherwise the color is calculated using Mathfx.IntToColor
 		 * \see #AreaColors */
 		public static Color GetAreaColor (int area) {
 			if (AreaColors == null || area >= AreaColors.Length) {
@@ -109,8 +110,8 @@ namespace Pathfinding {
 	}
 	
 	
-	/** Returned by graph ray- or linecasts containing info about the hit. This will only be set up if something was hit. \todo Why isn't this a struct? */
-	public class GraphHitInfo {
+	/** Returned by graph ray- or linecasts containing info about the hit. This will only be set up if something was hit. */
+	public struct GraphHitInfo {
 		public Vector3 origin;
 		public Vector3 point;
 		public Node node;
@@ -122,15 +123,6 @@ namespace Pathfinding {
 			get {
 				return (point-origin).magnitude;
 			}
-		}
-		
-		public GraphHitInfo () {
-			success = false;
-			tangentOrigin  = Vector3.zero;
-			origin = Vector3.zero;
-			point = Vector3.zero;
-			node = null;
-			tangent = Vector3.zero;
 		}
 		
 		public GraphHitInfo (Vector3 point) {
@@ -156,7 +148,7 @@ namespace Pathfinding {
 		 * \endcode
 		 * \note This does only affect which nodes are returned from a GetNearest call, if an invalid graph is linked to from a valid graph, it might be searched anyway.
 		 * 
-		 * \see AstarPath::GetNearest */
+		 * \see AstarPath.GetNearest */
 		public int graphMask = -1;
 		
 		public bool constrainArea = false; /**< Only treat nodes in the area #area as suitable. Does not affect anything if #area is less than 0 (zero) */ 
@@ -192,7 +184,10 @@ namespace Pathfinding {
 			return true;
 		}
 		
-		/** The default NNConstraint */
+		/** The default NNConstraint.
+		  * Equivalent to new NNConstraint ().
+		  * This NNConstraint has settings which works for most, it only finds walkable nodes
+		  * and it constrains distance set by A* Inspector -> Settings -> Max Nearest Node Distance */
 		public static NNConstraint Default {
 			get {
 				return new NNConstraint ();
@@ -218,8 +213,8 @@ namespace Pathfinding {
 	}
 	
 	/** A special NNConstraint which can use different logic for the start node and end node in a path.
-	 * A PathNNConstraint can be assigned to the Path::nnConstraint field, the path will first search for the start node, then it will call #SetStart and proceed with searching for the end node (nodes in the case of a MultiTargetPath).\n
-	 * The #Default PathNNConstraint will constrain the end point to lie inside the same area as the start point.
+	 * A PathNNConstraint can be assigned to the Path.nnConstraint field, the path will first search for the start node, then it will call #SetStart and proceed with searching for the end node (nodes in the case of a MultiTargetPath).\n
+	 * The default PathNNConstraint will constrain the end point to lie inside the same area as the start point.
 	 */
 	public class PathNNConstraint : NNConstraint {
 		
@@ -241,22 +236,24 @@ namespace Pathfinding {
 		}
 	}
 	
-	public class NNInfo {
+	public struct NNInfo {
+		/** Closest node found.
+		 * This node is not necessarily accepted by any NNConstraint passed.
+		 * \see constrainedNode
+		 */
 		public Node node;
 		
-		/** Optional to be filled in. if the search will be able to find the constrained node without any extra effort it can fill it in. */
+		/** Optional to be filled in.
+		 * If the search will be able to find the constrained node without any extra effort it can fill it in. */
 		public Node constrainedNode;
 		
-		public NearestNodePriority priority = NearestNodePriority.Normal;
-		
+		/** The position clamped to the closest point on the #node.
+		 */
 		public Vector3 clampedPosition;
 		/** Clamped position for the optional constrainedNode */
 		public Vector3 constClampedPosition;
 		
-		public NNInfo () {}
-		
 		public NNInfo (Node node) {
-			priority = NearestNodePriority.Normal;
 			this.node = node;
 			constrainedNode = null;
 			constClampedPosition = Vector3.zero;
@@ -289,27 +286,23 @@ namespace Pathfinding {
 			}
 		}
 		
-		public NNInfo (Node node, NearestNodePriority priority) {
-			this.node = node;
-			this.priority = priority;
-			clampedPosition = (Vector3)node.position;
-			constrainedNode = null;
-			constClampedPosition = Vector3.zero;
-		}
-		
-		public static implicit operator Vector3 (NNInfo ob) {
+		public static explicit operator Vector3 (NNInfo ob) {
 			return ob.clampedPosition;
 		}
 		
-		public static implicit operator Node (NNInfo ob) {
+		public static explicit operator Node (NNInfo ob) {
 			return ob.node;
 		}
 		
-		public static implicit operator NNInfo (Node ob) {
+		public static explicit operator NNInfo (Node ob) {
 			return new NNInfo (ob);
 		}
 	}
 	
+	/** Progress info for e.g a progressbar.
+	 * Used by the scan functions in the project
+	 * \see AstarPath.ScanLoop
+	 */
 	public struct Progress {
 		public float progress;
 		public string description;
@@ -320,6 +313,7 @@ namespace Pathfinding {
 		}
 	}
 	
+	/** Graphs which can be updated during runtime */
 	public interface IUpdatableGraph {
 		
 		/** Updates an area using the specified GraphUpdateObject.
@@ -334,20 +328,9 @@ namespace Pathfinding {
 		void UpdateArea (GraphUpdateObject o);
 	}
 	
-	//Enumerators
-	
-	/** Used to weight nodes returned by the GetNearest function from different graphs */
-	public enum NearestNodePriority {
-		ReallyLow = 20, 	
-		Low = 8,		/**< Used when only a simple range check or a similar algorithm was used */
-		Normal = 5, 	/**< Default */
-		High = 1,		/**< Used when the node is a very good candidate to being the closest node (like when the position is inside a triangle on a navmesh), it is really hard to override this */
-		ReallyHigh = 0 	/**< No other NavGraph can override this except if another graph returned ReallyHigh before this one */
-	}
-	
 	[System.Serializable]
 	/** Holds a tagmask.
-	 * This is used to store which tags to change and what to set them to in a Pathfinding::GraphUpdateObject.
+	 * This is used to store which tags to change and what to set them to in a Pathfinding.GraphUpdateObject.
 	 * All variables are bitmasks.\n
 	 * I wanted to make it a struct, but due to technical limitations when working with Unity's GenericMenu, I couldn't.
 	 * So be wary of this when passing it as it will be passed by reference, not by value as e.g LayerMask.
@@ -376,7 +359,7 @@ namespace Pathfinding {
 	}
 	
 	/** Represents a collection of settings used to update nodes in a specific area of a graph.
-	 * \see AstarPath::UpdateGraphs
+	 * \see AstarPath.UpdateGraphs
 	 */
 	public class GraphUpdateObject {
 		
@@ -402,9 +385,49 @@ namespace Pathfinding {
 		 * This has no effect when updating GridGraphs if #modifyWalkability is turned on */
 		public bool updatePhysics = true;
 		
+		/** When #updatePhysics is true, GridGraphs will normally reset penalties, with this option you can override it.
+		 * Good to use when you want to keep old penalties even when you update the graph.
+		 * 
+		 * The images below shows two overlapping graph update objects, the right one happened to be applied before the left one. They both have updatePhysics = true and are
+		 * set to increase the penalty of the nodes by some amount.
+		 * 
+		 * The first image shows the result when resetPenaltyOnPhysics is false. Both penalties are added correctly.
+		 * \shadowimage{resetPenaltyOnPhysics_False.png}
+		 * 
+		 * This second image shows when resetPenaltyOnPhysics is set to true. The first GUO is applied correctly, but then the second one (the left one) is applied
+		 * and during its updating, it resets the penalties first and then adds penalty to the nodes. The result is that the penalties from both GUOs are not added together.
+		 * The green patch in at the border is there because physics recalculation (recalculation of the position of the node, checking for obstacles etc.) affects a slightly larger
+		 * area than the original GUO bounds because of the Grid Graph -> Collision Testing -> Diameter setting (it is enlarged by that value). So some extra nodes have their penalties reset.
+		 * 
+		 * \shadowimage{resetPenaltyOnPhysics_True.png}
+		 */
+		public bool resetPenaltyOnPhysics = true;
+		/** Update Erosion for GridGraphs.
+		 * When enabled, erosion will be recalculated for grid graphs
+		 * after the GUO has been applied.
+		 * 
+		 * In the below image you can see the different effects you can get with the different values.\n
+		 * The first image shows the graph when no GUO has been applied. The blue box is not identified as an obstacle by the graph, the reason
+		 * there are unwalkable nodes around it is because there is a height difference (nodes are placed on top of the box) so erosion will be applied (an erosion value of 2 is used in this graph).
+		 * The orange box is identified as an obstacle, so the area of unwalkable nodes around it is a bit larger since both erosion and collision has made
+		 * nodes unwalkable.\n
+		 * The GUO used simply sets walkability to true, i.e making all nodes walkable.
+		 * 
+		 * \shadowimage{updateErosion.png}
+		 * 
+		 * When updateErosion=True, the reason the blue box still has unwalkable nodes around it is because there is still a height difference
+		 * so erosion will still be applied. The orange box on the other hand has no height difference and all nodes are set to walkable.\n
+		 * \n
+		 * When updateErosion=False, all nodes walkability are simply set to be walkable in this example.
+		 * 
+		 * \see Pathfinding.GridGraph
+		 */
+		public bool updateErosion = true;
+		
 		/** NNConstraint to use.
-		 * The Pathfinding::NNConstraint::SuitableGraph function will be called on the NNConstraint to enable filtering of which graphs to update.\n
-		 * \note As the Pathfinding::NNConstraint::SuitableGraph function is A* Pathfinding Project Pro only, this variable doesn't really affect anything in the free version.
+		 * The Pathfinding.NNConstraint.SuitableGraph function will be called on the NNConstraint to enable filtering of which graphs to update.\n
+		 * \note As the Pathfinding.NNConstraint.SuitableGraph function is A* Pathfinding Project Pro only, this variable doesn't really affect anything in the free version.
+		 * 
 		 * 
 		 * \astarpro */
 		public NNConstraint nnConstraint = NNConstraint.None;
@@ -418,6 +441,9 @@ namespace Pathfinding {
 		public bool modifyTag = false;
 		public int setTag = 0;
 		
+		/** Track which nodes are changed and save backup data.
+		 * Used internally to revert changes if needed.
+		 */
 		public bool trackChangedNodes = false;
 		
 		private List<Node> changedNodes;
@@ -426,10 +452,13 @@ namespace Pathfinding {
 		
 		public GraphUpdateShape shape = null;
 		
-		/** Should be called on every node which is updated with this GUO before it is updated */
+		/** Should be called on every node which is updated with this GUO before it is updated.
+		  * \param node The node to save fields for. If null, nothing will be done
+		  * \see #trackChangedNodes
+		  */
 		public virtual void WillUpdateNode (Node node) {
-			if (trackChangedNodes) {
-				if (changedNodes == null) { changedNodes = new List<Node>(); backupData = new List<ulong>(); backupPositionData = new List<Int3>(); }
+			if (trackChangedNodes && node != null) {
+				if (changedNodes == null) { changedNodes = ListPool<Node>.Claim(); backupData = ListPool<ulong>.Claim(); backupPositionData = ListPool<Int3>.Claim(); }
 				changedNodes.Add (node);
 				backupPositionData.Add (node.position);
 				backupData.Add ((ulong)node.penalty<<32 | (ulong)node.flags);
@@ -445,6 +474,10 @@ namespace Pathfinding {
 					changedNodes[i].penalty = (uint)(backupData[i]>>32);
 					changedNodes[i].flags = (int)(backupData[i] & 0xFFFFFFFF);
 					changedNodes[i].position = backupPositionData[i];
+					
+					ListPool<Node>.Release (changedNodes);
+					ListPool<ulong>.Release(backupData);
+					ListPool<Int3>.Release(backupPositionData);
 				}
 			} else {
 				throw new System.InvalidOperationException ("Changed nodes have not been tracked, cannot revert from backup");
@@ -499,11 +532,88 @@ namespace Pathfinding {
 			_lock = new object();
 		}
 	}
+	
+	/** Integer Rectangle.
+	 * Works almost like UnityEngine.Rect but with integer coordinates
+	 */
+	public struct IntRect {
+		public int xmin, ymin, xmax, ymax;
+		
+		public IntRect (int xmin, int ymin, int xmax, int ymax) {
+			this.xmin = xmin;
+			this.xmax = xmax;
+			this.ymin = ymin;
+			this.ymax = ymax;
+		}
+		
+		public bool Contains (int x, int y) {
+			return !(x < xmin || y < ymin || x > xmax || y > ymax);
+		}
+		
+		/** Returns if this rectangle is valid.
+		 * An invalid rect could have e.g xmin > xmax
+		 */
+		public bool IsValid () {
+			return xmin <= xmax && ymin <= ymax;
+		}
+		
+		/** Returns the intersection rect between the two rects.
+		 * The intersection rect is the area which is inside both rects.
+		 * If the rects do not have an intersection, an invalid rect is returned.
+		 * \see IsValid
+		 */
+		public static IntRect Intersection (IntRect a, IntRect b) {
+			IntRect r = new IntRect(
+			                        System.Math.Max(a.xmin,b.xmin),
+			                        System.Math.Max(a.ymin,b.ymin),
+			                        System.Math.Min(a.xmax,b.xmax),
+			                        System.Math.Min(a.ymax,b.ymax)
+			                        );
+			
+			return r;
+		}
+		
+		/** Returns a new rect which contains both input rects.
+		 * This rectangle may contain areas outside both input rects as well in some cases.
+		 */
+		public static IntRect Union (IntRect a, IntRect b) {
+			IntRect r = new IntRect(
+			                        System.Math.Min(a.xmin,b.xmin),
+			                        System.Math.Min(a.ymin,b.ymin),
+			                        System.Math.Max(a.xmax,b.xmax),
+			                        System.Math.Max(a.ymax,b.ymax)
+			                        );
+			
+			return r;
+		}
+		
+		/** Returns a new rect which is expanded by \a range in all directions.
+		 * \param range How far to expand. Negative values are permitted.
+		 */
+		public IntRect Expand (int range) {
+			return new IntRect(xmin-range,
+			                   ymin-range,
+			                   xmax+range,
+			                   ymax+range
+			                   );
+		}
+		
+		/** Draws some debug lines representing the rect */
+		public void DebugDraw (Matrix4x4 matrix, Color col) {
+			Vector3 p1 = matrix.MultiplyPoint3x4 (new Vector3(xmin,0,ymin));
+			Vector3 p2 = matrix.MultiplyPoint3x4 (new Vector3(xmin,0,ymax));
+			Vector3 p3 = matrix.MultiplyPoint3x4 (new Vector3(xmax,0,ymax));
+			Vector3 p4 = matrix.MultiplyPoint3x4 (new Vector3(xmax,0,ymin));
+			
+			Debug.DrawLine (p1,p2,col);
+			Debug.DrawLine (p2,p3,col);
+			Debug.DrawLine (p3,p4,col);
+			Debug.DrawLine (p4,p1,col);
+		}
+	}
 }
 
-//Delegates
-	
-//public delegate (Path p
+#region Delegates
 
 /* Delegate with on Path object as parameter.
  * This is used for callbacks when a path has finished calculation.\n
@@ -525,23 +635,17 @@ public delegate void OnPathDelegate (Path p);
 
 public delegate Vector3[] GetNextTargetDelegate (Path p, Vector3 currentPosition);
 
-//public delegate void OnPathSucess (Path p);
-
-//public delegate void OnPathError (Path p);
-
-//public delegate void OnPathPreSearch (Path p);
-
-//public delegate void OnPathPostSearch (Path p);
+public delegate void NodeDelegate (Node node);
 
 public delegate void OnGraphDelegate (NavGraph graph);
-
-//public delegate void OnGraphPostScan (NavGraph graph);
 
 public delegate void OnScanDelegate (AstarPath script);
 
 public delegate void OnVoidDelegate ();
 
-//public delegate void OnPostScan ();
+#endregion
+
+#region Enums
 
 /** How path results are logged by the system */
 public enum PathLog {
@@ -589,3 +693,20 @@ public enum ThreadCount {
 	Seven,
 	Eight
 }
+
+public enum PathState {
+	Created = 0,
+	PathQueue = 1,
+	Processing = 2,
+	ReturnQueue = 3,
+	Returned = 4
+}
+
+public enum PathCompleteState {
+	NotCalculated = 0,
+	Error = 1,
+	Complete = 2,
+	Partial = 3
+}
+
+#endregion

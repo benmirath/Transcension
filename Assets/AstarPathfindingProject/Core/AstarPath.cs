@@ -1,8 +1,10 @@
 //Define optimizations is a A* Pathfinding Project Pro only feature
 //#define ProfileAstar	//Enables profiling of the pathfinding process
-//#define DEBUG			//Enables more debugging messages, enable if this script is behaving weird (crashing or throwing NullReference exceptions or something)
+//#define ASTARDEBUG			//Enables more debugging messages, enable if this script is behaving weird (crashing or throwing NullReference exceptions or something)
 //#define NoGUI			//Disables the use of the OnGUI function, can eventually improve performance by a tiny bit (disables the InGame option for path debugging)
-//#define SingleCoreOptimize //Optimizes performance and memory for single and dual core computers/smartphones. Recommended if you only run pathfinding in on thread or in the unity thread. Reduces memory usage quite a lot.
+//#define ASTAR_SINGLE_THREAD_OPTIMIZE //Optimizes performance and memory for single and dual core computers/smartphones. Recommended if you only run pathfinding in on thread or in the unity thread. Reduces memory usage quite a lot.
+//#define ASTAR_MORE_PATH_IDS //Increases the number of pathIDs from 2^16 to 2^32. Uses more memory.
+//#define ASTAR_FAST_BUT_NO_EXCEPTIONS
 
 using UnityEngine;
 using System.Collections;
@@ -24,33 +26,33 @@ public class AstarPath : MonoBehaviour {
 	 */
 	public static System.Version Version {
 		get {
-			return new System.Version (3,1,1);
+			return new System.Version (3,2,5,1);
 		}
 	}
 	
 	public enum AstarDistribution { WebsiteDownload, AssetStore };
 	
 	/** Used by the editor to guide the user to the correct place to download updates */
-	public const AstarDistribution Distribution = AstarDistribution.WebsiteDownload;
+	public static readonly AstarDistribution Distribution = AstarDistribution.WebsiteDownload;
 	
 	/** Used by the editor to show some Pro specific stuff.
 	 * Note that setting this to true will not grant you any additional features */
 	public static readonly bool HasPro = false;
 	
-	/** See Pathfinding::AstarData */
+	/** See Pathfinding.AstarData */
 	public System.Type[] graphTypes {
 		get {
 			return astarData.graphTypes;
 		}
 	}
 	
-	/** Reference to the Pathfinding::AstarData object for this graph. The AstarData object stores information about all graphs. */
+	/** Reference to the Pathfinding.AstarData object for this graph. The AstarData object stores information about all graphs. */
 	public AstarData astarData;
 	
 	/** Returns the active AstarPath object in the scene.*/
 	public new static AstarPath active;
 	
-	/** Shortcut to Pathfinding::AstarData::graphs */
+	/** Shortcut to Pathfinding.AstarData.graphs */
 	public NavGraph[] graphs {
 		get {
 			if (astarData == null)
@@ -76,7 +78,7 @@ public class AstarPath : MonoBehaviour {
 	public bool showUnwalkableNodes = true;
 	
 	/** The mode to use for drawing nodes in the sceneview.
-	 * \see Pathfinding::GraphDebugMode
+	 * \see Pathfinding.GraphDebugMode
 	 */
 	public GraphDebugMode debugMode;
 	
@@ -124,7 +126,7 @@ public class AstarPath : MonoBehaviour {
 	
 	/** Max Nearest Node Distance.
 	 * When searching for a nearest node, this is the limit (world units) for how far away it is allowed to be.
-	 * \see Pathfinding::NNConstraint::constrainDistance
+	 * \see Pathfinding.NNConstraint.constrainDistance
 	 */
 	public float maxNearestNodeDistance = 100;
 	
@@ -146,7 +148,7 @@ public class AstarPath : MonoBehaviour {
 	 * With this setting on, additional searches will be done on all graphs.\n
 	 * More technically: GetNearestForce on all graphs will be called if true, otherwise only on the one graph which's GetNearest search returned the best node.\n
 	 * Usually faster when disabled, but higher quality searches when enabled.
-	 * When using a a navmesh or recast graph, for best quality, this setting should be combined with the Pathfinding::NavMeshGraph::accurateNearestNode setting set to true.
+	 * When using a a navmesh or recast graph, for best quality, this setting should be combined with the Pathfinding.NavMeshGraph.accurateNearestNode setting set to true.
 	 * \note For the PointGraph this setting doesn't matter much as it has only one search mode.
 	 */
 	public bool fullGetNearestSearch = false;
@@ -167,8 +169,8 @@ public class AstarPath : MonoBehaviour {
 	public AstarColor colorSettings;
 	
 	/** Stored tag names.
-	 * \see AstarPath::FindTagNames
-	 * \see AstarPath::GetTagNames
+	 * \see AstarPath.FindTagNames
+	 * \see AstarPath.GetTagNames
 	 */
 	[SerializeField]
 	protected string[] tagNames = null;
@@ -176,7 +178,7 @@ public class AstarPath : MonoBehaviour {
 	/** The heuristic to use.
 	 * The heuristic, often referred to as 'H' is the estimated cost from a node to the target.
 	 * Different heuristics affect how the path picks which one to follow from multiple possible with the same length
-	 * \see Pathfinding::Heuristic
+	 * \see Pathfinding.Heuristic
 	 */
 	public Heuristic heuristic = Heuristic.Euclidean;
 	
@@ -318,7 +320,7 @@ public class AstarPath : MonoBehaviour {
 			else if (threads != null && threads.Length == 0 && threadEnumerator != null)
 				return false;
 			else
-				throw new System.Exception ("Not 'using threading' and not 'not using threading'... Are you sure pathfinding is set up correctly?");
+				throw new System.Exception ("Not 'using threading' and not 'not using threading'... Are you sure pathfinding is set up correctly?\nIf scripts are reloaded in unity editor during play this could happen.");
 		}
 	}
 	
@@ -385,7 +387,7 @@ public class AstarPath : MonoBehaviour {
 	public static OnScanDelegate OnGraphsUpdated; /**< Called when any graphs are updated. Register to for example recalculate the path whenever a graph changes. */
 	
 	/** Called when \a pathID overflows 65536.
-	 * The Pathfinding::CleanupPath65K will be added to the queue, and directly after, this callback will be called.
+	 * The Pathfinding.CleanupPath65K will be added to the queue, and directly after, this callback will be called.
 	 * \note This callback will be cleared every timed it is called, so if you want to register to it repeatedly, register to it directly on receiving the callback as well. 
 	 */
 	public static OnVoidDelegate On65KOverflow;
@@ -440,8 +442,8 @@ public class AstarPath : MonoBehaviour {
 	 * When no multithreading is used, a coroutine is used instead. It is not directly called with StartCoroutine
 	 * but a separate function has just a while loop which increments the main IEnumerator.
 	 * This is done so other functions can step the thread forward at any time, without having to wait for Unity to update it.
-	 * \see CalculateAdv
-	 * \see CalculateAdvHandler
+	 * \see CalculatePaths
+	 * \see CalculatePathsHandler
 	 */
 	public static IEnumerator threadEnumerator;
 	public static Pathfinding.Util.LockFreeStack pathReturnStack = new Pathfinding.Util.LockFreeStack();
@@ -511,7 +513,7 @@ public class AstarPath : MonoBehaviour {
 	/** Returns tag names.
 	 * Makes sure that the tag names array is not null and of length 32.
 	 * If it is null or not of length 32, it creates a new array and fills it with 0,1,2,3,4 etc...
-	 * \see AstarPath::FindTagNames
+	 * \see AstarPath.FindTagNames
 	 */
 	public string[] GetTagNames () {
 		
@@ -527,7 +529,7 @@ public class AstarPath : MonoBehaviour {
 	
 	/** Tries to find an AstarPath object and return tag names.
 	 * If an AstarPath object cannot be found, it returns an array of length 1 with an error message.
-	 * \see AstarPath::GetTagNames
+	 * \see AstarPath.GetTagNames
 	 */
 	public static string[] FindTagNames () {
 		if (active != null) return active.GetTagNames ();
@@ -540,52 +542,10 @@ public class AstarPath : MonoBehaviour {
 		}
 	}
 	
-	/** Get a path from the Path Pool.
-	 * If path recycling is off, this will create an entirely new path.
-	 * \note path recycling is a disabled feature at the moment since it didn't improve performance much bug could cause bugs if you weren't careful. */
-	public static Path GetFromPathPool () {
-		
-		if (active == null) {
-			throw new System.NullReferenceException ("There is no active AstarPath object in the scene");
-		}
-		
-		if (active.recyclePaths) {
-			if (PathPool == null) {
-				PathPool = new Stack<Path> (10);
-				return new Path ();
-			}
-			
-			if (PathPool.Count > 0) {
-				Path p = PathPool.Pop ();
-				return p;
-			} else {
-				return new Path ();
-			}
-		} else {
-			return new Path ();
-		}
-	}
-	
-	/** Adds the path to the #PathPool.
-	 * Paths are pooled to reduce memory allocations
-	 * \note path recycling is a disabled feature at the moment since it didn't improve performance much bug could cause bugs if you weren't careful.
-	 * \note This method will not do anything
-	 */
-	public static void AddToPathPool (Path p) {
-		if (!active.recyclePaths) {
-			return;
-		}
-		
-		if (PathPool == null) {
-			PathPool = new Stack<Path> (16);
-		}
-		PathPool.Push (p);
-	}
-	
 	/** Returns the next free path ID. If the next free path ID overflows 65535, a cleanup operation is queued
-	  * \see Pathfinding::CleanupPath65K */
-	public ushort GetNextPathID () {
-		
+	  * \see Pathfinding.CleanupPath65K */
+	public ushort GetNextPathID ()
+	{
 		if (nextFreePathID == 0) {
 			nextFreePathID++;
 			
@@ -608,7 +568,9 @@ public class AstarPath : MonoBehaviour {
 	
 	
 	/** Calls OnDrawGizmos on graph generators and also #OnDrawGizmosCallback */
-	public void OnDrawGizmos () {
+	private void OnDrawGizmos () {
+		AstarProfiler.StartProfile ("OnDrawGizmos");
+		
 		if (active == null) {
 			active = this;
 		} else if (active != this) {
@@ -640,12 +602,14 @@ public class AstarPath : MonoBehaviour {
 		if (OnDrawGizmosCallback != null) {
 			OnDrawGizmosCallback ();
 		}
+		
+		AstarProfiler.EndProfile ("OnDrawGizmos");
 	}
 	
 	/** Draws the InGame debugging (if enabled), also shows the fps if 'L' is pressed down.
 	 * \see #logPathResults PathLog
 	 */
-	public void OnGUI () {
+	private void OnGUI () {
 		
 		if (Input.GetKey ("l")) {
 			GUI.Label (new Rect (Screen.width-100,5,100,25),(1F/Time.smoothDeltaTime).ToString ("0")+" fps");
@@ -667,7 +631,7 @@ public class AstarPath : MonoBehaviour {
 	
 #line hidden
 	/** Logs a string while taking into account #logPathResults */
-	public static void AstarLog (string s) {
+	private static void AstarLog (string s) {
 		if (active == null) {
 			Debug.Log ("No AstarPath object was found : "+s);
 			return;
@@ -679,7 +643,7 @@ public class AstarPath : MonoBehaviour {
 	}
 	
 	/** Logs an error string while taking into account #logPathResults */
-	public static void AstarLogError (string s) {
+	private static void AstarLogError (string s) {
 		if (active == null) {
 			Debug.Log ("No AstarPath object was found : "+s);
 			return;
@@ -694,9 +658,9 @@ public class AstarPath : MonoBehaviour {
 	/** Prints path results to the log. What it prints can be controled using #logPathResults.
 	 * \see #logPathResults
 	 * \see PathLog
-	 * \see Pathfinding::Path::DebugString
+	 * \see Pathfinding.Path.DebugString
 	 */
-	public void LogPathResults (Path p) {
+	private void LogPathResults (Path p) {
 		
 		if (logPathResults == PathLog.None || (logPathResults == PathLog.OnlyErrors && !p.error)) {
 			return;
@@ -716,7 +680,7 @@ public class AstarPath : MonoBehaviour {
 	 * Unpauses pathfinding threads after that.
 	 * \see CallThreadSafeCallbacks
 	 */
-	public void Update () {
+	private void Update () {
 		TryCallThreadSafeCallbacks ();
 	}
 	
@@ -775,8 +739,8 @@ public class AstarPath : MonoBehaviour {
 	 */
 	private IEnumerator DelayedGraphUpdate () {
 		graphUpdateRoutineRunning = true;
-		yield return new WaitForSeconds (maxGraphUpdateFreq-(Time.realtimeSinceStartup-lastGraphUpdate));
 		
+		yield return new WaitForSeconds (maxGraphUpdateFreq-(Time.time-lastGraphUpdate));
 		QueueGraphUpdates ();
 		graphUpdateRoutineRunning = false;
 	}
@@ -786,7 +750,7 @@ public class AstarPath : MonoBehaviour {
 	 * This function is quite a lot slower than a standart Graph Update, but not so much it will slow the game down.
 	 * \note This might return false for small areas even if it would block the path if #minAreaSize is greater than zero (0).
 	 * So when using this, it is recommended to set #minAreaSize to 0.
-	 * \see AstarPath::GetNearest
+	 * \see AstarPath.GetNearest
 	 * \deprecated Use Pathfinding.GraphUpdateUtilities.UpdateGraphsNoBlock instead
 	 */
 	[System.Obsolete("Use GraphUpdateUtilities.UpdateGraphsNoBlock instead")]
@@ -831,10 +795,13 @@ public class AstarPath : MonoBehaviour {
 	}
 	
 	/** Update all graphs within \a bounds.
-	 * This function will add a GraphUpdateObject to the #graphUpdateQueue. T
+	 * This function will add a GraphUpdateObject to the #graphUpdateQueue.
 	 * The graphs will be updated as soon as possible.
-	 * \see Update
-	 * \see DoUpdateGraphs
+	 * 
+	 * This is equivalent to\n
+	 * UpdateGraphs (new GraphUpdateObject (bounds))
+	 * 
+	 * \see FlushGraphUpdates
 	 */
 	public void UpdateGraphs (Bounds bounds) {
 		UpdateGraphs (new GraphUpdateObject (bounds));
@@ -842,9 +809,11 @@ public class AstarPath : MonoBehaviour {
 	
 	/** Update all graphs using the GraphUpdateObject.
 	 * This can be used to, e.g make all nodes in an area unwalkable, or set them to a higher penalty.
+	 * The graphs will be updated as soon as possible (with respect to #limitGraphUpdates)
+	 * 
+	 * \see FlushGraphUpdates
 	*/
 	public void UpdateGraphs (GraphUpdateObject ob) {
-		//Debug.LogWarning ("Trying To Update Graphs");
 		
 		//Create a new queue if no queue exists yet
 		if (graphUpdateQueue == null) {
@@ -867,7 +836,7 @@ public class AstarPath : MonoBehaviour {
 		}
 		
 		//If we should limit graph updates, start a coroutine which waits until we should update graphs
-		if (limitGraphUpdates && Time.realtimeSinceStartup-lastGraphUpdate < maxGraphUpdateFreq) {
+		if (limitGraphUpdates && Time.time-lastGraphUpdate < maxGraphUpdateFreq) {
 			if (!graphUpdateRoutineRunning) {
 				StartCoroutine (DelayedGraphUpdate ());
 			}
@@ -883,11 +852,12 @@ public class AstarPath : MonoBehaviour {
 	 * This will force the pathfinding threads to finish calculate the path they are currently calculating (if any) and then pause.
 	 * When all threads have paused, graph updates will be performed.
 	 * \warning Using this very often (many times per second) can reduce your fps due to a lot of threads waiting for one another.
-	 * But you probably wont have to worry about that
+	 * But you probably wont have to worry about that.
+	 * 
 	 * \note This is almost identical to FlushThreadSafeCallbacks, but added for more descriptive name.
-	 * But this function will also override any time limit delays for graph updates.
+	 * This function will also override any time limit delays for graph updates.
 	 * This is because graph updates are implemented using thread safe callbacks.
-	 * So calling this function will also call other thread safe callbacks (if any).
+	 * So calling this function will also call other thread safe callbacks (if any are waiting).
 	 * 
 	 * Will not do anything if there are no graph updates queued (not even call other callbacks).
 	 */
@@ -904,7 +874,7 @@ public class AstarPath : MonoBehaviour {
 	private void DoUpdateGraphs () {
 		isRegisteredForUpdate = false;
 		isUpdatingGraphs = true;
-		lastGraphUpdate = Time.realtimeSinceStartup;
+		lastGraphUpdate = Time.time;
 		
 		if (OnGraphsWillBeUpdated2 != null) {
 			OnVoidDelegate callbacks = OnGraphsWillBeUpdated2;
@@ -917,6 +887,7 @@ public class AstarPath : MonoBehaviour {
 			OnGraphsWillBeUpdated = null;
 			callbacks ();
 		}
+		GraphModifier.TriggerEvent (GraphModifier.EventType.PreUpdate);
 		
 		//If any GUOs requires a flood fill, then issue it, otherwise we can skip it to save processing power
 		bool anyRequiresFloodFill = false;
@@ -937,6 +908,7 @@ public class AstarPath : MonoBehaviour {
 				
 			}
 		}
+		
 		isUpdatingGraphs = false;
 		
 		//If any GUOs required flood filling and if we are not scanning graphs at the moment (in that case a FloodFill will be done later)
@@ -949,6 +921,7 @@ public class AstarPath : MonoBehaviour {
 		if (OnGraphsUpdated != null && !isScanning) {
 			OnGraphsUpdated (this);
 		}
+		GraphModifier.TriggerEvent (GraphModifier.EventType.PostUpdate);
 	}
 	
 #endregion
@@ -957,9 +930,11 @@ public class AstarPath : MonoBehaviour {
 	 * This will force all thread safe callbacks to run immidiately. Or rather, it will block the Unity main thread until callbacks can be called and then issue them.
 	 * This will force the pathfinding threads to finish calculate the path they are currently calculating (if any) and then pause.
 	 * When all threads have paused, thread safe callbacks will be called (which can be e.g graph updates).
+	 * 
 	 * \warning Using this very often (many times per second) can reduce your fps due to a lot of threads waiting for one another.
 	 * But you probably wont have to worry about that
-	 * \note This is almost identical to FlushGraphUpdates, but added for more appropriate name.
+	 * 
+	 * \note This is almost (note almost) identical to FlushGraphUpdates, but added for more appropriate name.
 	 */
 	public void FlushThreadSafeCallbacks () {
 		
@@ -1028,7 +1003,6 @@ public class AstarPath : MonoBehaviour {
 	 */
 	public static int CalculateThreadCount (ThreadCount count) {
 		if (count == ThreadCount.Automatic) {
-			Debug.Log (SystemInfo.systemMemorySize + " " + SystemInfo.processorCount + " " + SystemInfo.processorType);
 			
 			int logicalCores = SystemInfo.processorCount;
 			int memory = SystemInfo.systemMemorySize;
@@ -1048,8 +1022,8 @@ public class AstarPath : MonoBehaviour {
 		}
 	}
 	
-	/** Sets up all needed variables and scanns the graphs.
-	 * Calls Initialize, starts the ReturnPaths coroutine and scanns all graphs.
+	/** Sets up all needed variables and scans the graphs.
+	 * Calls Initialize, starts the ReturnPaths coroutine and scans all graphs.
 	 * Also starts threads if using multithreading
 	 * \see #OnAwakeSettings */
 	public void Awake () {
@@ -1077,12 +1051,13 @@ public class AstarPath : MonoBehaviour {
 			threadInfos[i] = new PathThreadInfo(i,this,new NodeRunData());
 		}
 		for (int i=0;i<threads.Length;i++) {
-			threads[i] = new Thread (new ParameterizedThreadStart (CalculateAdvThreaded));
+			threads[i] = new Thread (new ParameterizedThreadStart (CalculatePathsThreaded));
+			threads[i].IsBackground = true;
 		}
 		
 		Initialize ();
 		
-		StartCoroutine (ReturnPaths());
+		StartCoroutine (ReturnsPathsHandler());
 		
 		if (scanOnStartup) {
 			if (!astarData.cacheStartup || astarData.data_cachedStartup == null) {
@@ -1106,7 +1081,7 @@ public class AstarPath : MonoBehaviour {
 		
 		//Or if there are no threads, it should run as a coroutine
 		if (threads.Length == 0)
-			StartCoroutine (CalculateAdvHandler(threadInfos[0]));
+			StartCoroutine (CalculatePathsHandler(threadInfos[0]));
 		
 	}
 	
@@ -1148,8 +1123,11 @@ public class AstarPath : MonoBehaviour {
 	}
 	
 	/** Updates NodeRun data in threads.
-	 * Called by AstarData::CreateNodeRuns
-	 * \see AstarData::CreateNodeRuns
+	 * Called by AstarData.CreateNodeRuns
+	 * 
+	 * If the ASTAR_SINGLE_THREAD_OPTIMIZE define is enabled this function will only do some simple error checking.
+	 * 
+	 * \see AstarData.CreateNodeRuns
 	 */
 	public void UpdatePathThreadInfoNodes () {
 		for (int i=0;i<threadInfos.Length;i++) {
@@ -1162,7 +1140,7 @@ public class AstarPath : MonoBehaviour {
 	}
 	
 	/** Makes sure #active is set to this object and that #astarData is not null.
-	 * Also calls OnEnable for the #colorSettings and initializes astarData.userConnections */
+	 * Also calls OnEnable for the #colorSettings and initializes astarData.userConnections if it wasn't initialized before */
 	public void SetUpReferences () {
 		active = this;
 		if (astarData == null) {
@@ -1181,9 +1159,13 @@ public class AstarPath : MonoBehaviour {
 	}
 	
 	/** Initializes various variables.
-	 * \link SetUpReferences Sets up references \endlink, \link AstarData.
-	 * FindGraphTypes searches for graph types \endlink, creates the #binaryHeap and calls Awake on #astarData and on all graphs */
-	public void Initialize () {
+	 * \link SetUpReferences Sets up references \endlink, 
+	 * Searches for graph types, calls Awake on #astarData and on all graphs
+	 * 
+	 * \see AstarData.FindGraphTypes 
+	 * \see SetUpReferences
+	 */
+	private void Initialize () {
 		
 		AstarProfiler.InitializeFastProfile (new string [14] {
 			"Prepare", 			//0
@@ -1206,11 +1188,11 @@ public class AstarPath : MonoBehaviour {
 		
 		astarData.FindGraphTypes ();
 		
-		//astarData.DeserializeGraphs (new AstarSerializer (this));
 		astarData.Awake ();
 		
-		for (int i=0;i<astarData.graphs.Length;i++) {
-			astarData.graphs[i].Awake ();
+		//Initialize all graphs by calling their Awake functions
+		for (int i=0;i<astarData.graphs.Length;i++) {			
+			if (astarData.graphs[i] != null) astarData.graphs[i].Awake ();
 		}
 	}
 	
@@ -1252,7 +1234,7 @@ public class AstarPath : MonoBehaviour {
 		//Clean graphs up
 		if (astarData.graphs != null) {
 			for (int i=0;i<astarData.graphs.Length;i++) {
-				astarData.graphs[i].OnDestroy ();
+				if (astarData.graphs[i] != null) astarData.graphs[i].OnDestroy ();
 			}
 		}
 		astarData.graphs = null;
@@ -1262,15 +1244,17 @@ public class AstarPath : MonoBehaviour {
 		
 		
 		//Return all paths with errors
-		Path p = pathReturnStack.PopAll ();
+		/*Path p = pathReturnStack.PopAll ();
 		while (p != null) {
-			p.error = true;
-			p.errorLog += "Canceled because AstarPath object was destroyed\n";
+			p.Error ();
+			p.LogError ("Canceled because AstarPath object was destroyed\n");
+			p.AdvanceState (PathState.Returned);
 			p.ReturnPath ();
 			Path tmp = p;
 			p = p.next;
 			tmp.next = null;
-		}
+		}*/
+		ReturnPaths (false);
 		//Just in case someone happened to request a path in ReturnPath() (even though they should get canceled)
 		pathReturnStack.PopAll ();
 		
@@ -1347,7 +1331,7 @@ public class AstarPath : MonoBehaviour {
 	}
 	
 	/** Floodfills all graphs and updates areas for every node.
-	  * \see Pathfinding::Node::area */
+	  * \see Pathfinding.Node.area */
 	public void FloodFill () {
 		
 		
@@ -1368,7 +1352,7 @@ public class AstarPath : MonoBehaviour {
 		for (int i=0;i<graphs.Length;i++) {
 			NavGraph graph = graphs[i];
 			
-			if (graph.nodes != null) {
+			if (graph != null && graph.nodes != null) {
 				for (int j=0;j<graph.nodes.Length;j++) {
 					if (graph.nodes[j] != null)
 						graph.nodes[j].area = 0;
@@ -1381,6 +1365,8 @@ public class AstarPath : MonoBehaviour {
 		for (int i=0;i<graphs.Length;i++) {
 			
 			NavGraph graph = graphs[i];
+			
+			if (graph == null) continue;
 			
 			if (graph.nodes == null) {
 				Debug.LogWarning ("Graph "+i+" has not defined any nodes");
@@ -1453,8 +1439,6 @@ public class AstarPath : MonoBehaviour {
 			}
 		}
 		
-		
-		
 		if (!Application.isPlaying && (AstarPath.active.astarData.graphs == null || AstarPath.active.astarData.graphTypes == null)) {
 			UnityEditor.EditorUtility.DisplayProgressBar ("Scanning","Deserializing",0);
 			AstarPath.active.astarData.DeserializeGraphs ();
@@ -1473,15 +1457,18 @@ public class AstarPath : MonoBehaviour {
 			UnityEditor.EditorUtility.ClearProgressBar();
 		}
 	}
-#endif
 	
-	/** Called by editor scripts to rescan the graphs e.g when the user moved a graph */
-	public void AutoScan () {
+	/** Called by editor scripts to rescan the graphs e.g when the user moved a graph.
+	  * Will only scan graphs if not playing and time to scan last graph was less than some constant (to avoid lag with large graphs) */
+	public bool AutoScan () {
 		
 		if (!Application.isPlaying && lastScanTime < 0.11F) {
 			Scan ();
+			return true;
 		}
+		return false;
 	}
+#endif
 	
 	/** Scans all graphs */
 	public void Scan () {
@@ -1492,7 +1479,7 @@ public class AstarPath : MonoBehaviour {
 		
 	}
 	
-	/** Scanns all graphs. This is a IEnumerable, you can loop through it to get the progress
+	/** Scans all graphs. This is a IEnumerable, you can loop through it to get the progress
 	  * \code foreach (Progress progress in AstarPath.active.ScanLoop ()) {
 	*	 Debug.Log ("Scanning... " + progress.description + " - " + (progress.progress*100).ToString ("0") + "%");
 	  * } \endcode
@@ -1515,6 +1502,7 @@ public class AstarPath : MonoBehaviour {
 		if (OnPreScan != null) {
 			OnPreScan (this);
 		}
+		GraphModifier.TriggerEvent (GraphModifier.EventType.PreScan);
 		
 		//float startTime = Time.realtimeSinceStartup;
 		System.DateTime startTime = System.DateTime.UtcNow;
@@ -1522,6 +1510,11 @@ public class AstarPath : MonoBehaviour {
 		for (int i=0;i<graphs.Length;i++) {
 			
 			NavGraph graph = graphs[i];
+			
+			if (graph == null) {
+				yield return new Progress (Mathfx.MapTo (0.05F,0.7F,(float)(i+0.5F)/(graphs.Length+1)),"Skipping graph "+(i+1)+" of "+graphs.Length+" because it is null");
+				continue;
+			}
 			
 			if (OnGraphPreScan != null) {
 				yield return new Progress (Mathfx.MapTo (0.05F,0.7F,(float)(i+0.5F)/(graphs.Length+1)),"Scanning graph "+(i+1)+" of "+graphs.Length+" - Pre processing");
@@ -1552,6 +1545,7 @@ public class AstarPath : MonoBehaviour {
 		if (OnPostScan != null) {
 			OnPostScan (this);
 		}
+		GraphModifier.TriggerEvent (GraphModifier.EventType.PostScan);
 		
 		isScanning = false;
 		
@@ -1572,14 +1566,19 @@ public class AstarPath : MonoBehaviour {
 		if (OnLatePostScan != null) {
 			OnLatePostScan (this);
 		}
+		GraphModifier.TriggerEvent (GraphModifier.EventType.LatePostScan);
+		
 		
 		lastScanTime = (float)(System.DateTime.UtcNow-startTime).TotalSeconds;//Time.realtimeSinceStartup-startTime;
-		Debug.Log ("Scanning - Process took "+(lastScanTime*1000).ToString ("0")+" ms to complete ");
+		
+		System.GC.Collect ();
+		
+		AstarLog ("Scanning - Process took "+(lastScanTime*1000).ToString ("0")+" ms to complete ");
 		
 	}
 	
 	/** Should be called whenever the total nodecount has changed for the graphs.
-	 * Recreates temporary node data for every thread
+	 * Recreates temporary node data for every thread.
 	 */
 	public void NodeCountChanged () {
 		//Create temporary path data
@@ -1594,8 +1593,8 @@ public class AstarPath : MonoBehaviour {
 			UserConnection conn = astarData.userConnections[i];
 			
 			if (conn.type == ConnectionType.Connection) {
-				Node n1 = GetNearest (conn.p1);
-				Node n2 = GetNearest (conn.p2);
+				Node n1 = GetNearest (conn.p1).node;
+				Node n2 = GetNearest (conn.p2).node;
 				
 				if (n1 == null || n2 == null) {
 					continue;
@@ -1616,7 +1615,7 @@ public class AstarPath : MonoBehaviour {
 					}
 				}
 			} else {
-				Node n1 = GetNearest (conn.p1);
+				Node n1 = GetNearest (conn.p1).node;
 				if (n1 == null) { continue; }
 				
 				if (conn.doOverrideWalkability) {
@@ -1643,6 +1642,89 @@ public class AstarPath : MonoBehaviour {
 	
 #endregion
 	
+	private static int waitForPathDepth = 0;
+	
+	/** Wait for the specified path to be calculated.
+	 * Normally it takes a few frames for a path to get calculated and returned.
+	 * This function will ensure that the path will be calculated when this function returns
+	 * and that the callback for that path has been called.
+	 * 
+	 * \note Do not confuse this with Pathfinding.Path.WaitForPath. This one will halt all operations until the path has been calculated
+	 * while Pathfinding.Path.WaitForPath will wait using yield until it has been calculated.
+	 * 
+	 * If requesting a lot of paths in one go and waiting for the last one to complete,
+	 * it will calculate most of the paths in the queue (only most if using multithreading, all if not using multithreading).
+	 * 
+	 * Use this function only if you really need to.
+	 * There is a point to spreading path calculations out over several frames.
+	 * It smoothes out the framerate and makes sure requesting a large
+	 * number of paths at the same time does not cause lag.
+	 * 
+	 * \note Graph updates and other callbacks might get called during the execution of this function.
+	 * 
+	 * When the pathfinder is shutting down. I.e in OnDestroy, this function will not do anything.
+	 * 
+	 * \param p The path to wait for. The path must be started, otherwise an exception will be thrown.
+	 * 
+	 * \throws Exception if pathfinding is not initialized properly for this scene (most likely no AstarPath object exists)
+	 * or if the path has not been started yet.
+	 * Also throws an exception if critical errors ocurr such as when the pathfinding threads have crashed (which should not happen in normal cases).
+	 * This prevents an infinite loop while waiting for the path.
+	 * 
+	 * \see Pathfinding.Path.WaitForPath
+	 */
+	public static void WaitForPath (Path p) {
+		
+		if (active == null)
+			throw new System.Exception ("Pathfinding is not correctly initialized in this scene (yet?). " +
+				"AstarPath.active is null.\nDo not call this function in Awake");
+		
+		if (p == null) throw new System.ArgumentNullException ("Path must not be null");
+		
+		if (!active.acceptNewPaths) return;
+		
+		if (p.GetState () == PathState.Created){
+			throw new System.Exception ("The specified path has not been started yet.");
+		}
+		
+		waitForPathDepth++;
+		
+		if (waitForPathDepth == 5) {
+			Debug.LogError ("You are calling the WaitForPath function recursively (maybe from a path callback). Please don't do this.");
+		}
+		
+		if (p.GetState() < PathState.ReturnQueue) {
+			if (IsUsingMultithreading) {
+				
+				while (p.GetState() < PathState.ReturnQueue) {
+					if (ActiveThreadsCount == 0) {
+						waitForPathDepth--;
+						throw new System.Exception ("Pathfinding Threads seems to have crashed. No threads are running.");
+					}
+					
+					//Wait for threads to calculate paths
+					Thread.Sleep (1);
+					TryCallThreadSafeCallbacks();
+				}
+			} else {
+				while (p.GetState() < PathState.ReturnQueue) {
+					if (pathQueue.Count == 0 && p.GetState () != PathState.Processing) {
+						waitForPathDepth--;
+						throw new System.Exception ("Critical error. Path Queue is empty but the path state is '" + p.GetState() + "'");
+					}
+					
+					//Calculate some paths
+					threadEnumerator.MoveNext ();
+					TryCallThreadSafeCallbacks();
+				}
+			}
+		}
+		
+		active.ReturnPaths (false);
+		
+		waitForPathDepth--;
+	}
+	
 	/** Will send a callback when it is safe to update nodes. This is defined as between the path searches.
 	  * This callback will only be sent once and is nulled directly after the callback has been sent.
 	  * When using more threads than one, calling this often might decrease pathfinding performance due to a lot of idling in the threads.
@@ -1653,6 +1735,21 @@ public class AstarPath : MonoBehaviour {
 	  * 
 	  * \warning Note that if you do not set \a threadSafe to true, the callback might not be called from the Unity thread,
 	  * DO NOT call any part of the Unity API from those callbacks except for Debug.Log
+	  * 
+	  * \code
+Node node = AstarPath.active.GetNearest (transform.position).node;
+AstarPath.RegisterSafeUpdate (delegate () {
+	node.walkable = false;
+}, false);
+\endcode
+
+\code
+Node node = AstarPath.active.GetNearest (transform.position).node;
+AstarPath.RegisterSafeUpdate (delegate () {
+	node.position = (Int3)transform.position;
+}, true);
+\endcode
+	  * Note that the second example uses transform in the callback, and must thus be threadSafe.
 	  */
 	public static void RegisterSafeUpdate (OnVoidDelegate callback, bool threadSafe) {
 		if (callback == null || !Application.isPlaying) {
@@ -1720,7 +1817,10 @@ public class AstarPath : MonoBehaviour {
 		}
 	}
 	
-	/** Puts the Path in queue for calculation */
+	/** Puts the Path in queue for calculation.
+	  * The callback specified when constructing the path will be called when the path has been calculated.
+	  * Usually you should use the Seeker component instead of calling this function directly.
+	  */
 	public static void StartPath (Path p) {
 		
 		if (active == null) {
@@ -1728,9 +1828,14 @@ public class AstarPath : MonoBehaviour {
 			return;
 		}
 		
+		if (p.GetState() != PathState.Created) {
+			throw new System.Exception ("The path has an invalid state. Expected " + PathState.Created + " found " + p.GetState() + "\n" +
+				"Make sure you are not requesting the same path twice");
+		}
+		
 		if (!active.acceptNewPaths) {
-			p.error = true;
-			p.errorLog += "No new paths are accepted";
+			p.Error ();
+			p.LogError ("No new paths are accepted");
 			//Debug.LogError (p.errorLog);
 			//p.ReturnPath ();
 			return;
@@ -1738,8 +1843,8 @@ public class AstarPath : MonoBehaviour {
 		
 		if (active.graphs == null || active.graphs.Length == 0) {
 			Debug.LogError ("There are no graphs in the scene");
-			p.error = true;
-			p.errorLog = "There are no graphs in the scene";
+			p.Error ();
+			p.LogError ("There are no graphs in the scene");
 			Debug.LogError (p.errorLog);
 			//p.ReturnPath ();
 			return;
@@ -1751,7 +1856,11 @@ public class AstarPath : MonoBehaviour {
 			return;
 		}*/
 		
+		p.Claim (active);
+		
 		lock (pathQueue) {
+			//Will increment to PathQueue
+			p.AdvanceState (PathState.PathQueue);
 			pathQueue.Enqueue (p);
 			if (doSetQueueState)
 				pathQueueFlag.Set ();
@@ -1760,7 +1869,7 @@ public class AstarPath : MonoBehaviour {
 	
 
 	/** Terminates eventual pathfinding threads when the application quits.
-	 * \astarpro */
+	 */
 	public void OnApplicationQuit () {
 		if (threads == null) return;
 #if !UNITY_WEBPLAYER
@@ -1773,44 +1882,80 @@ public class AstarPath : MonoBehaviour {
 	
 #region MainThreads
 	
-	/** Coroutine to return thread safe path callbacks when using multithreading.
-	 * This is always running when multithreading is on, and will be returning paths as fast as possible as the CalculatePathsThreaded function calculates them
-	 * \astarpro */
-	public IEnumerator ReturnPaths () {
-		
+	/** Coroutine to return thread safe path callbacks.
+	 * This method will infinitely loop and call #ReturnPaths
+	 * \see ReturnPaths
+	 */
+	public IEnumerator ReturnsPathsHandler () {
 		while (true) {
-			//Pop all items from the stack
-			Path p = pathReturnStack.PopAll ();
-			
-			//Loop through the linked list and return all paths
-			while (p != null) {
-				//Return the path
-				p.ReturnPath ();
-				
-				//Move to the next path
-				Path prev = p;
-				p = p.next;
-				
-				/* Remove the reference to prevent possible memory leaks
-				If for example the first path computed was stored somewhere,
-				it would through the linked list contain references to all comming paths to be computed,
-				and thus the nodes those paths searched.
-				That adds up to a lot of memory not being released */
-				prev.next = null;
-				
-				//Add the path to the Path Pool if it is a standard path and not a specialised path class
-				//[NOTE] The path pool is a disabled feature currently (as of version 3.1)
-				//so this won't really do anything
-				if (prev.GetType () == typeof(Path)) {
-					AddToPathPool (prev);
-				}	
-			}
-			
+			ReturnPaths(true);
 			yield return 0;
 		}
 	}
 	
-	public static void LockThread (System.Object _astar) {
+	/** A temporary queue for paths which weren't returned due to large processing time.
+	 * When some time limit is exceeded in ReturnPaths, paths are put on this queue until the next frame.
+	 * \see ReturnPaths
+	 */
+	private Path pathReturnPop;
+	
+	/** Returns all paths in the return stack.
+	  * Paths which have been processed are put in the return stack.
+	  * This function will pop all items from the stack and return them to e.g the Seeker requesting them.
+	  * 
+	  * \param timeSlice Do not return all paths at once if it takes a long time, instead return some and wait until the next call.
+	  */
+	public void ReturnPaths (bool timeSlice) {
+		
+		//Pop all items from the stack
+		Path p = pathReturnStack.PopAll ();
+		
+		if(pathReturnPop == null) {
+			pathReturnPop = p;
+		} else {
+			Path tail = pathReturnPop;
+			while (tail.next != null) tail = tail.next;
+			tail.next = p;
+		}
+		
+		long targetTick = timeSlice ? System.DateTime.UtcNow.Ticks + 1 * 5000 : 0;
+		
+		int counter = 0;
+		//Loop through the linked list and return all paths
+		while (pathReturnPop != null) {
+			
+			//Move to the next path
+			Path prev = pathReturnPop;
+			pathReturnPop = pathReturnPop.next;
+			
+			/* Remove the reference to prevent possible memory leaks
+			If for example the first path computed was stored somewhere,
+			it would through the linked list contain references to all comming paths to be computed,
+			and thus the nodes those paths searched.
+			That adds up to a lot of memory not being released */
+			prev.next = null;
+			
+			//Return the path
+			prev.ReturnPath ();
+			
+			//Will increment to Returned
+			//However since multithreading is annoying, it might be set to ReturnQueue for a small time until the pathfinding calculation
+			//thread advanced the state as well
+			prev.AdvanceState (PathState.Returned);
+			
+			prev.ReleaseSilent (this);
+			
+			counter++;
+			if (counter > 5 && timeSlice) {
+				counter = 0;
+				if (System.DateTime.UtcNow.Ticks >= targetTick) {
+					return;
+				}
+			}
+		}
+	}
+	
+	private static void LockThread (System.Object _astar) {
 		AstarPath astar = (AstarPath)_astar;
 		
 		while (astar.acceptNewPaths) {
@@ -1855,7 +2000,7 @@ public class AstarPath : MonoBehaviour {
 	 * \see CalculatePaths
 	 * \astarpro 
 	 */
-	public static void CalculateAdvThreaded (System.Object _threadInfo) {
+	private static void CalculatePathsThreaded (System.Object _threadInfo) {
 		
 		//Increment the counter for how many threads are calculating
 		System.Threading.Interlocked.Increment (ref numActiveThreads);
@@ -1876,13 +2021,10 @@ public class AstarPath : MonoBehaviour {
 			//Initialize memory for this thread
 			NodeRunData runData = threadInfo.runData;
 			
-			//Create a binary heap
-			runData.open = new BinaryHeapM (InitialBinaryHeapSize);
-			
 			
 			//Max number of ticks before yielding/sleeping
 			long maxTicks = (long)(astar.maxFrameTime*10000);
-			long targetTick = System.DateTime.Now.Ticks + maxTicks;
+			long targetTick = System.DateTime.UtcNow.Ticks + maxTicks;
 			
 			while (true) {
 				
@@ -1929,95 +2071,98 @@ public class AstarPath : MonoBehaviour {
 				//One tick is 1/10000 of a millisecond
 				maxTicks = (long)(astar.maxFrameTime*10000);
 				
-				if (p.processed) {
-					p.error = true;
-					p.errorLog += "Requesting to process an already processed path\n";
-					Debug.LogError (p.errorLog);
-				} else {
-					//Path IDs have overflowed 65K, cleanup is needed
-					if (runData.pathID > p.pathID) {
-						runData.ClearPathIDs ();
-					}
-					
-					//Assign relevant path data to the runData
-					runData.path = p;
-					runData.pathID = p.pathID;
-					p.runData = runData;
-					
-					//Call some callbacks
-					if (OnPathPreSearch != null) {
-						OnPathPreSearch (p);
-					}
-					
-					//Tick for when the path started, used for calculating how long time the calculation took
-					long startTicks = System.DateTime.Now.Ticks;
-					long totalTicks = 0;
-					
-					//Prepare the path
-					p.Prepare ();
-					
-					if (!p.error) {
-						
-						//For debug uses, we set the last computed path to p, so we can view debug info on it in the editor (scene view).
-						astar.debugPath = p;
-						
-						//Initialize the path, now ready to begin search
-						p.Initialize ();
-						
-						//The error can turn up in the Init function
-						while (!p.IsDone ()) {
-							//Do some work on the path calculation.
-							//The function will return when it has taken too much time
-							//or when it has finished calculation
-							p.CalculateStep (targetTick);
-							p.searchIterations++;
-							
-							//If the path has finished calculation, we can break here directly instead of sleeping
-							if (p.IsDone ()) break;
-							
-							//Yield/sleep so other threads can work
-							totalTicks += System.DateTime.Now.Ticks-startTicks;
-							Thread.Sleep (0);
-							startTicks = System.DateTime.Now.Ticks;
-							
-							targetTick = startTicks + maxTicks;
-							
-							//Cancel function (and thus the thread) if no more paths should be accepted.
-							//This is done when the A* object is about to be destroyed
-							//The path is returned and then this function will be terminated (see similar IF statement higher up in the function)
-							if (!astar.acceptNewPaths) {
-								p.error = true;
-							}
-						}
-						
-						totalTicks += System.DateTime.Now.Ticks-startTicks;
-						p.duration = totalTicks*0.0001F;
-						
-						//Log path results
-						astar.LogPathResults (p);
-						
-					}
-					
-					if (OnPathPostSearch != null) {
-						OnPathPostSearch (p);
-					}
-					
-					//Push the path onto the return stack
-					//It will be detected by the main Unity thread and returned as fast as possible (the next late update)
-					pathReturnStack.Push (p);
-					
-					//Flag the path as processed
-					//Serves as a check to make sure a user does not try to calculate the same path instance multiple times
-					p.processed = true;
+				AstarProfiler.StartFastProfile (0);
+				p.PrepareBase (runData);
+				
+				//Now processing the path
+				//Will advance to Processing
+				p.AdvanceState (PathState.Processing);
+				
+				//Call some callbacks
+				if (OnPathPreSearch != null) {
+					OnPathPreSearch (p);
 				}
+				
+				//Tick for when the path started, used for calculating how long time the calculation took
+				long startTicks = System.DateTime.UtcNow.Ticks;
+				long totalTicks = 0;
+				
+				//Prepare the path
+				p.Prepare ();
+				
+				AstarProfiler.EndFastProfile (0);
+				
+				if (!p.IsDone()) {
+					
+					//For debug uses, we set the last computed path to p, so we can view debug info on it in the editor (scene view).
+					astar.debugPath = p;
+					
+					AstarProfiler.StartFastProfile (1);
+					
+					//Initialize the path, now ready to begin search
+					p.Initialize ();
+					
+					AstarProfiler.EndFastProfile (1);
+					
+					//The error can turn up in the Init function
+					while (!p.IsDone ()) {
+						//Do some work on the path calculation.
+						//The function will return when it has taken too much time
+						//or when it has finished calculation
+						AstarProfiler.StartFastProfile (2);
+						p.CalculateStep (targetTick);
+						p.searchIterations++;
+						
+						AstarProfiler.EndFastProfile (2);
+						
+						//If the path has finished calculation, we can break here directly instead of sleeping
+						if (p.IsDone ()) break;
+						
+						//Yield/sleep so other threads can work
+						totalTicks += System.DateTime.UtcNow.Ticks-startTicks;
+						Thread.Sleep (0);
+						startTicks = System.DateTime.UtcNow.Ticks;
+						
+						targetTick = startTicks + maxTicks;
+						
+						//Cancel function (and thus the thread) if no more paths should be accepted.
+						//This is done when the A* object is about to be destroyed
+						//The path is returned and then this function will be terminated (see similar IF statement higher up in the function)
+						if (!astar.acceptNewPaths) {
+							p.Error ();
+						}
+					}
+					
+					totalTicks += System.DateTime.UtcNow.Ticks-startTicks;
+					p.duration = totalTicks*0.0001F;
+					
+				}
+				
+				AstarProfiler.StartFastProfile (9);
+				
+				//Log path results
+				astar.LogPathResults (p);
+				
+				if (OnPathPostSearch != null) {
+					OnPathPostSearch (p);
+				}
+				
+				//Push the path onto the return stack
+				//It will be detected by the main Unity thread and returned as fast as possible (the next late update hopefully)
+				pathReturnStack.Push (p);
+				
+				//Will advance to ReturnQueue
+				p.AdvanceState (PathState.ReturnQueue);
+				
+				AstarProfiler.EndFastProfile (9);
 				
 				//Release lock for this thread
 				Monitor.Exit (threadInfo.Lock);
 				
 				//Wait a bit if we have calculated a lot of paths
-				if (System.DateTime.Now.Ticks > targetTick) {
+				if (System.DateTime.UtcNow.Ticks > targetTick) {
 					Thread.Sleep (1);
-					targetTick = System.DateTime.Now.Ticks + maxTicks;
+					targetTick = System.DateTime.UtcNow.Ticks + maxTicks;
 				}
 			}
 		} catch (System.Exception e) {
@@ -2034,25 +2179,24 @@ public class AstarPath : MonoBehaviour {
 		System.Threading.Interlocked.Decrement (ref numActiveThreads);
 	}
 	
-	/** Handler for the CalculateAdv function.
-	 * Will initialize an IEnumerator from the CalculateAdv function.
-	 * This function has a loop which will increment the CalculateAdv function state by one every time.
+	/** Handler for the CalculatePaths function.
+	 * Will initialize an IEnumerator from the CalculatePaths function.
+	 * This function has a loop which will increment the CalculatePaths function state by one every time.
 	 * Supposed to be called using StartCoroutine, this enabled other functions to also increment the state of the function when needed
 	 * using the #threadEnumerator variable.
-	 * \see CalculateAdv
+	 * \see CalculatePaths
 	 * \see threadEnumerator
 	 */
-	public static IEnumerator CalculateAdvHandler (System.Object _threadData) {
-		threadEnumerator = CalculateAdv (_threadData);
+	private static IEnumerator CalculatePathsHandler (System.Object _threadData) {
+		threadEnumerator = CalculatePaths (_threadData);
 		while (threadEnumerator.MoveNext ()) {
 			yield return 0;
 		}
 	}
-	/** Main pathfinding function (multithreaded). This function will calculate the paths in the pathfinding queue when multithreading is enabled.
+	/** Main pathfinding function. This function will calculate the paths in the pathfinding queue
 	 * \see CalculatePaths
-	 * \astarpro 
 	 */
-	public static IEnumerator CalculateAdv (System.Object _threadInfo) {
+	private static IEnumerator CalculatePaths (System.Object _threadInfo) {
 		
 		
 		//Increment the counter for how many threads are calculating
@@ -2071,12 +2215,10 @@ public class AstarPath : MonoBehaviour {
 		//Initialize memory for this thread
 		NodeRunData runData = threadInfo.runData;
 		
-		//Create a binary heap
-		runData.open = new BinaryHeapM (InitialBinaryHeapSize);
 		
 		//Max number of ticks before yielding/sleeping
 		long maxTicks = (long)(active.maxFrameTime*10000);
-		long targetTick = System.DateTime.Now.Ticks + maxTicks;
+		long targetTick = System.DateTime.UtcNow.Ticks + maxTicks;
 		
 		threadSafeUpdateState = true;
 		
@@ -2085,6 +2227,9 @@ public class AstarPath : MonoBehaviour {
 			//The path we are currently calculating
 			Path p = null;
 			
+			AstarProfiler.StartProfile ("Path Queue");
+			
+			//Try to get the next path to be calculated
 			while (true) {
 				//Cancel function (and thus the thread) if no more paths should be accepted.
 				//This is done when the A* object is about to be destroyed
@@ -2107,16 +2252,22 @@ public class AstarPath : MonoBehaviour {
 				
 				TryCallThreadSafeCallbacks ();
 				//The threadSafeUpdateState is still enabled since this is coroutine mode
+				//It would be reset in TryCallThreadSafeCallbacks
 				threadSafeUpdateState = true;
 				
-				if (p == null)
+				if (p == null) {
+					AstarProfiler.EndProfile ();
 					yield return 0;
+					AstarProfiler.StartProfile ("Path Queue");
+				}
 				
-				//System.Threading.Interlocked.Decrement(ref threadsIdle);
-				
+				//If we have a path, start calculating it
 				if (p != null) break;
-				
 			}
+			
+			AstarProfiler.EndProfile ();
+			
+			AstarProfiler.StartProfile ("Path Calc");
 			
 			//Max number of ticks we are allowed to continue working in one run
 			//One tick is 1/10000 of a millisecond
@@ -2124,108 +2275,112 @@ public class AstarPath : MonoBehaviour {
 			
 			threadSafeUpdateState = false;
 			
-			if (p.processed) {
-				p.error = true;
-				p.errorLog += "Requesting to process an already processed path\n";
-				Debug.LogError (p.errorLog);
-			} else {
-				//Path IDs have overflowed 65K, cleanup is needed
-				if (runData.pathID > p.pathID) {
-					runData.ClearPathIDs ();
-				}
+			p.PrepareBase (runData);
+			
+			//Now processing the path
+			//Will advance to Processing
+			p.AdvanceState (PathState.Processing);
+			
+			//Call some callbacks
+			if (OnPathPreSearch != null) {
+				OnPathPreSearch (p);
+			}
+			
+			numPaths++;
+			
+			//Tick for when the path started, used for calculating how long time the calculation took
+			long startTicks = System.DateTime.UtcNow.Ticks;
+			long totalTicks = 0;
+			
+			AstarProfiler.StartFastProfile(8);
+			
+			AstarProfiler.StartFastProfile(0);
+			//Prepare the path
+			AstarProfiler.StartProfile ("Path Prepare");
+			p.Prepare ();
+			AstarProfiler.EndProfile ();
+			AstarProfiler.EndFastProfile (0);
+			
+			if (!p.IsDone()) {
 				
-				//Assign relevant path data to the runData
-				runData.path = p;
-				runData.pathID = p.pathID;
-				p.runData = runData;
+				//For debug uses, we set the last computed path to p, so we can view debug info on it in the editor (scene view).
+				active.debugPath = p;
 				
-				//Call some callbacks
-				if (OnPathPreSearch != null) {
-					OnPathPreSearch (p);
-				}
+				//Initialize the path, now ready to begin search
+				AstarProfiler.StartProfile ("Path Initialize");
+				p.Initialize ();
+				AstarProfiler.EndProfile ();
 				
-				numPaths++;
-				
-				//Tick for when the path started, used for calculating how long time the calculation took
-				long startTicks = System.DateTime.Now.Ticks;
-				long totalTicks = 0;
-				
-				AstarProfiler.StartFastProfile(8);
-				
-				AstarProfiler.StartFastProfile(0);
-				//Prepare the path
-				p.Prepare ();
-				
-				AstarProfiler.EndFastProfile (0);
-				
-				if (!p.error) {
+				//The error can turn up in the Init function
+				while (!p.IsDone ()) {
+					//Do some work on the path calculation.
+					//The function will return when it has taken too much time
+					//or when it has finished calculation
+					AstarProfiler.StartFastProfile(2);
 					
-					//For debug uses, we set the last computed path to p, so we can view debug info on it in the editor (scene view).
-					active.debugPath = p;
+					AstarProfiler.StartProfile ("Path Calc Step");
+					p.CalculateStep (targetTick);
+					AstarProfiler.EndFastProfile(2);
+					p.searchIterations++;
 					
-					//Initialize the path, now ready to begin search
-					p.Initialize ();
+					AstarProfiler.EndProfile ();
 					
-					//The error can turn up in the Init function
-					while (!p.IsDone ()) {
-						//Do some work on the path calculation.
-						//The function will return when it has taken too much time
-						//or when it has finished calculation
-						AstarProfiler.StartFastProfile(2);
-						p.CalculateStep (targetTick);
-						AstarProfiler.EndFastProfile(2);
-						p.searchIterations++;
+					//If the path has finished calculation, we can break here directly instead of sleeping
+					if (p.IsDone ()) break;
+					
+					AstarProfiler.EndFastProfile(8);
+					totalTicks += System.DateTime.UtcNow.Ticks-startTicks;
+					//Yield/sleep so other threads can work
 						
-						//If the path has finished calculation, we can break here directly instead of sleeping
-						if (p.IsDone ()) break;
-						
-						AstarProfiler.EndFastProfile(8);
-						totalTicks += System.DateTime.Now.Ticks-startTicks;
-						//Yield/sleep so other threads can work
-						yield return 0;
-						startTicks = System.DateTime.Now.Ticks;
-						AstarProfiler.StartFastProfile(8);
-						
-						//Cancel function (and thus the thread) if no more paths should be accepted.
-						//This is done when the A* object is about to be destroyed
-						//The path is returned and then this function will be terminated (see similar IF statement higher up in the function)
-						if (!active.acceptNewPaths) {
-							p.error = true;
-						}
-						
-						targetTick = System.DateTime.Now.Ticks + maxTicks;
+					AstarProfiler.EndProfile ();
+					yield return 0;
+					AstarProfiler.StartProfile ("Path Calc");
+					
+					startTicks = System.DateTime.UtcNow.Ticks;
+					AstarProfiler.StartFastProfile(8);
+					
+					//Cancel function (and thus the thread) if no more paths should be accepted.
+					//This is done when the A* object is about to be destroyed
+					//The path is returned and then this function will be terminated (see similar IF statement higher up in the function)
+					if (!active.acceptNewPaths) {
+						p.Error ();
 					}
 					
-					totalTicks += System.DateTime.Now.Ticks-startTicks;
-					p.duration = totalTicks*0.0001F;
-					
-					//Log path results
-					active.LogPathResults (p);
-					
+					targetTick = System.DateTime.UtcNow.Ticks + maxTicks;
 				}
 				
-				AstarProfiler.EndFastProfile(8);
+				totalTicks += System.DateTime.UtcNow.Ticks-startTicks;
+				p.duration = totalTicks*0.0001F;
 				
-				AstarProfiler.StartFastProfile(13);
-				if (OnPathPostSearch != null) {
-					OnPathPostSearch (p);
-				}
-				AstarProfiler.EndFastProfile(13);
-				//Push the path onto the return stack
-				//It will be detected by the main Unity thread and returned as fast as possible (the next late update)
-				pathReturnStack.Push (p);
-				
-				//Flag the path as processed
-				//Serves as a check to make sure a user does not try to calculate the same path instance multiple times
-				p.processed = true;
 			}
+			
+			//Log path results
+			AstarProfiler.StartProfile ("Log Path Results");
+			active.LogPathResults (p);
+			AstarProfiler.EndProfile ();
+			
+			AstarProfiler.EndFastProfile(8);
+			
+			AstarProfiler.StartFastProfile(13);
+			if (OnPathPostSearch != null) {
+				OnPathPostSearch (p);
+			}
+			AstarProfiler.EndFastProfile(13);
+			
+			//Push the path onto the return stack
+			//It will be detected by the main Unity thread and returned as fast as possible (the next late update)
+			pathReturnStack.Push (p);
+			
+			p.AdvanceState (PathState.ReturnQueue);
+			
+			AstarProfiler.EndProfile ();
 			
 			threadSafeUpdateState = true;
 			
 			//Wait a bit if we have calculated a lot of paths
-			if (System.DateTime.Now.Ticks > targetTick) {
+			if (System.DateTime.UtcNow.Ticks > targetTick) {
 				yield return 0;
-				targetTick = System.DateTime.Now.Ticks + maxTicks;
+				targetTick = System.DateTime.UtcNow.Ticks + maxTicks;
 				numPaths = 0;
 			}
 		}
@@ -2239,7 +2394,7 @@ public class AstarPath : MonoBehaviour {
 	/** Returns the nearest node to a position using the specified NNConstraint.
 	 Searches through all graphs for their nearest nodes to the specified position and picks the closest one.\n
 	 Using the NNConstraint.None constraint.
-	 \see Pathfinding::NNConstraint
+	 \see Pathfinding.NNConstraint
 	 */
 	public NNInfo GetNearest (Vector3 position) {
 		return GetNearest(position,NNConstraint.None);
@@ -2248,7 +2403,7 @@ public class AstarPath : MonoBehaviour {
 	/** Returns the nearest node to a position using the specified NNConstraint.
 	 Searches through all graphs for their nearest nodes to the specified position and picks the closest one.
 	 The NNConstraint can be used to specify constraints on which nodes can be chosen such as only picking walkable nodes.
-	 \see Pathfinding::NNConstraint
+	 \see Pathfinding.NNConstraint
 	 */
 	public NNInfo GetNearest (Vector3 position, NNConstraint constraint) {
 		return GetNearest(position,constraint,null);
@@ -2257,11 +2412,11 @@ public class AstarPath : MonoBehaviour {
 	/** Returns the nearest node to a position using the specified NNConstraint.
 	 Searches through all graphs for their nearest nodes to the specified position and picks the closest one.
 	 The NNConstraint can be used to specify constraints on which nodes can be chosen such as only picking walkable nodes.
-	 \see Pathfinding::NNConstraint
+	 \see Pathfinding.NNConstraint
 	 */
 	public NNInfo GetNearest (Vector3 position, NNConstraint constraint, Node hint) {
 		
-		if (graphs == null) { return null; }
+		if (graphs == null) { return new NNInfo(); }
 		
 		if (constraint == null) {
 			constraint = NNConstraint.None;
@@ -2274,6 +2429,8 @@ public class AstarPath : MonoBehaviour {
 		for (int i=0;i<graphs.Length;i++) {
 			
 			NavGraph graph = graphs[i];
+			
+			if (graph == null) continue;
 			
 			//Check if this graph should be searched
 			if (!constraint.SuitableGraph (i,graph)) {
@@ -2297,13 +2454,13 @@ public class AstarPath : MonoBehaviour {
 			
 			if (prioritizeGraphs && dist < prioritizeGraphsLimit) {
 				//The node is close enough, choose this graph and discard all others
-				minDist = dist*(int)nnInfo.priority;
+				minDist = dist;
 				nearestNode = nnInfo;
 				nearestGraph = i;
 				break;
 			} else {
-				if (dist*(int)nnInfo.priority < minDist) {
-					minDist = dist*(int)nnInfo.priority;
+				if (dist < minDist) {
+					minDist = dist;
 					nearestNode = nnInfo;
 					nearestGraph = i;
 				}

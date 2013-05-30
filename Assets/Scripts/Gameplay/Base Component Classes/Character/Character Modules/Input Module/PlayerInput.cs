@@ -25,11 +25,13 @@ using System;
 	public void Awake () 
 	{
 		user = GetComponent<BasePlayer>();
+		_targetting = new PlayerTargetting ();
 		//ActivateRun += evasion;
 	}
 
 	public void Start () {
-		user = GetComponent<BaseCharacter>();
+		_targetting.Setup (user);
+//		user = GetComponent<BaseCharacter>();
 
 		//_targetting.Setup(user);
 	}
@@ -39,20 +41,18 @@ using System;
 		float dodgeTimer = 0;
 		float targettingTimer = 0;
 
+		Debug.Log ("the character is aiming at :"+lookDir);
 
 		//_targetting.UpdateTargetting();
-		moveDir = UpdateDirection();
-//		if (Input.GetButtonDown("Horizontal") || Input.GetButtonDown("Vertical"))
-//		{
-//			Debug.Log("TEST");
-//			ActivateWalk();
-//		}
+		moveDir = UpdateDirection ();
+		lookDir = _targetting.UpdateMouse ();
 
 		//Dodge and Evasion input
-		if (Input.GetButtonDown("Evasion")) StartCoroutine(CheckInput(2, 
-		                                               "Evasion", 
-		                                               delegate {ActivateDodge();}, 
-													   delegate {ActivateRun();}));
+		if (Input.GetButtonDown("Evasion")) StartCoroutine(CheckInput(1, "Evasion", delegate {ActivateDodge();}, delegate {ActivateRun();}));
+
+		if (Input.GetButtonDown("DrawWeapon")) StartCoroutine(CheckInput(1, "DrawWeapon", delegate {ActivateLockOn();}, delegate {ActivateSheathe();}));
+
+		if (Input.GetButtonDown("Primary")) ActivatePrimary();
 
 //		if (Input.GetButtonDown("Evasion"))
 //		{
@@ -239,7 +239,7 @@ using System;
 //	}
 	
 	[System.Serializable] public class PlayerTargetting {	
-		protected BaseCharacter _user;																//character using targetting component
+		protected ICharacter _user;																//character using targetting component
 		
 		protected Vector3 targetLocation;															//coordinate data of target (mouse or lock on for the player, player or random wandering spot for AI)
 		protected BaseCharacter target;																//character being targetted by component
@@ -254,14 +254,14 @@ using System;
 			set {targetLocation = value;}
 		}
 		
-		public void Setup (BasePlayer user) {
+		public void Setup (ICharacter user) {
 			_user = user;
 			_hasTarget = false;
 			_potentialTarget = null;
 		}
 		
 		//updates location of mouse cursor
-		private Vector3 UpdateMouse() {										//player aim
+		public Vector3 UpdateMouse() {										//player aim
 			Plane playerPlane = new Plane(Vector3.back, _user.Coordinates.position);
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			float hitdist = 0.0f;	

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerStateMachine : BaseCharacterStateModule
+public class PlayerStateModule : BaseCharacterStateModule
 {
 		protected override void OnAwake ()
 		{

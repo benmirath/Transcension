@@ -1,4 +1,5 @@
-//#define SingleCoreOptimize
+//#define ASTAR_SINGLE_THREAD_OPTIMIZE
+//#define ASTAR_FAST_NO_EXCEPTIONS //Needs to be enabled for the iPhone build setting Fast But No Exceptions to work.
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,11 +7,12 @@ using System.Collections.Generic;
 using Pathfinding.Util;
 
 namespace Pathfinding {
+	
 	[System.Serializable]
 	/** Stores the navigation graphs for the A* Pathfinding System.
 	 * \ingroup relevant
 	 * 
-	 * An instance of this class is assigned to AstarPath::astarData, from it you can access all graphs loaded through the #graphs variable.\n
+	 * An instance of this class is assigned to AstarPath.astarData, from it you can access all graphs loaded through the #graphs variable.\n
 	 * This class also handles a lot of the high level serialization.
 	 */
 	public class AstarData {
@@ -45,8 +47,22 @@ namespace Pathfinding {
 		/** All supported graph types. Populated through reflection search */
 		public System.Type[] graphTypes = null;
 		
+#if ASTAR_FAST_NO_EXCEPTIONS
+		/** Graph types to use when building with Fast But No Exceptions for iPhone.
+		 * If you add any custom graph types, you need to add them to this hard-coded list.
+		 */
+		public static readonly System.Type[] DefaultGraphTypes = new System.Type[] {
+			typeof(GridGraph),
+			typeof(PointGraph),
+			typeof(NavMeshGraph)
+		};
+#endif
+		
 		[System.NonSerialized]
-		/** All graphs this instance holds. This will be filled only after deserialization has completed */
+		/** All graphs this instance holds.
+		 * This will be filled only after deserialization has completed.
+		 * May contain null entries if graph have been removed.
+		 */
 		public NavGraph[] graphs = new NavGraph[0];
 		
 		/** Links placed by the user in the scene view. */
@@ -60,12 +76,17 @@ namespace Pathfinding {
 		public bool hasBeenReverted = false;
 		
 		[SerializeField]
+		/** Serialized data for all graphs and settings.
+		 */
 		private byte[] data;
 		
 		public uint dataChecksum;
 		
+		/** Backup data if deserialization failed.
+		 */
 		public byte[] data_backup;
 		
+		/** Serialized data for cached startup */
 		public byte[] data_cachedStartup;
 		
 		public byte[] revertData;
@@ -105,13 +126,6 @@ namespace Pathfinding {
 			} else {
 				DeserializeGraphs ();
 			}
-			
-
-			/*Pathfinding.Serialize.AstarSerializer sr = new Pathfinding.Serialize.AstarSerializer(this);
-			byte[] dt = sr.Serialize ();
-			
-			sr.Deserialize(dt);
-			 */
 		}
 		
 		[System.Obsolete]
@@ -138,7 +152,7 @@ namespace Pathfinding {
 		public void AssignNodeIndices () {
 			int counter = 0;
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i].nodes == null) continue;
+				if (graphs[i] == null || graphs[i].nodes == null) continue;
 				Node[] nodes = graphs[i].nodes;
 				for (int j=0;j<nodes.Length;j++, counter++) {
 					if (nodes[j] != null)
@@ -154,7 +168,7 @@ namespace Pathfinding {
 		 * Ideally, I would code an update function which reuses most of the previous ones instead of recreating it every time.
 		 * \param numParallel Number of parallel threads which will use the data.
 		 * \see #nodeRuns
-		 * \see AstarPath::UpdatePathThreadInfoNodes
+		 * \see AstarPath.UpdatePathThreadInfoNodes
 		 */
 		public void CreateNodeRuns (int numParallel) {
 			
@@ -162,7 +176,7 @@ namespace Pathfinding {
 			
 			int nodeCount = 0;
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i].nodes != null)
+				if (graphs[i] != null && graphs[i].nodes != null)
 					nodeCount += graphs[i].nodes.Length;
 			}
 			
@@ -186,12 +200,14 @@ namespace Pathfinding {
 				//AstarSerializer serializer = new AstarSerializer (active);
 				//DeserializeGraphs (serializer,data_cachedStartup);
 				DeserializeGraphs (data_cachedStartup);
+				
+				GraphModifier.TriggerEvent (GraphModifier.EventType.PostCacheLoad);
 			} else {
 				Debug.LogError ("Can't load from cache since the cache is empty");
 			}
 		}
 		
-		public void SaveCacheData (Pathfinding.Serialize.SerializeSettings settings) {
+		public void SaveCacheData (Pathfinding.Serialization.SerializeSettings settings) {
 			data_cachedStartup = SerializeGraphs (settings);
 			cacheStartup = true;
 		}
@@ -202,11 +218,11 @@ namespace Pathfinding {
 		 * \see DeserializeGraphs(byte[])
 		 */
 		public byte[] SerializeGraphs () {
-			return SerializeGraphs (Pathfinding.Serialize.SerializeSettings.Settings);
+			return SerializeGraphs (Pathfinding.Serialization.SerializeSettings.Settings);
 		}
 		
 		/** Main serializer function. */
-		public byte[] SerializeGraphs (Pathfinding.Serialize.SerializeSettings settings) {
+		public byte[] SerializeGraphs (Pathfinding.Serialization.SerializeSettings settings) {
 			uint checksum;
 			return SerializeGraphs (settings, out checksum);
 		}
@@ -214,9 +230,9 @@ namespace Pathfinding {
 		/** Main serializer function.
 		 * Serializes all graphs to a byte array
 		  * A similar function exists in the AstarEditor.cs script to save additional info */
-		public byte[] SerializeGraphs (Pathfinding.Serialize.SerializeSettings settings, out uint checksum) {
+		public byte[] SerializeGraphs (Pathfinding.Serialization.SerializeSettings settings, out uint checksum) {
 			
-			Pathfinding.Serialize.AstarSerializer sr = new Pathfinding.Serialize.AstarSerializer(this, settings);
+			Pathfinding.Serialization.AstarSerializer sr = new Pathfinding.Serialization.AstarSerializer(this, settings);
 			sr.OpenSerialize();
 			SerializeGraphsPart (sr);
 			byte[] bytes = sr.CloseSerialize();
@@ -228,7 +244,7 @@ namespace Pathfinding {
 		 * Common info is what is shared between the editor serialization and the runtime serializer.
 		 * This is mostly everything except the graph inspectors which serialize some extra data in the editor
 		 */
-		public void SerializeGraphsPart (Pathfinding.Serialize.AstarSerializer sr) {
+		public void SerializeGraphsPart (Pathfinding.Serialization.AstarSerializer sr) {
 			sr.SerializeGraphs(graphs);
 			sr.SerializeUserConnections (userConnections);
 			sr.SerializeNodes();
@@ -249,7 +265,7 @@ namespace Pathfinding {
 		public void DeserializeGraphs (byte[] bytes) {
 			try {
 				if (bytes != null) {
-					Pathfinding.Serialize.AstarSerializer sr = new Pathfinding.Serialize.AstarSerializer(this);
+					Pathfinding.Serialization.AstarSerializer sr = new Pathfinding.Serialization.AstarSerializer(this);
 					
 					if (sr.OpenDeserialize(bytes)) {
 						DeserializeGraphsPart (sr);
@@ -265,6 +281,7 @@ namespace Pathfinding {
 				active.DataUpdate ();
 			} catch (System.Exception e) {
 				Debug.LogWarning ("Caught exception while deserializing data.\n"+e);
+				data_backup = bytes;
 			}
 		}
 		
@@ -276,7 +293,7 @@ namespace Pathfinding {
 		public void DeserializeGraphsAdditive (byte[] bytes) {
 			try {
 				if (bytes != null) {
-					Pathfinding.Serialize.AstarSerializer sr = new Pathfinding.Serialize.AstarSerializer(this);
+					Pathfinding.Serialization.AstarSerializer sr = new Pathfinding.Serialization.AstarSerializer(this);
 					
 					if (sr.OpenDeserialize(bytes)) {
 						DeserializeGraphsPartAdditive (sr);
@@ -297,7 +314,7 @@ namespace Pathfinding {
 		 * Common info is what is shared between the editor serialization and the runtime serializer.
 		 * This is mostly everything except the graph inspectors which serialize some extra data in the editor
 		 */
-		public void DeserializeGraphsPart (Pathfinding.Serialize.AstarSerializer sr) {
+		public void DeserializeGraphsPart (Pathfinding.Serialization.AstarSerializer sr) {
 			graphs = sr.DeserializeGraphs ();
 			userConnections = sr.DeserializeUserConnections();
 			sr.DeserializeNodes();
@@ -309,7 +326,7 @@ namespace Pathfinding {
 		 * Common info is what is shared between the editor serialization and the runtime serializer.
 		 * This is mostly everything except the graph inspectors which serialize some extra data in the editor
 		 */
-		public void DeserializeGraphsPartAdditive (Pathfinding.Serialize.AstarSerializer sr) {
+		public void DeserializeGraphsPartAdditive (Pathfinding.Serialization.AstarSerializer sr) {
 			if (graphs == null) graphs = new NavGraph[0];
 			if (userConnections == null) userConnections = new UserConnection[0];
 			
@@ -323,6 +340,16 @@ namespace Pathfinding {
 			sr.DeserializeNodes();
 			sr.DeserializeExtraInfo();
 			sr.PostDeserialization();
+			
+			for (int i=0;i<graphs.Length;i++) {
+				for (int j=i+1;j<graphs.Length;j++) {
+					if (graphs[i] != null && graphs[j] != null && graphs[i].guid == graphs[j].guid) {
+						Debug.LogWarning ("Guid Conflict when importing graphs additively. Imported graph will get a new Guid.\nThis message is (relatively) harmless.");
+						graphs[i].guid = Pathfinding.Util.Guid.NewGuid ();
+						break;
+					}
+				}
+			}
 		}
 		
 #region OldSerializer
@@ -403,6 +430,9 @@ namespace Pathfinding {
 					}
 					string graphType = serializer.readerStream.ReadString ();
 					
+					//Old graph naming
+					graphType = graphType.Replace ("ListGraph","PointGraph");
+					
 					Guid guid = new Guid (serializer.readerStream.ReadString ());
 					
 					//Search for existing graphs with the same GUID. If one is found, that means that we are loading another version of that graph
@@ -479,6 +509,7 @@ namespace Pathfinding {
 		 * Using reflection, the assembly is searched for types which inherit from NavGraph. */
 		public void FindGraphTypes () {
 			
+#if !ASTAR_FAST_NO_EXCEPTIONS
 			System.Reflection.Assembly asm = System.Reflection.Assembly.GetAssembly (typeof(AstarPath));
 			
 			System.Type[] types = asm.GetTypes ();
@@ -503,6 +534,9 @@ namespace Pathfinding {
 			
 			graphTypes = graphList.ToArray ();
 			
+#else		
+			graphTypes = DefaultGraphTypes;
+#endif
 		}
 		
 #region GraphCreation
@@ -586,21 +620,47 @@ namespace Pathfinding {
 		/** Adds the specified graph to the #graphs array */
 		public void AddGraph (NavGraph graph) {
 			
+			//Try to fill in an empty position
+			for (int i=0;i<graphs.Length;i++) {
+				if (graphs[i] == null) {
+					graphs[i] = graph;
+					return;
+				}
+			}
+			
+			//Add a new entry to the list
 			List<NavGraph> ls = new List<NavGraph> (graphs);
 			ls.Add (graph);
 			graphs = ls.ToArray ();
 		}
 		
-		/** Removes the specified graph from the #graphs array and Destroys it in a safe manner */
-		public void RemoveGraph (NavGraph graph) {
-			
-			List<NavGraph> ls = new List<NavGraph> (graphs);
-			ls.Remove (graph);
-			graphs = ls.ToArray ();
+		/** Removes the specified graph from the #graphs array and Destroys it in a safe manner.
+		 * To avoid changing graph indices for the other graphs, the graph is simply nulled in the array instead
+		 * of actually removing it from the array.
+		 * The empty position will be reused if a new graph is added.
+		 * 
+		 * \returns True if the graph was sucessfully removed (i.e it did exist in the #graphs array). False otherwise.
+		 * 
+		 * \see NavGraph.SafeOnDestroy
+		 * 
+		 * \version Changed in 3.2.5 to call SafeOnDestroy before removing
+		 * and nulling it in the array instead of removing the element completely in the #graphs array.
+		 * 
+		 */
+		public bool RemoveGraph (NavGraph graph) {
 			
 			//Safe OnDestroy is called since there is a risk that the pathfinding is searching through the graph right now,
 			//and if we don't wait until the search has completed we could end up with evil NullReferenceExceptions
 			graph.SafeOnDestroy ();
+			
+			int i=0;
+			for (;i<graphs.Length;i++) if (graphs[i] == graph) break;
+			if (i == graphs.Length) {
+				return false;
+			}
+			
+			graphs[i] = null;
+			return true;
 		}
 		
 #endregion
@@ -668,7 +728,7 @@ namespace Pathfinding {
 		public NavGraph FindGraphOfType (System.Type type) {
 			
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i].GetType () == type) {
+				if (graphs[i] != null && graphs[i].GetType () == type) {
 					return graphs[i];
 				}
 			}
@@ -679,11 +739,11 @@ namespace Pathfinding {
 		 * \code foreach (GridGraph graph in AstarPath.astarData.FindGraphsOfType (typeof(GridGraph))) {
 		 * 	//Do something with the graph
 		 * } \endcode
-		 * \see AstarPath::RegisterSafeNodeUpdate */
+		 * \see AstarPath.RegisterSafeNodeUpdate */
 		public IEnumerable FindGraphsOfType (System.Type type) {
 			if (graphs == null) { yield break; }
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i].GetType () == type) {
+				if (graphs[i] != null && graphs[i].GetType () == type) {
 					yield return graphs[i];
 				}
 			}
@@ -693,12 +753,12 @@ namespace Pathfinding {
 		 * \code foreach (IUpdatableGraph graph in AstarPath.astarData.GetUpdateableGraphs ()) {
 		 * 	//Do something with the graph
 		 * } \endcode
-		 * \see AstarPath::RegisterSafeNodeUpdate
-		 * \see Pathfinding::IUpdatableGraph */
+		 * \see AstarPath.RegisterSafeNodeUpdate
+		 * \see Pathfinding.IUpdatableGraph */
 		public IEnumerable GetUpdateableGraphs () {
 			if (graphs == null) { yield break; }
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i] is IUpdatableGraph) {
+				if (graphs[i] != null && graphs[i] is IUpdatableGraph) {
 					yield return graphs[i];
 				}
 			}
@@ -708,11 +768,11 @@ namespace Pathfinding {
 		  * \code foreach (IRaycastableGraph graph in AstarPath.astarData.GetRaycastableGraphs ()) {
 		 * 	//Do something with the graph
 		 * } \endcode
-		 * \see Pathfinding::IRaycastableGraph*/
+		 * \see Pathfinding.IRaycastableGraph*/
 		public IEnumerable GetRaycastableGraphs () {
 			if (graphs == null) { yield break; }
 			for (int i=0;i<graphs.Length;i++) {
-				if (graphs[i] is IRaycastableGraph) {
+				if (graphs[i] != null && graphs[i] is IRaycastableGraph) {
 					yield return graphs[i];
 				}
 			}
@@ -720,6 +780,8 @@ namespace Pathfinding {
 		
 		/** Gets the index of the NavGraph in the #graphs array */
 		public int GetGraphIndex (NavGraph graph) {
+			if (graph == null) throw new System.ArgumentNullException ("graph");
+			
 			for (int i=0;i<graphs.Length;i++) {
 				if (graph == graphs[i]) {
 					return i;
@@ -741,7 +803,6 @@ namespace Pathfinding {
 			
 			for (int i=0;i<graphs.Length;i++) {
 				if (graphs[i] == null) {
-					Debug.LogWarning ("Graph "+i+" is null - This should not happen");
 					continue;
 				}
 				if (graphs[i].guid == guid) {
@@ -762,7 +823,6 @@ namespace Pathfinding {
 			
 			for (int i=0;i<graphs.Length;i++) {
 				if (graphs[i] == null) {
-					Debug.LogWarning ("Graph "+i+" is null - This should not happen");
 					continue;
 				}
 				if (graphs[i].guid == guid) {

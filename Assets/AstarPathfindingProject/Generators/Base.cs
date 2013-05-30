@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding.Util;
+using Pathfinding.Serialization.JsonFx;
 
 namespace Pathfinding {
 	/// <summary>
@@ -10,7 +11,7 @@ namespace Pathfinding {
 	public abstract class NavGraph {
 		
 		/** Used to store the guid value
-		 * \see NavGraph::guid
+		 * \see NavGraph.guid
 		 */
 		public byte[] _sguid;
 		
@@ -23,7 +24,7 @@ namespace Pathfinding {
 		/** Used as an ID of the graph, considered to be unique.
 		 * \note This is Pathfinding.Util.Guid not System.Guid. A replacement for System.Guid was coded for better compatibility with iOS
 		 */
-		[JsonFx.Json.JsonMember]
+		[JsonMember]
 		public Guid guid {
 			get {
 				if (_sguid == null || _sguid.Length != 16) {
@@ -36,24 +37,27 @@ namespace Pathfinding {
 			}
 		}
 		
+		[JsonMember]
+		public uint initialPenalty = 0;
+		
 		/// <summary>
 		/// Is the graph open in the editor
 		/// </summary>
-		[JsonFx.Json.JsonMember]
+		[JsonMember]
 		public bool open;
 		
-		[JsonFx.Json.JsonMember]
+		[JsonMember]
 		public string name;
 		
-		[JsonFx.Json.JsonMember]
+		[JsonMember]
 		public bool drawGizmos = true;
 		
 //#if UNITY_EDITOR
 		/** Used in the editor to check if the info screen is open.
-		 * Should be inside UNITY_EDITOR only #ifs but just in case anyone tries to serialize a NavGraph instance using Unity, I have left it like this as it would otherwise cause a crash when building.
+		 * Should be inside UNITY_EDITOR only \#ifs but just in case anyone tries to serialize a NavGraph instance using Unity, I have left it like this as it would otherwise cause a crash when building.
 		 * Version 3.0.8.1 was released because of this bug only
 		 */
-		[JsonFx.Json.JsonMember]
+		[JsonMember]
 		public bool infoScreenOpen;
 //#endif
 		
@@ -76,12 +80,13 @@ namespace Pathfinding {
 		/** Creates a number of nodes with the correct type for the graph.
 		This should not set the #nodes array, only return the nodes.
 		Called by graph generators and when deserializing a graph with nodes.
-		Override this function if you do not use the default Pathfinding::Node class.
+		Override this function if you do not use the default Pathfinding.Node class.
 		*/
 		public virtual Node[] CreateNodes (int number) {
 			Node[] tmp = new Node[number];
 			for (int i=0;i<number;i++) {
 				tmp[i] = new Node ();
+				tmp[i].penalty = initialPenalty;
 			}
 			return tmp;
 		}
@@ -98,11 +103,11 @@ namespace Pathfinding {
 			}
 			
 			Matrix4x4 inv = oldMatrix.inverse;
-			Matrix4x4 matrix = inv * newMatrix;
+			Matrix4x4 m = inv * newMatrix;
 			
 			for (int i=0;i<nodes.Length;i++) {
 				//Vector3 tmp = inv.MultiplyPoint3x4 ((Vector3)nodes[i].position);
-				nodes[i].position = (Int3)matrix.MultiplyPoint ((Vector3)nodes[i].position);
+				nodes[i].position = (Int3)m.MultiplyPoint ((Vector3)nodes[i].position);
 			}
 			this.matrix = newMatrix;
 		}
@@ -215,9 +220,11 @@ namespace Pathfinding {
 		}
 		
 		/// <summary>
-		/// Scanns the graph with appropriate pre and post processing calls.
 		/// Consider using AstarPath.Scan () instead since this function might screw things up if there is more than one graph.
-		/// This function does not call <see cref="AstarPath.FloodFill"/>
+		/// This function does not perform all necessary postprocessing for the graph to work with pathfinding (e.g flood fill).
+		/// See the source of the AstarPath.Scan function to see how it can be used.
+		/// 
+		/// In almost all cases you should use AstarPath.Scan instead.
 		/// </summary>
 		public void ScanGraph () {
 			
@@ -241,20 +248,14 @@ namespace Pathfinding {
 		}
 		
 		/// <summary>
-		/// Scanns the graph, called from <see cref="AstarPath.Scan"/>
+		/// Scans the graph, called from <see cref="AstarPath.Scan"/>
 		/// Override this function to implement custom scanning logic
 		/// </summary>
 		public abstract void Scan ();
 		
-		/// <summary>
-		/// Returns a color to be used for the specified node with the current debug settings (editor only)
-		/// </summary>
-		/// <param name="node">
-		/// A <see cref="Node"/>
-		/// </param>
-		/// <returns>
-		/// A <see cref="Color"/>
-		/// </returns>
+		/* Color to use for gizmos.
+		 * Returns a color to be used for the specified node with the current debug settings (editor only)
+		 */
 		public virtual Color NodeColor (Node node, NodeRunData data) {
 			
 			Color c = AstarColor.NodeConnection;
@@ -378,34 +379,63 @@ namespace Pathfinding {
 	
 
 	[System.Serializable]
+	/** Handles collision checking for graphs.
+	  * Mostly used by grid based graphs */
 	public class GraphCollision : ISerializableObject {
 		
 		/** Collision shape to use.
-		  * Pathfinding::ColliderType */
+		  * Pathfinding.ColliderType */
 		public ColliderType type = ColliderType.Capsule;
 		
-		public float diameter = 1F; /**< Diameter of capsule or sphere when checking for collision. 1 equals \link Pathfinding::GridGraph::nodeSize nodeSize \endlink. If #type is set to Ray, this does not affect anything */
-		public float height = 2F; /**< Height of capsule or length of ray when checking for collision. If #type is set to Sphere, this does not affect anything */
+		/** Diameter of capsule or sphere when checking for collision.
+		 * 1 equals \link Pathfinding.GridGraph.nodeSize nodeSize \endlink.
+		 * If #type is set to Ray, this does not affect anything */
+		public float diameter = 1F;
+		
+		/** Height of capsule or length of ray when checking for collision.
+		 * If #type is set to Sphere, this does not affect anything
+		 */
+		public float height = 2F;
 		public float collisionOffset = 0;
 		
-		public RayDirection rayDirection = RayDirection.Both; /**< Direction of the ray when checking for collision. If #type is not Ray, this does not affect anything \note This variable is not used currently, it does not affect anything */
+		/** Direction of the ray when checking for collision.
+		 * If #type is not Ray, this does not affect anything
+		 * \note This variable is not used currently, it does not affect anything
+		 */
+		public RayDirection rayDirection = RayDirection.Both;
 		
-		/** Layer mask to use for collision check. This should only contain layers of objects defined as obstacles */
+		/** Layer mask to use for collision check.
+		 * This should only contain layers of objects defined as obstacles */
 		public LayerMask mask;
 		
 		/** Layer mask to use for height check. */
 		public LayerMask heightMask = -1;
 		
+		/** The height to check from when checking height */
+		public float fromHeight = 100;
 		
-		public float fromHeight = 100; /**< The height to check from when checking height */
-		public bool thickRaycast = false; /**< Toggles thick raycast */
-		public float thickRaycastDiameter = 1; /**< Diameter of the thick raycast in nodes. 1 equals \link Pathfinding::GridGraph::nodeSize nodeSize \endlink */
+		/** Toggles thick raycast */
+		public bool thickRaycast = false;
 		
-		public Vector3 up; /**< Direction to use as \a UP. \see Initialize */
+		/** Diameter of the thick raycast in nodes.
+		 * 1 equals \link Pathfinding.GridGraph.nodeSize nodeSize \endlink */
+		public float thickRaycastDiameter = 1;
 		
-		private Vector3 upheight; /**< #up * #height \see Initialize */
-		private float finalRadius; /**< #diameter * scale * 0.5. Where \a scale usually is \link Pathfinding::GridGraph::nodeSize nodeSize \endlink \see Initialize */
-		private float finalRaycastRadius;/**< #thickRaycastDiameter * scale * 0.5. Where \a scale usually is \link Pathfinding::GridGraph::nodeSize nodeSize \endlink \see Initialize */
+		/** Direction to use as \a UP.
+		 * \see Initialize */
+		public Vector3 up;
+		
+		/** #up * #height.
+		 * \see Initialize */
+		private Vector3 upheight;
+		
+		/** #diameter * scale * 0.5.
+		 * Where \a scale usually is \link Pathfinding.GridGraph.nodeSize nodeSize \endlink
+		 * \see Initialize */
+		private float finalRadius;
+		
+		/** #thickRaycastDiameter * scale * 0.5. Where \a scale usually is \link Pathfinding.GridGraph.nodeSize nodeSize \endlink \see Initialize */
+		private float finalRaycastRadius;
 		
 		/** Offset to apply after each raycast to make sure we don't hit the same point again in CheckHeightAll */
 		public const float RaycastErrorMargin = 0.005F;
@@ -417,7 +447,13 @@ namespace Pathfinding {
 		public bool unwalkableWhenNoGround = true;
 
 //#if !PhotonImplementation
-		/** Sets up #up, #upheight, #finalRadius and #finalRaycastRadius using the specified matrix and scale */
+		
+		/** Sets up several variables using the specified matrix and scale.
+		  * \see GraphCollision.up
+		  * \see GraphCollision.upheight
+		  * \see GraphCollision.finalRadius
+		  * \see GraphCollision.finalRaycastRadius
+		  */
 		public void Initialize (Matrix4x4 matrix, float scale) {
 			up = matrix.MultiplyVector (Vector3.up);
 			upheight = up*height;
@@ -600,7 +636,7 @@ namespace Pathfinding {
 			return hits.ToArray ();
 		}
 		
-		/** \copydoc Pathfinding::ISerializableObject::SerializeSettings \copybrief Pathfinding::ISerializableObject::SerializeSettings */
+		/** \copydoc Pathfinding.ISerializableObject.SerializeSettings \copybrief Pathfinding.ISerializableObject.SerializeSettings */
 		public void SerializeSettings (AstarSerializer serializer) {
 			serializer.AddValue ("Mask",(int)mask);
 			serializer.AddValue ("Diameter",diameter);
@@ -621,7 +657,7 @@ namespace Pathfinding {
 			serializer.AddValue ("collisionOffset",collisionOffset);
 		}
 		
-		/** \copydoc Pathfinding::ISerializableObject::DeSerializeSettings */
+		/** \copydoc Pathfinding.ISerializableObject.DeSerializeSettings */
 		public void DeSerializeSettings (AstarSerializer serializer) {
 			mask.value = (int)serializer.GetValue ("Mask",typeof (int));
 			diameter = (float)serializer.GetValue ("Diameter",typeof (float));

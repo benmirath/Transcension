@@ -1,18 +1,20 @@
 using System;
 using UnityEngine;
 
-public interface IEquipmentProperties {
-	float BaseDamage {
-		get;
-	}
-	float AdjustedBaseDamage {
-		get;
-	}
-	ScalingStat ScalingBuff {
-		get;
-	}
-}
+public interface IEquipmentProperties
+{
+		float BaseDamage {
+				get;
+		}
 
+		float AdjustedBaseDamage {
+				get;
+		}
+
+		ScalingStat ScalingBuff {
+				get;
+		}
+}
 ///<summary>
 /// Elements required for (all) equipment stats.
 /// Lists (specified for each weapon)
@@ -37,7 +39,8 @@ public interface IEquipmentProperties {
 /// -Weapon Buff (determined based on any abilities/items/effects that boost the weapons damage)
 /// -Real Damage (((base damage * scaling buff) * ability buff) + Weapon Buff)
 /// </summary>	  	
-[System.Serializable] public class BaseEquipmentProperties {
+[System.Serializable] public class BaseEquipmentProperties : MonoBehaviour
+{
 //	public enum EquipmentType {
 //		//DW only
 //		PrayerSeal,
@@ -89,51 +92,49 @@ public interface IEquipmentProperties {
 	
 	#region Fields
 	//Inspector Fields
-	[SerializeField] protected string name;
-	[SerializeField] protected float baseDamage;					//Base offensive efficacy of equipment, modified by stats and abilities
-//	[SerializeField] protected float baseDefense;					//Base defensive efficacy of equipment, modified by stats
-	
-	[SerializeField] protected ScalingStat scalingBuff;
-	
-	//[SerializeField] protected Attribute scalingstat;				//Buff to weapon's efficacy based on user's selected stat and its scaling ratio
-	
-	//Internal Fields
-//	private float abilityBuff;										//percentage of attack adjustment from ability being used.
-	protected BaseEquipment curEquipment;
+		[SerializeField] protected string name;
+		[SerializeField] protected float baseDamage;
+//Base offensive efficacy of equipment, modified by stats and abilities
+		[SerializeField] protected ScalingStat scalingBuff;
+		protected BaseEquipment curEquipment;
 	#endregion
 	
 	#region Initializers
-	public BaseEquipmentProperties () {
-		//abilityBuff = 0;
-	}
-	public void Setup (BaseEquipment thisWeapon) {
-		curEquipment = thisWeapon;
-		//scalingBuff.SetScaling(curEquipment.user.CharStats);
-	}
+		public BaseEquipmentProperties ()
+		{
+				//abilityBuff = 0;
+		}
+
+		public void Setup (BaseEquipment thisWeapon)
+		{
+				curEquipment = thisWeapon;
+				//scalingBuff.SetScaling(curEquipment.user.CharStats);
+		}
 	#endregion Initializerss
 	
 	#region Properties
-	public float BaseDamage {
-		get {return baseDamage;}
-		set {baseDamage = value;}
-	}
-	public float AdjustedBaseDamage {
-		get {return baseDamage * scalingBuff.BaseValue;}
-	}
+		public float BaseDamage {
+				get { return baseDamage;}
+				set { baseDamage = value;}
+		}
+
+		public float AdjustedBaseDamage {
+				get { return baseDamage * scalingBuff.BaseValue;}
+		}
 //	public float BaseDefense {
 //		get {return baseDefense;}
 //		set {baseDefense = value;}
 //	}
-	public ScalingStat ScalingBuff {
-		get {return scalingBuff;}
-	}
+		public ScalingStat ScalingBuff {
+				get { return scalingBuff;}
+		}
 //	public float AbilityBuff {
 //		get {return abilityBuff;}
 //		set {abilityBuff = value;}
 //	}
-	public BaseEquipment CurEquipment {
-		get {return curEquipment;}
-		set {curEquipment = value;}
-	}
+		public BaseEquipment CurEquipment {
+				get { return curEquipment;}
+				set { curEquipment = value;}
+		}
 	#endregion Properties
 }

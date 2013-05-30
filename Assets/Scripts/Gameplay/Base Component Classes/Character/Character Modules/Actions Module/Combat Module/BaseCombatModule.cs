@@ -10,15 +10,15 @@ public interface ICombat {
 
 public class BaseCombatModule : ICombat {
 	protected ICharacter user;
-	protected IPhysics charPhysics;
+//	protected IPhysics charPhysics;
 	protected ICharacterStats charStats;
 
 	public ICharacter User {
 		get {return user;}
 	}
-	public IPhysics CharPhysics {
-		get {return charPhysics;}
-	}
+//	public IPhysics CharPhysics {
+//		get {return charPhysics;}
+//	}
 	public ICharacterStats CharStats {
 		get {return charStats;}
 	}

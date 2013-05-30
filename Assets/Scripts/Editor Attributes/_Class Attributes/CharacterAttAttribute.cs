@@ -2,12 +2,12 @@ using UnityEngine;
 using System.Collections;
 
 public class CharacterAttAttribute : PropertyAttribute {
-	public string name;
+	public Attribute.AttributeName name;
 	//public string name;						//Name of Attribute
 	public float value;						//Base Value of Attribute
 
 	public CharacterAttAttribute (Attribute.AttributeName n) {
-		name = n.ToString();
+		name = n;
 	//	value = att.BaseValue
 	}
 }

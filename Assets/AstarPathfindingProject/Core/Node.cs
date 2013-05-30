@@ -1,11 +1,8 @@
-//#define NoHeuristic	//"Heuristic"[NoHeuristic,ManhattanHeuristic,DiagonalManhattanHeuristic,EucledianHeuristic]Forces the heuristic to be the chosen one or disables it altogether
-//#define NoVirtualUpdateH //Should UpdateH be virtual or not
-//#define NoVirtualUpdateG //Should UpdateG be virtual or not
-//#define NoVirtualOpen //Should Open be virtual or not
-//#define NoHScaling    //Should H score scaling be enabled. H Score is usually multiplied with UpdateH's parameter 'scale'
-//#define NoTagPenalty		//Enables or disables tag penalties. Can give small performance boost
-
-//#define SingleCoreOptimize
+//#define ASTAR_EucledianHeuristic	//"Heuristic"[ASTAR_NoHeuristic,ASTAR_ManhattanHeuristic,ASTAR_DiagonalManhattanHeuristic,ASTAR_EucledianHeuristic]Forces the heuristic to be the chosen one or disables it altogether
+//#define ASTAR_NoHScaling    //Should H score scaling be enabled. H Score is usually multiplied with UpdateH's parameter 'scale'
+//#define ASTAR_NoTagPenalty		//Enables or disables tag penalties. Can give small performance boost
+//#define ASTAR_ConfigureTagsAsMultiple
+//#define ASTAR_SINGLE_THREAD_OPTIMIZE
 
 
 using UnityEngine;
@@ -21,13 +18,16 @@ namespace Pathfinding {
 	public class Node
 		: NodeRun
 	{
-	
+		
+		/** Global node index */
 		private int nodeIndex;
 		
-		/** Returns the global node index */
+		/** Returns the global node index. Used for internal pathfinding purposes */
 		public int GetNodeIndex () {
 			return nodeIndex;
 		}
+		
+		//public override int GetHashCode () { return GetNodeIndex (); }
 		
 		public NodeRun GetNodeRun (NodeRunData data) {
 			return (NodeRun)this;
@@ -64,12 +64,24 @@ namespace Pathfinding {
 		
 		//public static Path activePath; /*< Path which is currently being calculated */
 		
-		public uint penalty; /**< Penlty cost for walking on this node. This can be used to make it harder/slower to walk over certain areas.
+		private uint _penalty; /**< Penlty cost for walking on this node. This can be used to make it harder/slower to walk over certain areas. */
+		public uint penalty {
+			get {
+				return _penalty;
+			}
+			set {
+				if (value > 0xFFFFF)
+					Debug.LogWarning ("Very high penalty applied. Are you sure negative values haven't underflowed?\n" +
+						"Penalty values this high could with long paths cause overflows and in some cases infinity loops because of that.\n" +
+						"Penalty value applied: "+value);
+				_penalty = value;
+			}
+		}
 		
 		//public int tags = 1; /* < Tags for walkability */
 		
 		/** List of all connections from this node. This node's neighbour nodes are stored in this array.\n
-		 * \note Not all connections are stored in this array, some node types (such as Pathfinding::GridNode) use custom connection systems which they store somewhere else.
+		 * \note Not all connections are stored in this array, some node types (such as Pathfinding.GridNode) use custom connection systems which they store somewhere else.
 		 * \see #connectionCosts */
 		public Node[] connections;
 		
@@ -155,11 +167,20 @@ namespace Pathfinding {
 			}
 		}
 		
-		/** Returns bit 8 from #flags. In the GridGraph (and derived) it is used to store if walkable before erosion.
-		  * \see GridNode::WalkableErosion */
+		/** Returns bit 15 from #flags. In the GridGraph (and derived) it is used to store if walkable before erosion.
+		  * \see GridNode.WalkableErosion */
 		public bool Bit15 {
 			get { return ((flags >> 15) & 1) != 0; }
 			set { flags = (flags & ~(1 << 15)) | ((value?1:0) << 15); }
+		}
+		
+		/** Returns bit 16 from #flags.
+		 * Graphs can use this value for any kind of data storage.
+		 * Grid Graphs use it as a temporary variable when updating graphs using erosion.
+		  * \see GridNode.WalkableErosion */
+		public bool Bit16 {
+			get { return ((flags >> 16) & 1) != 0; }
+			set { flags = (flags & ~(1 << 16)) | ((value?1:0) << 16); }
 		}
 		
 		/** Is the node walkable */
@@ -175,7 +196,7 @@ namespace Pathfinding {
 		
 		/** Area ID of the node. Nodes which there are no valid path between have different area values.
 		  * \note Small areas can have have the same area ID since only 256 ID values are available
-		  * \see AstarPath::minAreaSize
+		  * \see AstarPath.minAreaSize
 		  */
 		public int area {
 			get {
@@ -189,7 +210,7 @@ namespace Pathfinding {
 		}
 				
 		/** The index of the graph this node is in.
-		  * \see \link Pathfinding::AstarData::graphs AstarData.graphs \endlink */
+		  * \see \link Pathfinding.AstarData.graphs AstarData.graphs \endlink */
 		public int graphIndex {
 			get {
 				return ((flags >> GraphIndexBitNumber) & GraphIndexBitsSize);
@@ -324,7 +345,9 @@ endif
 		}
 		
 		public void UpdateG (NodeRun nodeR, NodeRunData nodeRunData) {
-			nodeR.g = nodeR.parent.g+nodeR.cost+penalty + nodeRunData.path.GetTagPenalty(tags);
+			nodeR.g = nodeR.parent.g+nodeR.cost+penalty
+				+ nodeRunData.path.GetTagPenalty(tags)
+					;
 		}
 		
 		
@@ -426,18 +449,16 @@ endif
 		 * \see Open */
 		public void BaseOpen (NodeRunData nodeRunData, NodeRun nodeR, Int3 targetPosition, Path path) {
 			
-			if (connections == null) {
-				return;
-			}
+			if (connections == null) return;
 			
 			for (int i=0;i<connections.Length;i++) {
-				Node node = connections[i];
+				Node conNode = connections[i];
 				
-				if (!path.CanTraverse (node)) {
+				if (!path.CanTraverse (conNode)) {
 					continue;
 				}
 				
-				NodeRun nodeR2 = node.GetNodeRun (nodeRunData);
+				NodeRun nodeR2 = conNode.GetNodeRun (nodeRunData);
 				
 				if (nodeR2.pathID != nodeRunData.pathID) {
 					
@@ -446,8 +467,8 @@ endif
 					
 					nodeR2.cost = (uint)connectionCosts[i];
 					
-					node.UpdateH (targetPosition, path.heuristic, path.heuristicScale, nodeR2);
-					node.UpdateG (nodeR2, nodeRunData);
+					conNode.UpdateH (targetPosition, path.heuristic, path.heuristicScale, nodeR2);
+					conNode.UpdateG (nodeR2, nodeRunData);
 					
 					nodeRunData.open.Add (nodeR2);
 					
@@ -457,15 +478,14 @@ endif
 					//If not we can test if the path from the current node to this one is a better one then the one already used
 					uint tmpCost = (uint)connectionCosts[i];
 					
-					if (nodeR.g+tmpCost+node.penalty
-				+ path.GetTagPenalty(node.tags)
+					if (nodeR.g+tmpCost+conNode.penalty
+				+ path.GetTagPenalty(conNode.tags)
 					    	< nodeR2.g) {
 						
 						nodeR2.cost = tmpCost;
 						nodeR2.parent = nodeR;
 						
-						//TODO!!!!! ??
-						node.UpdateAllG (nodeR2,nodeRunData);
+						conNode.UpdateAllG (nodeR2,nodeRunData);
 						
 						nodeRunData.open.Add (nodeR2);
 					}
@@ -474,7 +494,7 @@ endif
 				+ path.GetTagPenalty(tags)
 					         < nodeR.g) {//Or if the path from this node ("node") to the current ("current") is better
 						
-						bool contains = node.ContainsConnection (this);
+						bool contains = conNode.ContainsConnection (this);
 						
 						//Make sure we don't travel along the wrong direction of a one way link now, make sure the Current node can be moved to from the other Node.
 						/*if (node.connections != null) {
@@ -493,11 +513,37 @@ endif
 						nodeR.parent = nodeR2;
 						nodeR.cost = tmpCost;
 						
-						//TODO!!!!!!! ??
 						UpdateAllG (nodeR,nodeRunData);
 						
 						nodeRunData.open.Add (nodeR);
 					}
+				}
+			}
+		}
+		
+		/** Get all connections for a node.
+		 * This function will call the callback with every node this node is connected to.
+		 * In contrast to the #connections array this function also includes custom connections which
+		 * for example grid graphs use.
+		 * \since Added in version 3.2
+		 */
+		public virtual void GetConnections (NodeDelegate callback) {
+			GetConnectionsBase (callback);
+		}
+		
+		/** Get all connections for a node.
+		 * This function will call the callback with every node this node is connected to.
+		 * This is a base function and will simply loop through the #connections array.
+		 * \see GetConnections
+		 */
+		public void GetConnectionsBase (NodeDelegate callback) {
+			if (connections == null) {
+				return;
+			}
+			
+			for (int i=0;i<connections.Length;i++) {
+				if (connections[i].walkable) {
+					callback (connections[i]);
 				}
 			}
 		}
@@ -578,10 +624,15 @@ endif
 			return false;
 		}
 		
-		/** Add a connection to the node with the specified cost
-		 * \note This will create a one-way connection, consider calling the same function on the other node too 
+		/** Add a connection to the node with the specified cost.
+		 * If a connection to the node already exists, this function will only change the cost of it.
+		 * \note This will create a one-way connection, consider calling the same function on the other node too.
+		 * 
+		 * \note GridGraphs use custom connections and has a fixed cost for connections to neighbour nodes.
+		 * So you will not be able to modify costs to neighbour nodes on grid graphs with this function.
+		 * 
 		 * \see RemoveConnection
-		 * \see Pathfinding::Int3::costMagnitude */
+		 * \see Pathfinding.Int3.costMagnitude */
 		public void AddConnection (Node node, int cost) {
 			
 			if (connections == null) {
@@ -617,6 +668,7 @@ endif
 		 * Returns true if a connection was removed, returns false if no connection to the node was found
 		 * \note This will only remove the connection from this node to \a node, but it will still exist in the other direction
 		 * consider calling the same function on the other node too
+		 * 
 		 * \see AddConnection
 		 */
 		public virtual bool RemoveConnection (Node node) {
@@ -640,12 +692,34 @@ endif
 					
 					connections = new_connections;
 					connectionCosts = new_costs;
-					//Debug.Log ("Done Remove");
 					return true;
 				}
 			}
 			return false;
 		}
-		
+
+		/**
+		 * Recalculate costs for each connection.
+		 * All standard connections, which means those stored in the #connections array will have their
+		 * costs recalculated. Non-standard connections such as most grid graph connections will
+		 * not be recalculated (mostly because they are constant and cannot be recalculated).
+		 *
+		 * @param neighbours If true, recalculates connection costs on this node's neighbours as well.
+		 * This makes sure costs are calculated correctly (the same) in both directions.
+		 *
+		 * \note Assumes the correct cost is simply the distance between the nodes (in Int3 space).
+		 * This is what the built-in graphs (e.g Point Graph) use, so it should be fine.
+		 */
+		public void RecalculateConnectionCosts (bool neighbours) {
+			//Calculate the cost for each connection
+			if (connections == null) return;
+			
+			for (int i=0;i<connections.Length;i++)
+				connectionCosts[i] = (int)System.Math.Round((position - connections[i].position).magnitude);
+	
+			//Recalculate connection costs for neighbours as well
+			//Makes sure costs are calculated correctly (the same) in both directions
+			if (neighbours) for (int i=0;i<connections.Length;i++) connections[i].RecalculateConnectionCosts (false);
+		}
 	}
 }

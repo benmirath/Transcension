@@ -4,7 +4,10 @@ using Pathfinding;
 
 [AddComponentMenu("Pathfinding/Modifiers/Alternative Path")]
 [System.Serializable]
-/** Applies penalty to the paths it processes telling other units to avoid choosing the same path. 
+/** Applies penalty to the paths it processes telling other units to avoid choosing the same path.
+ * 
+ * Note that this might not work properly if penalties are modified by other actions as well (e.g graph updates which reset the penalty to zero).
+ * 
  * \ingroup modifiers
  */
 public class AlternativePath : MonoModifier {
@@ -51,7 +54,7 @@ public class AlternativePath : MonoModifier {
 	public override void Apply (Path p, ModifierData source) {
 		
 		lock (lockObject) {
-			toBeApplied = p.path;
+			toBeApplied = p.path.ToArray();
 			//AstarPath.active.RegisterCanUpdateGraphs (ApplyNow);
 			if (!waitingForApply) {
 				waitingForApply = true;
@@ -70,9 +73,16 @@ public class AlternativePath : MonoModifier {
 			
 			//Add previous penalty
 			if (prevNodes != null) {
+				bool warnPenalties = false;
 				int rndStart = rnd.Next (randomStep);
 				for (int i=rndStart;i<prevNodes.Length;i+= rnd.Next (1,randomStep)) {
-					prevNodes[i].penalty = (uint)(prevNodes[i].penalty-prevPenalty);
+					if (prevNodes[i].penalty < prevPenalty) {
+						warnPenalties = true;
+					}
+					prevNodes[i].penalty = (uint)(Mathf.Max(prevNodes[i].penalty-prevPenalty));
+				}
+				if (warnPenalties) {
+					Debug.LogWarning ("Penalty for some nodes has been reset while this modifier was active. Penalties might not be correctly set.");
 				}
 			}
 			

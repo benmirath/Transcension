@@ -1,8 +1,9 @@
-//#define DEBUG
+//#define ASTARDEBUG
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Pathfinding;
+using Pathfinding.Util;
 
 [AddComponentMenu ("Pathfinding/Modifiers/Funnel")]
 [System.Serializable]
@@ -21,16 +22,13 @@ public class FunnelModifier : MonoModifier {
 	}
 #endif
 	
-	/* Get start and end points from \link Path::vectorPath vectorPath \endlink. Set this to true if you are using the Start End modifier and want to have more accurate start and end points (the ones you passed to StartPath) */
+	/* Get start and end points from \link Path.vectorPath vectorPath \endlink. Set this to true if you are using the Start End modifier and want to have more accurate start and end points (the ones you passed to StartPath) */
 	//public bool useVectorStartEnd = true;
 	
 	//Used to reduce allocations
 	private static List<Vector3> tmpList;
 	private static Int3[] leftFunnel;
 	private static Int3[] rightFunnel;
-	
-	public static Vector3[] lastLeftFunnel;
-	public static Vector3[] lastRightFunnel;
 	
 	public override ModifierData input {
 		get { return ModifierData.StrictVectorPath; }
@@ -41,10 +39,10 @@ public class FunnelModifier : MonoModifier {
 	}
 	
 	public override void Apply (Path p, ModifierData source) {
-		Node[] path = p.path;
-		Vector3[] vectorPath = p.vectorPath;
+		List<Node> path = p.path;
+		List<Vector3> vectorPath = p.vectorPath;
 		
-		if (path == null || path.Length == 0 || vectorPath == null || vectorPath.Length != path.Length) {
+		if (path == null || path.Count == 0 || vectorPath == null || vectorPath.Count != path.Count) {
 			return;
 		}
 		
@@ -54,12 +52,14 @@ public class FunnelModifier : MonoModifier {
 		//First node which is in the graph currentGraphIndex
 		int currentGraphStart = 0;
 		
-		List<Vector3> funnelPath = new List<Vector3> ();
+		List<Vector3> funnelPath = ListPool<Vector3>.Claim ();
 		
-		List<Vector3> left = new List<Vector3> ();
-		List<Vector3> right = new List<Vector3> ();
+		List<Vector3> left = ListPool<Vector3>.Claim ();
+		List<Vector3> right = ListPool<Vector3>.Claim ();
 		
-		for (int i=0;i<path.Length;i++) {
+		AstarProfiler.StartProfile ("Construct Funnel");
+		
+		for (int i=0;i<path.Count;i++) {
 			
 			if (path[i].graphIndex != currentGraphIndex) {
 				IFunnelGraph funnelGraph = AstarData.GetGraph (path[currentGraphStart]) as IFunnelGraph;
@@ -70,7 +70,9 @@ public class FunnelModifier : MonoModifier {
 						funnelPath.Add ((Vector3)path[j].position);
 					}
 				} else {
+					AstarProfiler.StartProfile ("Construct Funnel Real");
 					ConstructFunnel (funnelGraph, vectorPath,path,currentGraphStart,i-1,funnelPath,left,right);
+					AstarProfiler.EndProfile ();
 				}
 				
 				
@@ -79,21 +81,30 @@ public class FunnelModifier : MonoModifier {
 			}
 		}
 		
+		
 		IFunnelGraph funnelGraph2 = AstarData.GetGraph (path[currentGraphStart]) as IFunnelGraph;
 				
 		if (funnelGraph2 == null) {
-			for (int j=currentGraphStart;j<path.Length-1;j++) {
+			for (int j=currentGraphStart;j<path.Count-1;j++) {
 				funnelPath.Add ((Vector3)path[j].position);
 			}
 		} else {
-			ConstructFunnel (funnelGraph2, vectorPath,path,currentGraphStart,path.Length-1,funnelPath,left,right);
+			AstarProfiler.StartProfile ("Construct Funnel Real");
+			ConstructFunnel (funnelGraph2, vectorPath,path,currentGraphStart,path.Count-1,funnelPath,left,right);
+			AstarProfiler.EndProfile ();
 		}
 		
-		p.vectorPath = funnelPath.ToArray ();
+		AstarProfiler.EndProfile ();
+		
+		ListPool<Vector3>.Release (p.vectorPath);
+		p.vectorPath = funnelPath;
+		
+		ListPool<Vector3>.Release (left);
+		ListPool<Vector3>.Release (right);
 		
 	}
 	
-	public void ConstructFunnel (IFunnelGraph funnelGraph, Vector3[] vectorPath, Node[] path, int sIndex, int eIndex, List<Vector3> funnelPath, List<Vector3> left, List<Vector3> right) {
+	public void ConstructFunnel (IFunnelGraph funnelGraph, List<Vector3> vectorPath, List<Node> path, int sIndex, int eIndex, List<Vector3> funnelPath, List<Vector3> left, List<Vector3> right) {
 		//Construct a funnel corridor for the nodes in the path segment
 					
 		left.Clear ();
@@ -118,9 +129,6 @@ public class FunnelModifier : MonoModifier {
 			//	funnelPath.Add (path[j].position);
 			//}
 		}
-		
-		lastLeftFunnel = left.ToArray ();
-		lastRightFunnel = right.ToArray ();
 	}
 	
 	public bool RunFunnel (List<Vector3> left, List<Vector3> right, List<Vector3> funnelPath) {
@@ -494,7 +502,7 @@ public class FunnelModifier : MonoModifier {
 			Debug.DrawLine (path[i].position,path[i+1].position,Color.blue);
 		}*
 		
-		#if DEBUGGING
+		#if ASTARDEBUG
 		for (int i=0;i<leftFunnel.Length-1;i++) {
 			Debug.DrawLine (leftFunnel[i],leftFunnel[i+1],Color.red);
 			Debug.DrawLine (rightFunnel[i],rightFunnel[i+1],Color.magenta);
@@ -600,7 +608,7 @@ public class FunnelModifier : MonoModifier {
 /** Graphs implementing this interface have support for the Funnel modifier */
 public interface IFunnelGraph {
 	
-	void BuildFunnelCorridor (Node[] path, int sIndex, int eIndex, List<Vector3> left, List<Vector3> right);
+	void BuildFunnelCorridor (List<Node> path, int sIndex, int eIndex, List<Vector3> left, List<Vector3> right);
 	
 	/** Add the portal between node \a n1 and \a n2 to the funnel corridor. The left and right edges does not necesarily need to be the left and right edges (right can be left), they will be swapped if that is detected. But that works only as long as the edges do not switch between left and right in the middle of the path.
 	  */

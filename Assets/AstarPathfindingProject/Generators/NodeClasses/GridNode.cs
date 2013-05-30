@@ -1,3 +1,4 @@
+//#define ASTAR_NoTagPenalty
 using System;
 using Pathfinding;
 using System.Collections.Generic;
@@ -15,6 +16,9 @@ namespace Pathfinding.Nodes
 		/** First 24 bits used for the index value of this node in the graph specified by the last 8 bits. \see #gridGraphs */
 		protected int indices;
 		
+		/** Internal list of grid graphs.
+		 * Used for fast typesafe lookup of graphs.
+		 */
 		public static GridGraph[] gridGraphs;
 		
 		/** Returns if this node has any valid grid connections */
@@ -23,17 +27,18 @@ namespace Pathfinding.Nodes
 		}
 		
 		/** Has connection to neighbour \a i.
-		 * The neighbours are the up to 8 grid neighbours of this node
-		 * /see SetConnection
+		 * The neighbours are the up to 8 grid neighbours of this node.
+		 * \see SetConnection
 		 */
 		public bool GetConnection (int i) {
 			return ((flags >> i) & 1) == 1;
 		}
 		
 		/** Set connection to neighbour \a i.
-		 * \param value 0 or 1 (true/false)
+		 * \param i Connection to set [0...7]
+		 * \param value 1 or 0 (true/false)
 		 * The neighbours are the up to 8 grid neighbours of this node
-		 * /see GetConnection
+		 * \see GetConnection
 		 */
 		public void SetConnection (int i, int value) {
 			flags = flags & ~(1 << i) | (value << i);
@@ -63,7 +68,7 @@ namespace Pathfinding.Nodes
 		}
 		
 		/** Sets the index of which GridGraph this node is contained in.
-		 * Only changes lookup variables, does not actually move the node to another graph
+		 * Only changes lookup variables, does not actually move the node to another graph.
 		 */
 		public void SetGridIndex (int gridIndex) {
 			indices &= 0xFFFFFF;
@@ -71,7 +76,7 @@ namespace Pathfinding.Nodes
 		}
 		
 		/** Returns if walkable before erosion.
-		  * Identical to Pathfinding::Node::Bit15 but should be used when possible to make the code more clear */
+		  * Identical to Pathfinding.Node.Bit15 but should be used when possible to make the code more readable */
 		public bool WalkableErosion {
 			get { return Bit15; }//return ((flags >> 15) & 1) != 0 ? true : false; }
 			set { Bit15 = value; }//flags = (flags & ~(1 << 15)) | (value?1:0 << 15); }
@@ -112,7 +117,7 @@ namespace Pathfinding.Nodes
 			
 			GridGraph graph = gridGraphs[indices >> 24];
 			
-			int index = indices & 0xFFFFFF;
+			int index = GetIndex();
 			
 			int x = index % graph.width;
 			int z = index/graph.width;
@@ -122,25 +127,25 @@ namespace Pathfinding.Nodes
 			int[] neighbourOffsetsX = graph.neighbourXOffsets;
 			int[] neighbourOffsetsZ = graph.neighbourZOffsets;
 			
+			//Loop through neighbours
 			for (int i=0;i<8;i++) {
-				//if (((flags >> i) & 1) == 1) {
-				
+				//Find the coordinates for the neighbour
 				int nx = x+neighbourOffsetsX[i];
 				int nz = z+neighbourOffsetsZ[i];
 				
-				
+				//Make sure it is not out of bounds
 				if (nx < 0 || nz < 0 || nx >= graph.width || nz >= graph.depth) {
 					continue;
 				}
 				
 				GridNode node = (GridNode)graph.nodes[index+neighbourOffsets[i]];
 				
+				//Calculate connections for neighbour
 				graph.CalculateConnections (graph.nodes, nx, nz, node);
-				//}
 			}
 			
-		}
-		
+		}	
+
 		/** Removes a connection from the node.
 		 * This can be a standard connection or a grid connection
 		 * \returns True if a connection was removed, false otherwsie */
@@ -184,9 +189,6 @@ namespace Pathfinding.Nodes
 		}
 		
 		public override	void UpdateAllG (NodeRun nodeR, NodeRunData nodeRunData) {
-			//g = parent.g+cost+penalty;
-			//f = g+h;
-			
 			BaseUpdateAllG (nodeR, nodeRunData);
 			
 			int index = GetIndex ();
@@ -206,14 +208,34 @@ namespace Pathfinding.Nodes
 					}
 				}
 			}
-				
+		}
+		
+		public override void GetConnections (NodeDelegate callback) {
+			
+			GetConnectionsBase (callback);
+			
+			GridGraph graph = gridGraphs[indices >> 24];
+			
+			int index = GetIndex ();
+			
+			int[] neighbourOffsets = graph.neighbourOffsets;
+			Node[] nodes = graph.nodes;
+			
+			for (int i=0;i<8;i++) {
+				if (((flags >> i) & 1) == 1) {
+					
+					Node node = nodes[index+neighbourOffsets[i]];
+					
+					callback (node);
+				}
+			}
 		}
 		
 		public override void FloodFill (Stack<Node> stack, int area) {
 			
 			base.FloodFill (stack,area);
 			
-			GridGraph graph = gridGraphs[indices >> 24];//];
+			GridGraph graph = gridGraphs[indices >> 24];
 			
 			int index = indices & 0xFFFFFF;
 			
@@ -277,7 +299,6 @@ namespace Pathfinding.Nodes
 						node.UpdateH (targetPosition,path.heuristic,path.heuristicScale, nodeR2);
 						node.UpdateG (nodeR2,nodeRunData);
 						
-						
 						nodeRunData.open.Add (nodeR2);
 					
 					} else {
@@ -288,13 +309,11 @@ namespace Pathfinding.Nodes
 				+ path.GetTagPenalty(node.tags)
 						  		< nodeR2.g) {
 							nodeR2.cost = tmpCost;
-							//node.extraCost = extraCost2;
+							
 							nodeR2.parent = nodeR;
 							
 							node.UpdateAllG (nodeR2,nodeRunData);
 							
-							//open.Add (node);
-							//Debug.DrawLine (current.vectorPos,current.neighbours[i].vectorPos,Color.cyan); //Uncomment for @Debug
 						}
 						
 						 else if (nodeR2.g+tmpCost+penalty
@@ -316,13 +335,8 @@ namespace Pathfinding.Nodes
 							
 							nodeR.parent = nodeR2;
 							nodeR.cost = tmpCost;
-							//extraCost = extraCost2;
 							
 							UpdateAllG (nodeR,nodeRunData);
-							//open.Add (this);
-							//Debug.DrawLine (current.vectorPos,current.neighbours[i].vectorPos,Color.blue); //Uncomment for @Debug
-							
-							//open.Add (this);
 						}
 					}
 				}

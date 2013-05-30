@@ -131,9 +131,10 @@ namespace Pathfinding.Util {
 			return bytes;
 		}			
 		
+		private static System.Random random = new System.Random();
+		
 		public static Guid NewGuid () {
 			byte[] bytes = new byte[16];
-			System.Random random = new System.Random();
 			random.NextBytes(bytes);
 			return new Guid(bytes);
 		}

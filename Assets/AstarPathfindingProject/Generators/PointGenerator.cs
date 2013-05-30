@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using JsonFx.Json;
+using Pathfinding.Serialization.JsonFx;
 
 namespace Pathfinding {
 	
@@ -36,7 +36,14 @@ namespace Pathfinding {
 		public string searchTag;
 		
 		[JsonMember]
-		/** Max distance for a connection to be valid. 0 = infinity */
+		/** Max distance for a connection to be valid.
+		 * The value 0 (zero) will be read as infinity and thus all nodes not restricted by
+		 * other constraints will be added as connections.
+		 * 
+		 * A negative value will disable any neighbours to be added.
+		 * It will completely stop the connection processing to be done, so it can save you processing
+		 * power if you don't these connections.
+		 */
 		public float maxDistance = 0;
 		
 		[JsonMember]
@@ -141,33 +148,35 @@ namespace Pathfinding {
 				}
 			}
 			
-			//To avoid too many allocations, these lists are reused for each node
-			List<Node> connections = new List<Node>(3);
-			List<int> costs = new List<int>(3);
-			
-			//Loop through all nodes and add connections to other nodes
-			for (int i=0;i<nodes.Length;i++) {
+			if (maxDistance >= 0) {
+				//To avoid too many allocations, these lists are reused for each node
+				List<Node> connections = new List<Node>(3);
+				List<int> costs = new List<int>(3);
 				
-				connections.Clear ();
-				costs.Clear ();
-				
-				Node node = nodes[i];
-				
-				
-				for (int j=0;j<nodes.Length;j++) {
-					if (i == j) continue;
-						
-					Node other = nodes[j];
+				//Loop through all nodes and add connections to other nodes
+				for (int i=0;i<nodes.Length;i++) {
 					
-					float dist = 0;
-					if (IsValidConnection (node,other,out dist)) {
-						connections.Add (other);
-						costs.Add (Mathf.RoundToInt (dist*Int3.FloatPrecision));
+					connections.Clear ();
+					costs.Clear ();
+					
+					Node node = nodes[i];
+					
+					
+					for (int j=0;j<nodes.Length;j++) {
+						if (i == j) continue;
+							
+						Node other = nodes[j];
+						
+						float dist = 0;
+						if (IsValidConnection (node,other,out dist)) {
+							connections.Add (other);
+							costs.Add (Mathf.RoundToInt (dist*Int3.FloatPrecision));
+						}
 					}
+					
+					node.connections = connections.ToArray ();
+					node.connectionCosts = costs.ToArray ();
 				}
-				
-				node.connections = connections.ToArray ();
-				node.connectionCosts = costs.ToArray ();
 			}
 			
 			//GC can clear this up now.

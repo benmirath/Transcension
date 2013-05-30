@@ -1,33 +1,44 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Pathfinding.Util;
 
 namespace Pathfinding {
 	
 	/** Contains useful functions for updating graphs.
-	 * This class works a lot with the Node class, a useful function to get nodes is AstarPath.GetNearest.
+	  * This class works a lot with the Node class, a useful function to get nodes is AstarPath.GetNearest.
+	  * 
 	  * \see AstarPath.GetNearest
-	  * \version Added in 3.1
+	  * \see Pathfinding.Utils.PathUtilities
+	  * 
+	  * \since Added in 3.1
+	  * 
 	  * \ingroup utils
 	  */
 	public static class GraphUpdateUtilities {
-	
+		
 		/** Returns if there is a walkable path from \a n1 to \a n2.
 		 * If you are making changes to the graph, areas must first be recaculated using FloodFill()
-		 * \note This might return true for small areas even if there is no possible path if #minAreaSize is greater than zero (0).
-		 * So when using this, it is recommended to set #minAreaSize to 0. (A* Inspector -> Settings -> Pathfinding)
+		 * \note This might return true for small areas even if there is no possible path if AstarPath.minAreaSize is greater than zero (0).
+		 * So when using this, it is recommended to set AstarPath.minAreaSize to 0. (A* Inspector -> Settings -> Pathfinding)
 		 * \see AstarPath.GetNearest
+		 * 
+		 * \deprecated This function has been moved to Pathfinding.Util.PathUtilities. Please use the version in that class
 		 */
+		[System.Obsolete("This function has been moved to Pathfinding.Util.PathUtilities. Please use the version in that class")]
 		public static bool IsPathPossible (Node n1, Node n2) {
 			return n1.walkable && n2.walkable && n1.area == n2.area;
 		}
 		
 		/** Returns if there are walkable paths between all nodes.
 		 * If you are making changes to the graph, areas must first be recaculated using FloodFill()
-		 * \note This might return true for small areas even if there is no possible path if #minAreaSize is greater than zero (0).
-		 * So when using this, it is recommended to set #minAreaSize to 0. (A* Inspector -> Settings -> Pathfinding)
+		 * \note This might return true for small areas even if there is no possible path if AstarPath.minAreaSize is greater than zero (0).
+		 * So when using this, it is recommended to set AstarPath.minAreaSize to 0. (A* Inspector -> Settings -> Pathfinding)
 		 * \see AstarPath.GetNearest
+		 * 
+		 * \deprecated This function has been moved to Pathfinding.Util.PathUtilities. Please use the version in that class
 		 */
+		[System.Obsolete("This function has been moved to Pathfinding.Util.PathUtilities. Please use the version in that class")]
 		public static bool IsPathPossible (List<Node> nodes) {
 			int area = nodes[0].area;
 			for (int i=0;i<nodes.Count;i++) if (!nodes[i].walkable || nodes[i].area != area) return false;
@@ -46,15 +57,15 @@ namespace Pathfinding {
 		 * \param guo The GraphUpdateObject to update the graphs with
 		 * \param node1 Node which should have a valid path to \a node2. All nodes should be walkable or \a false will be returned.
 		 * \param node2 Node which should have a valid path to \a node1. All nodes should be walkable or \a false will be returned.
-		 * \param alwaysRevert If true, revert the graphs even though no blocking ocurred
+		 * \param alwaysRevert If true, reverts the graphs to the old state even if no blocking ocurred
 		 */
 		public static bool UpdateGraphsNoBlock (GraphUpdateObject guo, Node node1, Node node2, bool alwaysRevert = false) {
-			List<Node> buffer = ClaimNodeBuffer ();
+			List<Node> buffer = ListPool<Node>.Claim ();
 			buffer.Add (node1);
 			buffer.Add (node2);
 			
 			bool worked = UpdateGraphsNoBlock (guo,buffer, alwaysRevert);
-			ReleaseNodeBuffer (buffer);
+			ListPool<Node>.Release (buffer);
 			return worked;
 		}
 		
@@ -69,7 +80,7 @@ namespace Pathfinding {
 		 * 
 		 * \param guo The GraphUpdateObject to update the graphs with
 		 * \param nodes Nodes which should have valid paths between them. All nodes should be walkable or \a false will be returned.
-		 * \param alwaysRevert If true, revert the graphs even though no blocking ocurred
+		 * \param alwaysRevert If true, reverts the graphs to the old state even if no blocking ocurred
 		 */
 		public static bool UpdateGraphsNoBlock (GraphUpdateObject guo, List<Node> nodes, bool alwaysRevert = false) {
 			
@@ -91,7 +102,7 @@ namespace Pathfinding {
 				AstarPath.ForceCallThreadSafeCallbacks ();
 				
 				//Check if all nodes are in the same area and that they are walkable, i.e that there are paths between all of them
-				worked = worked && IsPathPossible (nodes);
+				worked = worked && PathUtilities.IsPathPossible (nodes);
 				
 				//If it did not work, revert the GUO
 				if (!worked || alwaysRevert) {
@@ -110,30 +121,5 @@ namespace Pathfinding {
 			
 			return worked;
 		}
-		
-		
-	#region Utils
-		private static List<Node> _nodeBuffer;
-		
-		/** Claim a node buffer. Returns an empty List<Node>. Uses a cached one if possible.
-		 * \see ReleaseNodeBuffer
-		 */
-		private static List<Node> ClaimNodeBuffer () {
-			if (_nodeBuffer == null)
-				return new List<Node>();
-			
-			List<Node> buffer = _nodeBuffer;
-			_nodeBuffer = null;
-			buffer.Clear ();
-			return buffer;
-		}
-		
-		/** Releases a claimed node buffer. This enables it for caching again.
-		 * \see ClaimNodeBuffer
-		 */
-		private static void ReleaseNodeBuffer (List<Node> buffer) {
-			_nodeBuffer = buffer;
-		}
-	#endregion
 	}
 }

@@ -61,6 +61,7 @@ public class MineBotAI : AIPath {
 	 * when the current position is some distance away from the previous spawn-point
 	*/
 	public override void OnTargetReached () {
+		
 		if (endOfPathEffect != null && Vector3.Distance (tr.position, lastTarget) > 1) {
 			GameObject.Instantiate (endOfPathEffect,tr.position,tr.rotation);
 			lastTarget = tr.position;
@@ -72,7 +73,7 @@ public class MineBotAI : AIPath {
 		return tr.position;
 	}
 	
-	protected new void FixedUpdate () {
+	protected new void Update () {
 		
 		//Get velocity in world-space
 		Vector3 velocity;

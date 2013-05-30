@@ -15,13 +15,15 @@ public class Seeker : MonoBehaviour {
 
 	//====== SETTINGS ======
 	
-	/* Recalculate last queried path when a graph changes. \see AstarPath::OnGraphsUpdated */
+	/* Recalculate last queried path when a graph changes. \see AstarPath.OnGraphsUpdated */
 	//public bool recalcOnGraphChange = true;
 	
 	public bool drawGizmos = true;
 	public bool detailedGizmos = false;
 	
-	/** Saves nearest nodes for previous path to enable faster Get Nearest Node calls. */
+	/** Saves nearest nodes for previous path to enable faster Get Nearest Node calls.
+	 * This variable basically does not a affect anything at the moment. So it is hidden in the inspector */
+	[HideInInspector]
 	public bool saveGetNearestHints = true;
 	
 	public StartEndModifier startEndModifier = new StartEndModifier ();
@@ -34,7 +36,7 @@ public class Seeker : MonoBehaviour {
 	 * Tag 0 which is the default tag, will have added a penalty of tagPenalties[0].
 	 * These should only be positive values since the A* algorithm cannot handle negative penalties.
 	 * \note This array should always have a length of 32.
-	 * \see Pathfinding::Path::tagPenalties
+	 * \see Pathfinding.Path.tagPenalties
 	 */
 	public int[] tagPenalties = new int[32];
 	
@@ -60,15 +62,18 @@ public class Seeker : MonoBehaviour {
 	//DEBUG
 	//public Path lastCompletedPath;
 	[System.NonSerialized]
-	public Vector3[] lastCompletedVectorPath;
+	public List<Vector3> lastCompletedVectorPath;
 	[System.NonSerialized]
-	public Node[] lastCompletedNodePath;
+	public List<Node> lastCompletedNodePath;
 	
 	//END DEBUG
 	
 	/** The current path */
 	[System.NonSerialized]
-	protected Path path;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+	protected Path path;
+
+	/** Previous path. Used to draw gizmos */
+	private Path prevPath;
 	
 	/** Returns #path */
 	public Path GetCurrentPath () {
@@ -78,19 +83,48 @@ public class Seeker : MonoBehaviour {
 	private Node startHint;
 	private Node endHint;
 	
+	private OnPathDelegate onPathDelegate;
+	private OnPathDelegate onPartialPathDelegate;
+	
 	/** Temporary callback only called for the current path. This value is set by the StartPath functions */
 	private OnPathDelegate tmpPathCallback;
 	
 	/** The path ID of the last path queried */
-	protected int lastPathID = 0;
+	protected uint lastPathID = 0;
 	
 	
+	/** Initializes a few variables
+	 */
 	public void Awake () {
+		onPathDelegate = OnPathComplete;
+		
 		startEndModifier.Awake (this);
 	}
 	
+	/** Cleans up some variables.
+	 * Releases any eventually claimed paths.
+	 * Calls OnDestroy on the #startEndModifier.
+	 * 
+	 * \see ReleaseClaimedPath
+	 * \see startEndModifier
+	 */
 	public void OnDestroy () {
+		ReleaseClaimedPath ();
 		startEndModifier.OnDestroy (this);
+	}
+	
+	/** Releases an eventual claimed path.
+	 * The seeker keeps the latest path claimed so it can draw gizmos.
+	 * In some cases this might not be desireable and you want it released.
+	 * In that case, you can call this method to release it (not that path gizmos will then not be drawn).
+	 * 
+	 * If you didn't understand anything from the description above, you probably don't need to use this method.
+	 */
+	public void ReleaseClaimedPath () {
+		if (prevPath != null) {
+			prevPath.ReleaseSilent (this);
+			prevPath = null;
+		}
 	}
 	
 	private List<IPathModifier> modifiers = new List<IPathModifier> ();
@@ -114,6 +148,16 @@ public class Seeker : MonoBehaviour {
 		PreProcess,
 		PostProcessOriginal,
 		PostProcess
+	}
+	
+	/** Post Processes the path.
+	 * This will run any modifiers attached to this GameObject on the path.
+	 * This is identical to calling RunModifiers(ModifierPass.PostProcess, path)
+	 * \see RunModifiers
+	 * \since Added in 3.2
+	 */
+	public void PostProcess (Path p) {
+		RunModifiers (ModifierPass.PostProcess,p);
 	}
 	
 	/** Runs modifiers on path \a p */
@@ -162,44 +206,48 @@ public class Seeker : MonoBehaviour {
 			if (mMod != null && !mMod.enabled) continue;
 			
 			switch (pass) {
-				case ModifierPass.PreProcess:
-					modifiers[i].PreProcess (p);
-					break;
-				case ModifierPass.PostProcessOriginal:
-					modifiers[i].ApplyOriginal (p);
-					break;
-				case ModifierPass.PostProcess:
-					//UnityEngine.Debug.Log ("Applying Post");
-					//Convert the path if necessary to match the required input for the modifier
-					ModifierData newInput = ModifierConverter.Convert (p,prevOutput,modifiers[i].input);
-					if (newInput != ModifierData.None) {
-						modifiers[i].Apply (p,newInput);
-						prevOutput = modifiers[i].output;
-					} else {
-						
-						UnityEngine.Debug.Log ("Error converting "+(i > 0 ? prevMod.GetType ().Name : "original")+"'s output to "+(modifiers[i].GetType ().Name)+"'s input.\nTry rearranging the modifier priorities on the Seeker.");
-					
-						prevOutput = ModifierData.None;
-					}
+			case ModifierPass.PreProcess:
+				modifiers[i].PreProcess (p);
+				break;
+			case ModifierPass.PostProcessOriginal:
+				modifiers[i].ApplyOriginal (p);
+				break;
+			case ModifierPass.PostProcess:
 				
-					prevMod = modifiers[i];
+				//Convert the path if necessary to match the required input for the modifier
+				ModifierData newInput = ModifierConverter.Convert (p,prevOutput,modifiers[i].input);
+				
+				if (newInput != ModifierData.None) {
+					modifiers[i].Apply (p,newInput);
+					prevOutput = modifiers[i].output;
+				} else {
 					
-					break;
+					UnityEngine.Debug.Log ("Error converting "+(i > 0 ? prevMod.GetType ().Name : "original")+"'s output to "+(modifiers[i].GetType ().Name)+"'s input.\nTry rearranging the modifier priorities on the Seeker.");
+				
+					prevOutput = ModifierData.None;
+				}
+			
+				prevMod = modifiers[i];
+				break;
 			}
 			
 			if (prevOutput == ModifierData.None) {
 				break;
 			}
+			
 		}
 	}
 	
 	/** Is the current path done calculating.
-	 * Returns if the current #path returns true on IsDone or there is no path (path is null)
-	 * This method is not reliable when switching scenes and/or stopping and resuming pathfinding in any way
-	 * \see Pathfinding::Path::IsDone
-	 * \version Added in 3.0.8*/
+	 * Returns true if the current #path has been returned or if the #path is null.
+	 * 
+	 * \note Do not confuse this with Pathfinding.Path.IsDone. They do mostly return the same value, but not always.
+	 * 
+	 * \since Added in 3.0.8
+	 * \version Behaviour changed in 3.2
+	 * */
 	public bool IsDone () {
-		return path == null || path.IsDone ();
+		return path == null || path.GetState() >= PathState.Returned;
 	}
 	
 	/** Called when a path has completed.
@@ -213,22 +261,35 @@ public class Seeker : MonoBehaviour {
 	 * Will post process it and return it by calling #tmpPathCallback and #pathCallback */
 	public void OnPathComplete (Path p, bool runModifiers, bool sendCallbacks) {
 		
-		if (this == null || p == null || p != path) {
+		AstarProfiler.StartProfile ("Seeker OnPathComplete");
+		
+		
+		if (p != null && p != path && sendCallbacks) {
 			return;
 		}
 		
-		startHint = p.startNode;
-		endHint = p.endNode;
+		
+		if (this == null || p == null || p != path)
+			return;
 		
 		if (!path.error && runModifiers) {
+			AstarProfiler.StartProfile ("Seeker Modifiers");
 			//This will send the path for post processing to modifiers attached to this Seeker
 			RunModifiers (ModifierPass.PostProcessOriginal, path);
 			
 			//This will send the path for post processing to modifiers attached to this Seeker
 			RunModifiers (ModifierPass.PostProcess, path);
+			AstarProfiler.EndProfile ();
 		}
 		
 		if (sendCallbacks) {
+			
+			p.Claim (this);
+			
+			AstarProfiler.StartProfile ("Seeker Callbacks");
+			
+			lastCompletedNodePath = p.path;
+			lastCompletedVectorPath = p.vectorPath;
 			
 			//This will send the path to the callback (if any) specified when calling StartPath
 			if (tmpPathCallback != null) {
@@ -240,9 +301,21 @@ public class Seeker : MonoBehaviour {
 				pathCallback (p);
 			}
 			
-			lastCompletedNodePath = p.path;
-			lastCompletedVectorPath = p.vectorPath;
+			//Recycle the previous path
+			if (prevPath != null) {
+				prevPath.ReleaseSilent (this);
+			}
+			
+			prevPath = p;
+
+			//If not drawing gizmos, then storing prevPath is quite unecessary
+			//So clear it and set prevPath to null
+			if (!drawGizmos) ReleaseClaimedPath ();
+
+			AstarProfiler.EndProfile();
 		}
+		
+		AstarProfiler.EndProfile ();
 	}
 	
 	
@@ -288,16 +361,14 @@ public class Seeker : MonoBehaviour {
 	//private int lastPathCall = -1000;
 	
 	/** Returns a new path instance. The path will be taken from the path pool if path recycling is turned on.\n
-	 * This path can be sent to #StartPath(Path,OnPathDelegate) with no change, but if no change is required #StartPath(Vector3,Vector3,OnPathDelegate) does just that.
+	 * This path can be sent to #StartPath(Path,OnPathDelegate,int) with no change, but if no change is required #StartPath(Vector3,Vector3,OnPathDelegate) does just that.
 	 * \code Seeker seeker = GetComponent (typeof(Seeker)) as Seeker;
 	 * Path p = seeker.GetNewPath (transform.position, transform.position+transform.forward*100);
 	 * p.nnConstraint = NNConstraint.Default; \endcode */
 	public Path GetNewPath (Vector3 start, Vector3 end) {
-		//Get a path from the Path Pool - If path recycling is off or if there are no paths in the pool, a new path will be created
-		Path p = AstarPath.GetFromPathPool ();
+		//Construct a path with start and end points
+		Path p = ABPath.Construct (start, end, null);
 		
-		//Reset the path with new start and end points
-		p.Reset (start,end,null);
 		return p;
 	}
 	
@@ -324,7 +395,7 @@ public class Seeker : MonoBehaviour {
 	 * \param start		The start point of the path
 	 * \param end		The end point of the path
 	 * \param callback	The function to call when the path has been calculated
-	 * \param graphMask	Mask used to specify which graphs should be searched for close nodes. See Pathfinding::NNConstraint::graphMask. \astarproParam
+	 * \param graphMask	Mask used to specify which graphs should be searched for close nodes. See Pathfinding.NNConstraint.graphMask.
 	 * 
 	 * \a callback will be called when the path has completed.
 	 * \a Callback will not be called if the path is canceled (e.g when a new path is requested before the previous one has completed) */
@@ -336,7 +407,7 @@ public class Seeker : MonoBehaviour {
 	/** Call this function to start calculating a path.
 	 * \param p			The path to start calculating
 	 * \param callback	The function to call when the path has been calculated
-	 * \param graphMask	Mask used to specify which graphs should be searched for close nodes. See Pathfinding::NNConstraint::graphMask. \astarproParam
+	 * \param graphMask	Mask used to specify which graphs should be searched for close nodes. See Pathfinding.NNConstraint.graphMask. \astarproParam
 	 * 
 	 * \a callback will be called when the path has completed.
 	 * \a Callback will not be called if the path is canceled (e.g when a new path is requested before the previous one has completed) */
@@ -345,23 +416,23 @@ public class Seeker : MonoBehaviour {
 		p.tagPenalties = tagPenalties;
 		
 		//Cancel a previously requested path is it has not been processed yet and also make sure that it has not been recycled and used somewhere else
-		if (path != null && !path.processed && lastPathID == path.pathID) {
-			path.errorLog += "Canceled path because a new one was requested\nGameObject: "+gameObject.name;
-			path.error = true;
+		if (path != null && path.GetState() <= PathState.Processing && lastPathID == path.pathID) {
+			path.LogError ("Canceled path because a new one was requested\nGameObject: "+gameObject.name);
 			//No callback should be sent for the canceled path
 		}
 		
 		path = p;
-		path.callback += OnPathComplete;
+		path.callback += onPathDelegate;
 		
 		tmpPathCallback = callback;
 		
 		//Set the Get Nearest Node hints if they have not already been set
-		if (path.startHint == null)
+		/*if (path.startHint == null)
 			path.startHint = startHint;
 			
 		if (path.endHint == null) 
 			path.endHint = endHint;
+		*/
 		
 		//Save the path id so we can make sure that if we cancel a path (see above) it should not have been recycled yet.
 		lastPathID = path.pathID;
@@ -401,8 +472,8 @@ public class Seeker : MonoBehaviour {
 		if (detailedGizmos) {
 			Gizmos.color = new Color (0.7F,0.5F,0.1F,0.5F);
 			
-			if (lastCompletedNodePath!= null) {
-				for (int i=0;i<lastCompletedNodePath.Length-1;i++) {
+			if (lastCompletedNodePath != null) {
+				for (int i=0;i<lastCompletedNodePath.Count-1;i++) {
 					Gizmos.DrawLine ((Vector3)lastCompletedNodePath[i].position,(Vector3)lastCompletedNodePath[i+1].position);
 				}
 			}
@@ -411,7 +482,7 @@ public class Seeker : MonoBehaviour {
 		Gizmos.color = new Color (0,1F,0,1F);
 		
 		if (lastCompletedVectorPath != null) {
-			for (int i=0;i<lastCompletedVectorPath.Length-1;i++) {
+			for (int i=0;i<lastCompletedVectorPath.Count-1;i++) {
 				Gizmos.DrawLine (lastCompletedVectorPath[i],lastCompletedVectorPath[i+1]);
 			}
 		}

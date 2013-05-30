@@ -23,7 +23,7 @@ public class BaseEnemy : BaseCharacter {
 #endregion
 
 	#region Properties
-	public override IInput CharInput {
+	public override BaseInputModule CharInput {
 		get {return _input;}
 	}
 

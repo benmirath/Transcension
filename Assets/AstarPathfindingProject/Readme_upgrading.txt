@@ -1,12 +1,52 @@
-A* Pathfinding Project
+======== A* Pathfinding Project ========================
 
-This document was written for version 3.1.1 but contains
-	general info and should apply at least for some versions to come
+========================================================
+======== Upgrading from older versions =================
+========================================================
 
-Upgrading from very old versions (2.x) see:
-	http://arongranberg.com/astar/docs/upgrading.php
+Read the respective sections on how to upgrade from older versions
 
-Upgrading from earlier 3.x versions
+See also http://arongranberg.com/astar/docs/upgrading.php
+
+========================================================
+======== Upgrading from 3.1.x to 3.2.x =================
+========================================================
+	
+	Syntax has changed a bit for the 3.2.x version to make path pooling as streamlined as possible
+	You might not need to change anything, but if you are creating new paths manually, e.g using:
+		
+		Path p = new Path (startPoint, endPoint, callback);
+	
+	You will now need to change that. Path is a now an abstract class, and the basic path which calculates a path
+	from a point A to a point B is now called ABPath. Constructors are not used either
+	instead static Construct methods are used. These will use pooled paths if possible
+	
+		ABPath p = ABPath.Construct (startPoint, endPoint, callback);
+	
+	All path types implement Construct methods in a similar fashion.
+	
+	-------------------------------------
+	
+	The vectorPath and path arrays on path objects are now List<Vector3> and List<Node> respectively.
+	This is done so that they can be reused if the path object is recycled.
+	
+	-------------------------------------
+	
+	If you have been getting the closest node to a point with
+	
+		Node node = AstarPath.active.GetNearest(somePosition);
+	
+	You will now have to either explicitly cast from NNInfo (which the GetNearest function actually returns)
+	or get the node by the .node field
+	
+		Node node = AstarPath.active.GetNearest(somePosition).node;
+	
+	See changelog for more changes.
+	
+========================================================
+======== Upgrading from 3.0.x versions =================
+========================================================
+
 	If you are upgrading from versions earlier than 3.1 your settings for
 	each graph might be lost during the upgrade process.
 	Please back up your project before upgrading
@@ -38,3 +78,9 @@ Upgrading from earlier 3.x versions
 	
 	These were the most important changes, for more changes, see the change log.
 		http://arongranberg.com/astar/docs/changelog.php
+
+========================================================
+======== Upgrading from very old versions (2.x) ========
+========================================================
+
+	see http://arongranberg.com/astar/docs/upgrading.php

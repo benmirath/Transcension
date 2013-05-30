@@ -1,3 +1,4 @@
+//#define ASTAR_NoTagPenalty
 using UnityEngine;
 using Pathfinding;
 
@@ -29,7 +30,7 @@ namespace Pathfinding {
 	    }
 	    
 	    public Vector3 ClosestPoint (Vector3 p, Int3[] vertices) {
-	    	return Polygon.ClosesPointOnTriangle ((Vector3)vertices[v1],(Vector3)vertices[v2],(Vector3)vertices[v3],p);
+	    	return Polygon.ClosestPointOnTriangle ((Vector3)vertices[v1],(Vector3)vertices[v2],(Vector3)vertices[v3],p);
 	    }
 	}
 }

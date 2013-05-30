@@ -4,9 +4,9 @@ using Pathfinding;
 
 namespace Pathfinding {
 	
-	/** Defines a shape for a Pathfinding::GraphUpdateObject.
+	/** Defines a shape for a Pathfinding.GraphUpdateObject.
 	 * The shape consists of a number of points which it can either calculate the convex hull of (XZ space) or use as a polygon directly.
-	 * \see Pathfinding::GraphUpdateObject::shape
+	 * \see Pathfinding.GraphUpdateObject.shape
 	 */
 	public class GraphUpdateShape  {
 	
@@ -64,6 +64,7 @@ namespace Pathfinding {
 		}
 		
 		public bool Contains (Node node) {
+			
 			Vector3 point = (Vector3)node.position;
 			
 			//Debug.DrawRay (node.position,-Vector3.up*2,Color.magenta);

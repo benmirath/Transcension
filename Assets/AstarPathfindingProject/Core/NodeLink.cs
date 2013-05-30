@@ -37,8 +37,8 @@ public class NodeLink : MonoBehaviour {
 		
 		if (Start == null || End == null || AstarPath.active == null) return;
 		
-		Node startNode = AstarPath.active.GetNearest (Start.position);
-		Node endNode = AstarPath.active.GetNearest (End.position);
+		Node startNode = AstarPath.active.GetNearest (Start.position).node;
+		Node endNode = AstarPath.active.GetNearest (End.position).node;
 		
 		if (startNode == null || endNode == null) return;
 		

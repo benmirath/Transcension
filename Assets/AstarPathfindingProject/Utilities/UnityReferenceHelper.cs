@@ -7,7 +7,7 @@ using System.Collections;
  */
 public class UnityReferenceHelper : MonoBehaviour {
 	
-	//[HideInInspector]
+	[HideInInspector]
 	[SerializeField]
 	private string guid;
 	
