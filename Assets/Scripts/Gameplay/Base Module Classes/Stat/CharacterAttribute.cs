@@ -11,7 +11,7 @@ public interface IAttribute {
 /// This is the class for all of the character attributes in-game. These values are more 
 /// rigid than those that follow, and primarily modify the other character stats like Vitals. </summary>
 [System.Serializable] 
-public class Attribute : IAttribute {
+public class CharacterAttribute : IAttribute {
 	public enum AttributeName {
 		None,						//Empty value used when dealing with stat scaling equipment
 		Vitality,					//influences max health
@@ -48,7 +48,7 @@ public class Attribute : IAttribute {
 	#endregion
 	
 	#region Initialization
-	public Attribute () {
+	public CharacterAttribute () {
 		baseValue = 10;
 	}
 	#endregion

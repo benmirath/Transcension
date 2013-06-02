@@ -39,12 +39,18 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 	[SerializeField]protected Vector3 lookDir;
 	protected bool lockedOn;
 	
-	public Vector3 MoveDir {get {return moveDir;}}
-	public Vector3 LookDir {get {return lookDir;}}
+	public virtual Vector3 MoveDir {get {return moveDir;}}
+	public virtual Vector3 LookDir {get {return lookDir;}}
 
 	public bool LockedOn {get { return lockedOn;}}
 
 //	public abstract void Setup (ICharacter user);
+
+	void Awake ()
+	{
+		moveDir = Vector3.zero;
+		lookDir = Vector3.zero;
+	}
 
 	#region Ability Signals
 	public event Action walkSignal;

@@ -1,32 +1,48 @@
 ﻿<Properties GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Sub-Module Classes/Action/Ability Stats/AbilityProperties.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/AstarPathfindingProject/Core/AI/Seeker.cs">
     <Files>
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Base Behavior/__Base/BaseEquipment.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Weapon Stats/BaseEquipmentProperties.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/State Machine/BaseEquipmentStateModule.cs" Line="340" Column="31" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/PlayerStateMachine.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs" Line="259" Column="7" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/PlayerInput.cs" Line="48" Column="33" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/BaseInputModule.cs" Line="37" Column="2" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/BasePlayer.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/MoveSet.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Base Behavior/__Base/BaseEquipment.cs" Line="64" Column="2" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Weapon Stats/BaseEquipmentProperties.cs" Line="95" Column="49" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/State Machine/BaseEquipmentStateModule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/BaseEquipmentMovesetModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Sub-Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="285" Column="24" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Stats Module/BaseCharacterStats.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/__Base/BaseCharacter.cs" Line="209" Column="2" />
-      <File FileName="Assets/Tutorial/Finite State Machines/Part 2/Scene 1/StateMachineBehaviourEx.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Movement Module/BaseMovementModule.cs" Line="13" Column="2" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Equipment Loadout Module/BaseEquipmentLoadoutModule.cs" Line="6" Column="78" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs" Line="53" Column="28" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/CharacterMovesetModule.cs" Line="71" Column="45" />
+      <File FileName="Assets/Scripts/Editor/CharacterAttributeDrawer.cs" Line="22" Column="77" />
+      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Stat/ScalingStat.cs" Line="13" Column="2" />
+      <File FileName="Assets/Scripts/Editor/ScalingStatDrawer.cs" Line="20" Column="85" />
+      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Stat/CharacterAttribute.cs" Line="14" Column="39" />
+      <File FileName="Assets/Scripts/Editor Attributes/_Class Attributes/ScalingStatAttribute.cs" Line="4" Column="47" />
+      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Stat/Vital.cs" Line="206" Column="23" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/__Base/BaseCharacter.cs" Line="216" Column="26" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/AIInput.cs" Line="8" Column="32" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/BaseInputModule.cs" Line="43" Column="16" />
+      <File FileName="Assets/AstarPathfindingProject/ExampleScenes/ExampleScripts/DoorController.cs" Line="41" Column="5" />
+      <File FileName="Assets/Orthello/Examples/3 - Shooting Asteroids/CExample3.cs" Line="37" Column="23" />
+      <File FileName="Assets/AstarPathfindingProject/Core/AI/Seeker.cs" Line="420" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State expanded="True">
           <Node name="Assembly-CSharp" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="Scripts" expanded="True">
-                <Node name="Editor Attributes" expanded="True">
-                  <Node name="_Class Attributes" expanded="True" />
+              <Node name="AstarPathfindingProject" expanded="True">
+                <Node name="Core" expanded="True">
+                  <Node name="AI" expanded="True">
+                    <Node name="Seeker.cs" selected="True" />
+                  </Node>
                 </Node>
+                <Node name="ExampleScenes" expanded="True">
+                  <Node name="ExampleScripts" expanded="True" />
+                </Node>
+              </Node>
+              <Node name="Orthello" expanded="True">
+                <Node name="Examples" expanded="True">
+                  <Node name="3 - Shooting Asteroids" expanded="True" />
+                </Node>
+              </Node>
+              <Node name="Scripts" expanded="True">
                 <Node name="Gameplay" expanded="True">
                   <Node name="Base Component Classes" expanded="True">
                     <Node name="Character" expanded="True">
@@ -34,48 +50,16 @@
                         <Node name="__Base" expanded="True" />
                       </Node>
                       <Node name="Character Modules" expanded="True">
-                        <Node name="Actions Module" expanded="True">
-                          <Node name="Movement Module" expanded="True" />
-                        </Node>
-                        <Node name="Input Module" expanded="True" />
                         <Node name="State Module" expanded="True" />
-                        <Node name="Stats Module" expanded="True" />
                       </Node>
                     </Node>
                     <Node name="Item" expanded="True">
                       <Node name="Equipable" expanded="True">
-                        <Node name="Base Behavior" expanded="True">
-                          <Node name="__Base" expanded="True" />
-                        </Node>
-                        <Node name="Move Set" expanded="True" />
-                        <Node name="State Machine" expanded="True" />
                         <Node name="Weapon Stats" expanded="True" />
                       </Node>
                     </Node>
                   </Node>
-                  <Node name="Sub-Module Classes" expanded="True">
-                    <Node name="Action" expanded="True">
-                      <Node name="Ability Stats" expanded="True" />
-                      <Node name="Modules" expanded="True" selected="True" />
-                    </Node>
-                    <Node name="Stat" expanded="True" />
-                  </Node>
                 </Node>
-              </Node>
-              <Node name="Tutorial" expanded="True">
-                <Node name="Finite State Machines" expanded="True">
-                  <Node name="Part 2" expanded="True">
-                    <Node name="Scene 1" expanded="True" />
-                  </Node>
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-          <Node name="Assembly-CSharp-Editor" expanded="True">
-            <Node name="Assets" expanded="True">
-              <Node name="Editor" expanded="True" />
-              <Node name="Scripts" expanded="True">
-                <Node name="Editor" expanded="True" />
               </Node>
             </Node>
           </Node>

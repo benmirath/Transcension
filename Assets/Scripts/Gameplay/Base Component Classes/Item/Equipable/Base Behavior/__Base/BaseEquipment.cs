@@ -7,25 +7,25 @@ using System.Collections.Generic;
 /// Base interface for all Equipment. Acceses basic functionality. </summary>
 public interface IEquippable
 {
-		ICharacter User {
-				get;
-		}
+	ICharacter User {
+		get;
+	}
 
-		Collider HitBox {
-				get;
-		}
+	Collider HitBox {
+		get;
+	}
 
-		BaseEquipmentProperties Stats {
-				get;
-		}
+	BaseEquipmentProperties Stats {
+		get;
+	}
 
-		BaseEquipmentMovesetModule Moveset {
-				get;
-		}
+	BaseEquipmentMovesetModule Moveset {
+		get;
+	}
 
-		BaseEquipmentStateModule WeaponState {
-				get;
-		}
+	BaseEquipmentStateModule WeaponState {
+		get;
+	}
 }
 /// <summary>
 /// Base equipment.
@@ -39,56 +39,56 @@ public interface IEquippable
 public class BaseEquipment : MonoBehaviour, IEquippable
 {
 
-		protected ICharacter user;
-		protected Collider hitBox;
-		[SerializeField] protected BaseEquipmentProperties stats;				//Holds the raw stats for the weapon
-		[SerializeField] protected BaseEquipmentMovesetModule moveset;		//Holds the various moves a given weapon can utilize
-		[SerializeField] protected BaseEquipmentStateModule weaponState;	//Coordinates use of moveset by controlling character
+	protected ICharacter user;
+	protected Collider hitBox;
+	[SerializeField] protected BaseEquipmentProperties stats;				//Holds the raw stats for the weapon
+	[SerializeField] protected BaseEquipmentMovesetModule moveset;				//Holds the various moves a given weapon can utilize
+	[SerializeField] protected BaseEquipmentStateModule weaponState;			//Coordinates use of moveset by controlling character
 
 
 	#region Properties
-		public ICharacter User {
-				get { return user;}
-				set { user = value;}
-		}
+	public ICharacter User {
+		get { return user;}
+		set { user = value;}
+	}
 
-		public Collider HitBox {
-				get { return hitBox;}
-				set { hitBox = value;}
-		}
+	public Collider HitBox {
+		get { return hitBox;}
+		set { hitBox = value;}
+	}
 
-		public BaseEquipmentProperties Stats {
-				get { return stats;}
-		}
+	public BaseEquipmentProperties Stats {
+		get { return stats;}
+	}
 
-		public BaseEquipmentMovesetModule Moveset {
-				get { return moveset;}
-		}
+	public BaseEquipmentMovesetModule Moveset {
+		get { return moveset;}
+	}
 
-		public BaseEquipmentStateModule WeaponState {
-				get { return weaponState;}
-		}
+	public BaseEquipmentStateModule WeaponState {
+		get { return weaponState;}
+	}
 	#endregion
 
 	#region Initialization
-		protected virtual void Awake ()
-		{
-				user = transform.parent.GetComponent<BaseCharacter> ();
-				hitBox = GetComponent<Collider> ();
+	protected virtual void Awake ()
+	{
+		user = transform.parent.GetComponent<BaseCharacter> ();
+		hitBox = GetComponent<Collider> ();
 	
-				stats = GetComponent<BaseEquipmentProperties> ();
-				moveset = GetComponent<BaseEquipmentMovesetModule> ();
-				weaponState = GetComponent <BaseEquipmentStateModule> ();
+		stats = GetComponent<BaseEquipmentProperties> ();
+		moveset = GetComponent<BaseEquipmentMovesetModule> ();
+		weaponState = GetComponent <BaseEquipmentStateModule> ();
 
-		}
+	}
 
-		protected virtual void Start ()
-		{
-				//stats.Setup(this);
+	protected virtual void Start ()
+	{
+		//stats.Setup(this);
 		
-				hitBox.isTrigger = true;
-				hitBox.enabled = false;	
-		}
+		hitBox.isTrigger = true;
+		hitBox.enabled = false;	
+	}
 	#endregion Initialization
 
 	#region Methods

@@ -38,8 +38,8 @@ using System;
 	
 	// Update is called once per frame
 	public void Update () {
-		float dodgeTimer = 0;
-		float targettingTimer = 0;
+//		float dodgeTimer = 0;
+//		float targettingTimer = 0;
 
 		Debug.Log ("the character is aiming at :"+lookDir);
 

@@ -110,7 +110,7 @@ public class RagePixelSprite : MonoBehaviour, IRagePixel {
     }
 
 	void Start () {
-        if (Application.isPlaying && playAnimation && gameObject.active)
+        if (Application.isPlaying && playAnimation && gameObject.activeSelf)
         {
             nextAnimFrame = myTime + GetCurrentCell().delay / 1000f;
         }

@@ -44,14 +44,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\CharacterCamera.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\CharacterControl.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\CollisionParticleEffect.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\CollisionSoundEffect.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\Foot.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\OrbitCamera.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Monstergame\character1\Scripts\myThirdPersonController.js" />
-     <Compile Include="Assets\Additional Assets\monstercave\Standard Assets\Particles\Legacy Particles\TimedObjectDestructor.js" />
      <Compile Include="Assets\Orthello\Examples\1 - Paralax scrolling FilledSprite\JSExample1.js" />
      <Compile Include="Assets\Orthello\Examples\2 - Moving collidable sprites\JSBlock2.js" />
      <Compile Include="Assets\Orthello\Examples\2 - Moving collidable sprites\JSExample2.js" />
@@ -68,14 +60,9 @@
      <Compile Include="Assets\Orthello\Examples\7 - Tweening\JSStar7_2.js" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
      <None Include="Assets\Orthello\Examples\0 - Simple Examples\TextSprites\lorem.txt" />
-     <None Include="Assets\Additional Assets\CustomizableSword_Free\readme.txt" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
-     <None Include="Assets\Additional Assets\CustomizableGun_FreeED\readme.txt" />
-     <None Include="Assets\Additional Assets\AudioDraft Music Pack #2 - Orchestral\readme.txt" />
-     <None Include="Assets\Additional Assets\monstercave\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
      <None Include="Assets\Orthello\Examples\4 - Follow Target View\-orthello-config.xml" />
-     <None Include="Assets\Additional Assets\Medieval Village\[Shared]\Shaders\MeshTerrain4Splats.shader" />
      <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\Orthello\-Read-Me.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\DiffuseAlwaysVisible.shader" />
@@ -85,7 +72,6 @@
      <None Include="Assets\Orthello\-Update-Upgrade info.txt" />
      <None Include="Assets\Orthello\Examples\0 - Simple Examples\TextSprites\Atlases\img.xml" />
      <None Include="Assets\Additional Assets\UnlitFade.shader" />
-     <None Include="Assets\Additional Assets\Medieval Village\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
      <None Include="Assets\Orthello\Examples\0 - Simple Examples\TextSprites\Atlases\glyph.xml" />
      <None Include="Assets\RagePixel\readme.txt" />

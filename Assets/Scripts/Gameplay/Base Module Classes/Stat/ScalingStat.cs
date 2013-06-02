@@ -7,7 +7,7 @@ using UnityEngine;
 [System.Serializable] public class ScalingStat
 {	
 		//Inspector Members
-		[SerializeField] private Attribute.AttributeName scalingAttribute;
+		[SerializeField] private CharacterAttribute.AttributeName scalingAttribute;
 		[SerializeField] private float scalingRatio;
 		private IAttribute _scalingAtt;
 
@@ -26,22 +26,22 @@ using UnityEngine;
 		{
 				
 				switch (scalingAttribute) {
-				case Attribute.AttributeName.Vitality:
+				case CharacterAttribute.AttributeName.Vitality:
 						_scalingAtt = user.CharStats.Vitality;
 						break;
-				case Attribute.AttributeName.Endurance:
+				case CharacterAttribute.AttributeName.Endurance:
 						_scalingAtt = user.CharStats.Endurance;
 						break;
-				case Attribute.AttributeName.Spirit:
+				case CharacterAttribute.AttributeName.Spirit:
 						_scalingAtt = user.CharStats.Spirit;
 						break;
-				case Attribute.AttributeName.Strength:
+				case CharacterAttribute.AttributeName.Strength:
 						_scalingAtt = user.CharStats.Strength;
 						break;
-				case Attribute.AttributeName.Dexterity:
+				case CharacterAttribute.AttributeName.Dexterity:
 						_scalingAtt = user.CharStats.Dexterity;
 						break;
-				case Attribute.AttributeName.Mind:
+				case CharacterAttribute.AttributeName.Mind:
 						_scalingAtt = user.CharStats.Mind;
 						break;
 				default:

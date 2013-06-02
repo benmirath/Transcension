@@ -29,10 +29,10 @@ public class AIInput : BaseInputModule {
 	#endregion
 	
 	#region Properties
-	public Vector3 MoveDir {
+	public override Vector3 MoveDir {
 		get {return CalculateVelocity(GetFeetPosition());}
 	}
-	public Vector3 LookDir {
+	public override Vector3 LookDir {
 		get {return _targetPoint;}
 	}
 

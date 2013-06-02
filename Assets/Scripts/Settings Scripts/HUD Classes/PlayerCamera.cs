@@ -35,7 +35,7 @@ public class PlayerCamera : MonoBehaviour {
 	}
 
 	private void LockedCameraUpdate () {
-//		transform.position = new Vector3(target.Coordinates.position.x, target.Coordinates.position.y, target.Coordinates.position.z + cameraHeight);
+		transform.position = new Vector3(target.Coordinates.position.x, target.Coordinates.position.y, target.Coordinates.position.z + cameraHeight);
 	}
 
 	private void LooseCameraUpdate () {
@@ -47,8 +47,6 @@ public class PlayerCamera : MonoBehaviour {
 		
 		if (temp.y > maxY) temp.y = maxY;
 		if (temp.y < Mathf.Abs(minY)) temp.y = minY;
-		
-
 	}
 }
 

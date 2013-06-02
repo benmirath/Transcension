@@ -57,7 +57,7 @@ public class CharacterGenerator : MonoBehaviour {
 		else
 			DisplayCreateButton();
 	}
-	
+
 	private void DisplayName () {
 		GUI.Label(new Rect(10, 10, 50, 25), "Name:");
 		_player.name = GUI.TextField (new Rect(65, 10, 100, 25), _player.name);

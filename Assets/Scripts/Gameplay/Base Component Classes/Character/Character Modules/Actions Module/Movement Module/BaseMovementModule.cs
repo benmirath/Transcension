@@ -32,7 +32,7 @@ public interface IMovement {
 	[SerializeField]protected MovementProperties dodge;
 	//Internal Fields
 	private ICharacter _user;
-	private Transform _coordinates;
+	//private Transform _coordinates;
 	//private List<MovementProperties> moveSet;
 	
 	public ICharacter Char {
@@ -67,7 +67,7 @@ public interface IMovement {
 	public void Setup (ICharacter user) {
 		Debug.Log("BaseMovementModule: Setting Values");
 		_user = user;
-		_coordinates = _user.Coordinates;
+		//_coordinates = _user.Coordinates;
 
 		walk.SetValue (user);
 		strafe.SetValue(user);

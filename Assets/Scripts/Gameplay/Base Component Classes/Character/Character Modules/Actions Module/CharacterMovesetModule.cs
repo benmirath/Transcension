@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveSet : MonoBehaviour, IMoveSet {
+public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 	[SerializeField]protected ICharacter user;
 
 	[SerializeField] protected BaseMovementModule charMovement;
@@ -68,7 +68,7 @@ public interface IMoveSet {
 	//IAbility CurrentAction {get;}
 
 	[SerializeField] IMovement CharMovement {get;}
-	[SerializeField] IEquipmentLoadout CharEquipment {get;}
+	[SerializeField] BaseEquipmentLoadoutModule CharEquipment {get;}
 	[SerializeField] ICombat CharCombat {get;}
 	[SerializeField] IStealth CharStealth {get;}
 

@@ -13,7 +13,7 @@ public class BuffItem : Item {
 		buffs = ht;	
 	}
 	
-	public void AddBuff(Attribute stat, int mod) {
+	public void AddBuff(CharacterAttribute stat, int mod) {
 		try {
 			buffs.Add (stat, mod);	
 		}

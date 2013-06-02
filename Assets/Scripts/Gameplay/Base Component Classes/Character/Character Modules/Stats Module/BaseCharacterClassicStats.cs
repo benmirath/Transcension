@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public interface ICharacterStats 
+public interface ICharacterClassicStats 
 {
 	IAttribute Vitality {get;}
 	IAttribute Endurance {get;}
@@ -22,7 +22,8 @@ public interface ICharacterStats
 
 /// <summary>
 /// Character Stat Module. Holds all relevant in-mechanics values, especially those (down the line) visible to the player. </summary>
-[System.Serializable] public class BaseCharacterStats : MonoBehaviour
+[System.Serializable] 
+public class BaseCharacterClassicStats : MonoBehaviour
 {
 //	public interface IAttribute {
 //		int BaseValue				{get; set;}
@@ -49,12 +50,12 @@ public interface ICharacterStats
 	//		[SerializeField] private List<PrimaryVital> primaryVitals;
 	//		[SerializeField] private List<StatusVital> statusVitals;
 	
-	[SerializeField, CharacterAttAttribute(Attribute.AttributeName.Vitality)] protected Attribute vitality;
-	[SerializeField, CharacterAttAttribute(Attribute.AttributeName.Endurance)] protected Attribute endurance;
-	[SerializeField, CharacterAttAttribute(Attribute.AttributeName.Spirit)] protected Attribute spirit;
-	[SerializeField, CharacterAttAttribute(Attribute.AttributeName.Strength)] protected Attribute strength;
-	[SerializeField, CharacterAttAttribute(Attribute.AttributeName.Dexterity)] protected Attribute dexterity;
-	[SerializeField, CharacterAttAttribute(Attribute.AttributeName.Mind)] protected Attribute mind;
+	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Vitality)] protected CharacterAttribute vitality;
+	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Endurance)] protected CharacterAttribute endurance;
+	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Spirit)] protected CharacterAttribute spirit;
+	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Strength)] protected CharacterAttribute strength;
+	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Dexterity)] protected CharacterAttribute dexterity;
+	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Mind)] protected CharacterAttribute mind;
 	
 	//Primary Vitals
 	[SerializeField] protected PrimaryVital health;
@@ -140,6 +141,7 @@ public interface ICharacterStats
 				Debug.Log ("us er is null");
 		else
 				Debug.Log ("user is set");
+
 
 		health.SetScaling(_user);
 		stamina.SetScaling(_user);

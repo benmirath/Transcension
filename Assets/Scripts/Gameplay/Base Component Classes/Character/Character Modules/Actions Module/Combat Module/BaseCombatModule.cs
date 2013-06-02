@@ -11,7 +11,7 @@ public interface ICombat {
 public class BaseCombatModule : ICombat {
 	protected ICharacter user;
 //	protected IPhysics charPhysics;
-	protected ICharacterStats charStats;
+	protected ICharacterClassicStats charStats;
 
 	public ICharacter User {
 		get {return user;}
@@ -19,7 +19,7 @@ public class BaseCombatModule : ICombat {
 //	public IPhysics CharPhysics {
 //		get {return charPhysics;}
 //	}
-	public ICharacterStats CharStats {
+	public ICharacterClassicStats CharStats {
 		get {return charStats;}
 	}
 

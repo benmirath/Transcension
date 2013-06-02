@@ -3,17 +3,17 @@ using UnityEngine;
 
 public interface IEquipmentProperties
 {
-		float BaseDamage {
-				get;
-		}
+	float BaseDamage {
+		get;
+	}
 
-		float AdjustedBaseDamage {
-				get;
-		}
+	float AdjustedBaseDamage {
+		get;
+	}
 
-		ScalingStat ScalingBuff {
-				get;
-		}
+	ScalingStat ScalingBuff {
+		get;
+	}
 }
 ///<summary>
 /// Elements required for (all) equipment stats.
@@ -92,49 +92,49 @@ public interface IEquipmentProperties
 	
 	#region Fields
 	//Inspector Fields
-		[SerializeField] protected string name;
-		[SerializeField] protected float baseDamage;
+	[SerializeField] protected string equipmentName;
+	[SerializeField] protected float baseDamage;
 //Base offensive efficacy of equipment, modified by stats and abilities
-		[SerializeField] protected ScalingStat scalingBuff;
-		protected BaseEquipment curEquipment;
+	[SerializeField] protected ScalingStat scalingBuff;
+	protected BaseEquipment curEquipment;
 	#endregion
 	
 	#region Initializers
-		public BaseEquipmentProperties ()
-		{
-				//abilityBuff = 0;
-		}
+	public BaseEquipmentProperties ()
+	{
+		//abilityBuff = 0;
+	}
 
-		public void Setup (BaseEquipment thisWeapon)
-		{
-				curEquipment = thisWeapon;
-				//scalingBuff.SetScaling(curEquipment.user.CharStats);
-		}
+	public void Setup (BaseEquipment thisWeapon)
+	{
+		curEquipment = thisWeapon;
+		//scalingBuff.SetScaling(curEquipment.user.CharStats);
+	}
 	#endregion Initializerss
 	
 	#region Properties
-		public float BaseDamage {
-				get { return baseDamage;}
-				set { baseDamage = value;}
-		}
+	public float BaseDamage {
+		get { return baseDamage;}
+		set { baseDamage = value;}
+	}
 
-		public float AdjustedBaseDamage {
-				get { return baseDamage * scalingBuff.BaseValue;}
-		}
+	public float AdjustedBaseDamage {
+		get { return baseDamage * scalingBuff.BaseValue;}
+	}
 //	public float BaseDefense {
 //		get {return baseDefense;}
 //		set {baseDefense = value;}
 //	}
-		public ScalingStat ScalingBuff {
-				get { return scalingBuff;}
-		}
+	public ScalingStat ScalingBuff {
+		get { return scalingBuff;}
+	}
 //	public float AbilityBuff {
 //		get {return abilityBuff;}
 //		set {abilityBuff = value;}
 //	}
-		public BaseEquipment CurEquipment {
-				get { return curEquipment;}
-				set { curEquipment = value;}
-		}
+	public BaseEquipment CurEquipment {
+		get { return curEquipment;}
+		set { curEquipment = value;}
+	}
 	#endregion Properties
 }

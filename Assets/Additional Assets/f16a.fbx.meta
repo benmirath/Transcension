@@ -1,0 +1,166 @@
+fileFormatVersion: 2
+guid: 41fadbebf94826d4f9678e6c8f18ca53
+labels:
+- Air_Force
+- aircraft
+- military
+- jet
+- fighter
+- plane
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Collada_visual_scene_group
+    100002: F16_01
+    100004: F16_02
+    100006: F16_03
+    100008: F16_03_1
+    100010: F16_04
+    100012: F16_04_1
+    100014: F16_07
+    100016: F16_07_1
+    100018: F16_08
+    100020: F16_08_1
+    100022: F16_13
+    100024: F16_13_1
+    100026: F16_14
+    100028: F16_15
+    100030: F16_15_1
+    100032: F16_15_2
+    100034: //RootNode
+    100036: group
+    100038: matrixTransform
+    100040: matrixTransform_1
+    100042: matrixTransform_2
+    100044: matrixTransform_3
+    100046: matrixTransform_4
+    100048: matrixTransform_5
+    100050: NWS
+    100052: NWS_1
+    100054: RootNode
+    100056: sceneRoot
+    100058: Tire_1
+    100060: Tire_1_1
+    100062: Tire_1_2
+    100064: Tire_1_3
+    100066: Tire_2
+    100068: Tire_2_1
+    400000: Collada_visual_scene_group
+    400002: F16_01
+    400004: F16_02
+    400006: F16_03
+    400008: F16_03_1
+    400010: F16_04
+    400012: F16_04_1
+    400014: F16_07
+    400016: F16_07_1
+    400018: F16_08
+    400020: F16_08_1
+    400022: F16_13
+    400024: F16_13_1
+    400026: F16_14
+    400028: F16_15
+    400030: F16_15_1
+    400032: F16_15_2
+    400034: //RootNode
+    400036: group
+    400038: matrixTransform
+    400040: matrixTransform_1
+    400042: matrixTransform_2
+    400044: matrixTransform_3
+    400046: matrixTransform_4
+    400048: matrixTransform_5
+    400050: NWS
+    400052: NWS_1
+    400054: RootNode
+    400056: sceneRoot
+    400058: Tire_1
+    400060: Tire_1_1
+    400062: Tire_1_2
+    400064: Tire_1_3
+    400066: Tire_2
+    400068: Tire_2_1
+    2300000: F16_03_1
+    2300002: F16_04_1
+    2300004: F16_07_1
+    2300006: F16_08_1
+    2300008: F16_13_1
+    2300010: F16_15_1
+    2300012: F16_15_2
+    2300014: NWS_1
+    2300016: Tire_1_1
+    2300018: Tire_1_3
+    2300020: Tire_2_1
+    3300000: F16_03_1
+    3300002: F16_04_1
+    3300004: F16_07_1
+    3300006: F16_08_1
+    3300008: F16_13_1
+    3300010: F16_15_1
+    3300012: F16_15_2
+    3300014: NWS_1
+    3300016: Tire_1_1
+    3300018: Tire_1_3
+    3300020: Tire_2_1
+    4300000: F16_15_1
+    4300002: F16_15_2
+    4300004: F16_13_1
+    4300006: F16_08_1
+    4300008: F16_04_1
+    4300010: F16_03_1
+    4300012: Tire_1_1
+    4300014: Tire_2_1
+    4300016: NWS_1
+    4300018: Tire_1_3
+    4300020: F16_07_1
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 3
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .0500000007
+    meshCompression: 3
+    addColliders: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 1
+  userData: 

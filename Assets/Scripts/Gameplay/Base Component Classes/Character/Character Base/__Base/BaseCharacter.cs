@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// This abstract script lays down the basic functionality (stats, movement, basic states)for any in-game character, 
 /// which will be fine tuned in later derived scripts. </summary>
 [RequireComponent (typeof(IAnimation), typeof(CharacterController), typeof(Rigidbody))]		//Engine Logic
-[RequireComponent (typeof(BaseCharacterStats), typeof(MoveSet), typeof(BaseCharacterStateModule))]
+[RequireComponent (typeof(BaseCharacterClassicStats), typeof(CharacterMovesetModule), typeof(BaseCharacterStateModule))]
 public abstract class BaseCharacter : MonoBehaviour, ICharacter 
 {
 	#region Fields
@@ -33,14 +33,14 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	//State Machine (will tie into the majority of the modules, looking at equipment and MoveSet for available actions, animation to cue the correct animation, physics for calculations, etc.)
 	//ActionsModule (This will connect to charEquipment to become a list of all available actions a character may perform.)
 
-	[SerializeField] protected IAnimation charAnimation;
-	[SerializeField] protected Material animation;
+	//[SerializeField] protected IAnimation charAnimation;
+	[SerializeField] protected Material charAnimation;
 
 	[SerializeField] protected BaseInputModule charInput;
 	[SerializeField] protected BaseCharacterStateModule charState;
 
-	[SerializeField] protected BaseCharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
-	[SerializeField] protected MoveSet charMoveSet;
+	[SerializeField] protected BaseCharacterClassicStats charStats; //This holds all gameplay and combat stats that are inherent to the character
+	[SerializeField] protected CharacterMovesetModule charMoveSet;
 
 	[SerializeField] protected BaseEquipment primaryWeapon;
 	[SerializeField] protected BaseEquipment secondaryWeapon;
@@ -66,19 +66,19 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 		set {_rigidbody = value;}
 	}
 	
-	public IAnimation CharAnimation {
-		get {return charAnimation;}
-	}
+//	public IAnimation CharAnimation {
+//		get {return charAnimation;}
+//	}
 	public abstract BaseInputModule CharInput {
 		get;
 	}
 	public BaseCharacterStateModule CharState {
 		get {return charState;}
 	}
-	public MoveSet CharActions {
+	public CharacterMovesetModule CharActions {
 		get {return charMoveSet;}
 	}
-	public BaseCharacterStats CharStats {
+	public BaseCharacterClassicStats CharStats {
 		get {return charStats;}
 	}
 
@@ -128,8 +128,8 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 		_controller = GetComponent<CharacterController>();
 		_rigidbody = GetComponent<Rigidbody>();
 
-		charStats = GetComponent<BaseCharacterStats>();
-		charMoveSet = GetComponent<MoveSet>();
+		charStats = GetComponent<BaseCharacterClassicStats>();
+		charMoveSet = GetComponent<CharacterMovesetModule>();
 
 		//primaryWeapon = transform.GetComponentInChildren<>();
 	}	
@@ -212,13 +212,13 @@ public interface ICharacter {
 
 	//DEV
 	BaseInputModule CharInput { get;}
-	IAnimation CharAnimation {get;}
+	//IAnimation CharAnimation {get;}
 	BaseCharacterStateModule CharState {get;}
 	//IGUI (will turn into a full module down the line, handle health bars and other gui elements)
 
 	//USER
-	BaseCharacterStats CharStats {get;}
-	MoveSet CharActions {get;}
+	BaseCharacterClassicStats CharStats {get;}
+	CharacterMovesetModule CharActions {get;}
 	BaseEquipment PrimaryWeapon {get;}
 	BaseEquipment SecondaryWeapon {get;}
 }

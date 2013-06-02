@@ -5,13 +5,13 @@
 /// </summary>
 
 public class BaseStat {
-	public const int STARTING_EXP_COST = 100;	//publicly accessible value for all stats to start at
+	//public const int STARTING_EXP_COST = 100;	//publicly accessible value for all stats to start at
 
 	private string _name;						//this is the name of the stat
-	private float _baseValue;						//the base value of this stat 
-	private float _buffValue;						//the amount of the buff to this stat. (value will be filled based on equipment, abilities, etc.)
-	private int _expToLevel;					//the total amount of exp needed to raise this skill
-	private float _levelModifier;				//the modifier applied to the exp needed to raise the skill
+	private float _baseValue;					//the base value of this stat 
+	private float _buffValue;					//the amount of the buff to this stat. (value will be filled based on equipment, abilities, etc.)
+	//private int _expToLevel;					//the total amount of exp needed to raise this skill
+	//private float _levelModifier;				//the modifier applied to the exp needed to raise the skill
 	
 	//Constructor for BaseStat
 	public BaseStat () {
@@ -19,16 +19,16 @@ public class BaseStat {
 		_name = "";
 		_baseValue = 0;
 		_buffValue = 0;
-		_levelModifier = 1.1f;
-		_expToLevel = STARTING_EXP_COST;
+		//_levelModifier = 1.1f;
+		//_expToLevel = STARTING_EXP_COST;
 	}
 	public BaseStat (string name, float baseVal)
 	{
 		_name = name;
 		_baseValue = baseVal;
 		_buffValue = 0;
-		_levelModifier = 1.1f;
-		_expToLevel = STARTING_EXP_COST;
+		//_levelModifier = 1.1f;
+		//_expToLevel = STARTING_EXP_COST;
 	}
 
 	#region Properties

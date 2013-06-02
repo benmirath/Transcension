@@ -118,7 +118,7 @@ public interface IAbilityProperties
 //	protected Action exitMoveEffect;
 //	protected Action lookEffect;
 
-	[SerializeField] protected MovementPropertyType movementType;
+	[SerializeField] private MovementPropertyType _movementType;
 	[SerializeField] protected float enterMoveSpeed;
 	[SerializeField] protected float activeMoveSpeed;
 	[SerializeField] protected float exitMoveSpeed;
@@ -153,7 +153,7 @@ public interface IAbilityProperties
 		Debug.Log ("AbilityProperty: Setting Values");
 		isSpecial = false;
 		base.SetValue (user);
-		switch (movementType) {
+		switch (_movementType) {
 		case MovementPropertyType.Aim:
 //			activeMoveEffect = null;
 //			lookEffect = Aim;
@@ -263,13 +263,6 @@ public interface IAbilityProperties
 		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle - 90, Vector3.forward);
 		User.Coordinates.rotation = Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed);
 
-		if (User == null)
-			Debug.LogWarning ("user is null");
-		if (User.Coordinates == null)
-			Debug.LogWarning ("coordinates are null");
-		if (target == null)
-			Debug.LogWarning ("target is null");
-
 		Debug.Log (fromRotation);
 		Debug.Log (finalRotation);
 	}
@@ -344,10 +337,10 @@ public class StealthProperties : MovementProperties
 ,
 	}
 	//[SerializeField] protected Vector3 range;										//vector3 that determines the proprotion of the attack
-	[SerializeField] protected AttackPropertyType attackType;
+	[SerializeField] private AttackPropertyType _attackType;
 
-	[SerializeField] protected float dmgModifier;									//amount that this attack modifies the base weapon's damage range. 
 	[SerializeField] protected DamageType dmgType;
+	[SerializeField] protected float dmgModifier;									//amount that this attack modifies the base weapon's damage range. 
 	[SerializeField] protected float attackStrength;								//raw force behind attack, used for determining effectiveness of blocks and calculating hit stun
 	//[SerializeField] protected bool comboable;
 	//[SerializeField] protected float comboWindow;									//the window of oppotunity to activate a followup attack (combo)
