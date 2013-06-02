@@ -1,4 +1,3 @@
 .DS_store
 Temp/*
-Library/cache
-Library/previews
+Library/
