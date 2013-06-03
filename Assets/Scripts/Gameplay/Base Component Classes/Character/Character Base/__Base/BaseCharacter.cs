@@ -34,16 +34,24 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	//ActionsModule (This will connect to charEquipment to become a list of all available actions a character may perform.)
 
 	//[SerializeField] protected IAnimation charAnimation;
-	[SerializeField] protected Material charAnimation;
+//	[SerializeField] 
+	protected Material charAnimation;
 
-	[SerializeField] protected BaseInputModule charInput;
-	[SerializeField] protected BaseCharacterStateModule charState;
+//	[SerializeField] 
+	protected BaseInputModule charInput;
+//	[SerializeField] 
+	protected BaseCharacterStateModule charState;
 
-	[SerializeField] protected BaseCharacterClassicStats charStats; //This holds all gameplay and combat stats that are inherent to the character
-	[SerializeField] protected CharacterMovesetModule charMoveSet;
+//	[SerializeField]
+	protected BaseCharacterClassicStats charStats; //This holds all gameplay and combat stats that are inherent to the character
+//	[SerializeField]
+	protected CharacterMovesetModule charMoveSet;
+	protected BaseEquipmentLoadoutModule charEquipment;
 
-	[SerializeField] protected BaseEquipment primaryWeapon;
-	[SerializeField] protected BaseEquipment secondaryWeapon;
+//	[SerializeField]
+//	protected BaseEquipment primaryWeapon;
+//	[SerializeField]
+//	protected BaseEquipment secondaryWeapon;
 
 	//[SerializeField] protected BaseMovementModule charMovement; //This will likely get wrapped up into character stats and physics
 	//[SerializeField] protected BaseEquipmentLoadoutModule charEquipment; //This holds all gameplay and combat stats that are inherent to the loadout
@@ -81,14 +89,17 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	public BaseCharacterClassicStats CharStats {
 		get {return charStats;}
 	}
-
-	public BaseEquipment PrimaryWeapon {
-		get {return primaryWeapon;}
+	public BaseEquipmentLoadoutModule CharEquipment {
+		get {return charEquipment;}
 	}
 
-	public BaseEquipment SecondaryWeapon {
-		get {return secondaryWeapon;}
-	}
+//	public BaseEquipment PrimaryWeapon {
+//		get {return primaryWeapon;}
+//	}
+//
+//	public BaseEquipment SecondaryWeapon {
+//		get {return secondaryWeapon;}
+//	}
 	#endregion Properites
 	
 	#region Initialization
@@ -219,6 +230,7 @@ public interface ICharacter {
 	//USER
 	BaseCharacterClassicStats CharStats {get;}
 	CharacterMovesetModule CharActions {get;}
-	BaseEquipment PrimaryWeapon {get;}
-	BaseEquipment SecondaryWeapon {get;}
+	BaseEquipmentLoadoutModule CharEquipment { get;}
+//	BaseEquipment PrimaryWeapon {get;}
+//	BaseEquipment SecondaryWeapon {get;}
 }

@@ -418,7 +418,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	{
 		Debug.Log ("Entering Primary Attack");
 		_animation.material.color = Color.green;
-		Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.PrimaryWeapon.WeaponState);
+		Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.CharEquipment.Primary.WeaponState);
 		Debug.Log ("Succesfully returned from equipment action");
 		currentState = CharacterActions.Idle;
 				

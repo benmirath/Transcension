@@ -15,8 +15,10 @@ using System.Collections.Generic;
 	}
 	//Current Equipment
 	[SerializeField] EquipmentLoadoutType loadoutType;
-	[SerializeField] BaseEquipment primary;
-	[SerializeField] BaseEquipment secondary;
+	[SerializeField] 
+	BaseEquipment primary;
+	[SerializeField] 
+	BaseEquipment secondary;
 //will be left null depending on the moveset
 	public BaseEquipment Primary { get { return primary; } }
 
