@@ -55,7 +55,7 @@ public class BaseCombatModule : ICombat {
 		if (user.Rigid != null) Debug.Log("rigidbody is attached");
 #endif
 		float _timer = 0; 
-		_timer = Time.time + user.CharStats.StunDuration;
+//		_timer = Time.time + user.CharStats.StunDuration;
 		user.Rigid.isKinematic = false;
 		
 		while (_timer - Time.time >= 0.05f)								//Initial Knockback
@@ -82,7 +82,7 @@ public class BaseCombatModule : ICombat {
 		if (user.Rigid != null) Debug.Log("rigidbody is attached");
 		#endif
 		float _timer = 0; 
-		_timer = Time.time + user.CharStats.StunDuration;
+//		_timer = Time.time + user.CharStats.StunDuration;
 		//user.CharPhysics.Body.isKinematic = false;
 
 		while (_timer - Time.time >0)									//Stun Period

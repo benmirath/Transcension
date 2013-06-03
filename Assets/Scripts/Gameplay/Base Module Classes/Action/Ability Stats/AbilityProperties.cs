@@ -18,20 +18,19 @@ public interface IAbilityProperties
 //	}
 
 	#region Properties
+	[SerializeField] protected Vital.PrimaryVitalName vitalType;
+
 	private ICharacter _user;
 	private IInput _charInput;
 		//private bool _followupAvailable;
-	protected Vital.VitalName vitalType;
+
 	public Action enterAbility;
 	public Action durationAbility;
 	public Action exitAbility;
 	[SerializeField] protected float cost;
-	[SerializeField] protected float enterLength;
-//length of time between when ability is activated, and when it takes effect.
-	[SerializeField] protected float durationLength;
-//length of time that the ability remains in effect.
-	[SerializeField] protected float exitLength;
-//length of time between when ability effect ends, and character can act again.
+	[SerializeField] protected float enterLength;				//length of time between when ability is activated, and when it takes effect.
+	[SerializeField] protected float durationLength;			//length of time that the ability remains in effect.
+	[SerializeField] protected float exitLength;				//length of time between when ability effect ends, and character can act again.
 
 	protected bool isSpecial;
 //determines whether ability will use stamina or energy
@@ -69,7 +68,7 @@ public interface IAbilityProperties
 
 	public bool IsSpecial { get { return isSpecial; } }
 
-	public Vital.VitalName VitalType { get { return vitalType; } }
+	public Vital.PrimaryVitalName VitalType { get { return vitalType; } }
 
 	public float Cost {
 		get { return cost;}

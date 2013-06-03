@@ -70,8 +70,8 @@ public class BaseCharacterClassicStats : MonoBehaviour
 	//		[SerializeField] protected List<Vital> vitList;
 	
 	//Combat Stats
-	[SerializeField] private float stunDuration;
-	[SerializeField] private float stunStrength;
+//	[SerializeField] private float stunDuration;
+//	[SerializeField] private float stunStrength;
 	#endregion
 	
 	#region Properties
@@ -116,16 +116,16 @@ public class BaseCharacterClassicStats : MonoBehaviour
 		get {return stunResistance;}
 	}
 	
-	public float StunDuration
-	{
-		get {return stunDuration;}
-		set {stunDuration = value;}
-	}
-	public float StunStrength
-	{
-		get {return stunStrength;}
-		set {stunStrength = value;}
-	}
+//	public float StunDuration
+//	{
+//		get {return stunDuration;}
+//		set {stunDuration = value;}
+//	}
+//	public float StunStrength
+//	{
+//		get {return stunStrength;}
+//		set {stunStrength = value;}
+//	}
 	#endregion
 	
 	

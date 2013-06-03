@@ -4,7 +4,8 @@ using UnityEngine;
 /// <summary>
 /// This class acts as the value added to the relevant object's effectiveness 
 /// based on the user's own stats. </summary>
-[System.Serializable] public class ScalingStat
+[System.Serializable] 
+public class ScalingStat
 {	
 		//Inspector Members
 		[SerializeField] private CharacterAttribute.AttributeName scalingAttribute;
