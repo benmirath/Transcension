@@ -29,102 +29,104 @@ using UnityEditor;
 //	}
 //}
 
-[CustomPropertyDrawer (typeof(StatusVital))]
-public class StatusVitalDrawer : PropertyDrawer
-{
-	float nameWidth = .30f;
-	float minValueWidth = .23f;
-	float maxValueWidth = .23f;
-	float curValueWidth = .23f;
-	//float regenWidth;
-
-	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
-	{
-		return 60;
-	}
-
-	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
-	{
-		SerializedProperty name = property.FindPropertyRelative ("name");
-		SerializedProperty minValue = property.FindPropertyRelative ("minValue");
-		SerializedProperty maxValue = property.FindPropertyRelative ("maxValue");
-		SerializedProperty curValue = property.FindPropertyRelative ("curValue");
-		SerializedProperty baseValue = property.FindPropertyRelative ("baseValue");
-		SerializedProperty regenScalingStat = property.FindPropertyRelative("regenScalingStat");
-
-		Rect namePos 	 = new Rect (position.x, position.y, position.width * nameWidth, 15);
-		Rect minValuePos = new Rect (position.x + (nameWidth * position.width), 
-		                             position.y, 
-		                             position.width * minValueWidth, 
-		                             15);
-
-		Rect maxValuePos = new Rect (position.x + (nameWidth * position.width) + (minValueWidth * position.width), 
-		                             position.y, 
-		                             position.width * maxValueWidth, 
-		                             15);
-
-		Rect curValuePos = new Rect (position.x + (nameWidth * position.width) + (minValueWidth * position.width) + (maxValueWidth * position.width), 
-		                             position.y, 
-		                             position.width * curValueWidth, 
-		                             15);
-		Rect baseValuePos = new Rect (position.x + 15, position.y + 20, position.width - 15, 15);
-		Rect regenScalingPos = new Rect (position.x + 15, position.y + 35, position.width - 15, 15);
-
-		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
-		EditorGUI.LabelField (minValuePos, "min val : " + minValue.floatValue);
-		EditorGUI.LabelField (maxValuePos, "max val : " + maxValue.floatValue);
-		EditorGUI.LabelField (curValuePos, "cur val : " + curValue.floatValue);
-
-		EditorGUI.PropertyField (regenScalingPos, regenScalingStat);
-		EditorGUI.PropertyField (baseValuePos, baseValue);
-	}
-}
-
 [CustomPropertyDrawer (typeof(PrimaryVital))]
 public class PrimaryVitalDrawer : PropertyDrawer
 {
+	bool showContent = false;
+	float foldoutWidth = 30f;
+
 	float nameWidth = .30f;
-	float minValueWidth = .23f;
-	float maxValueWidth = .23f;
-	float curValueWidth = .23f;
+	float barWidth = .65f;
 
 	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 	{
-		return 60;
+		if (showContent)
+			return 50;
+		else 
+			return 20;
 	}
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
 		SerializedProperty name = property.FindPropertyRelative("name");
-		SerializedProperty minValue = property.FindPropertyRelative("minValue");
+
 		SerializedProperty maxValue = property.FindPropertyRelative("maxValue");
 		SerializedProperty curValue = property.FindPropertyRelative("curValue");
-		SerializedProperty baseScalingStat = property.FindPropertyRelative("baseScalingStat");
-		SerializedProperty regenScalingStat = property.FindPropertyRelative("regenScalingStat");
 
-		Rect namePos 	 = new Rect (position.x, position.y, position.width * nameWidth, 15);
-		Rect minValuePos = new Rect (position.x + (nameWidth * position.width), 
-		                             position.y, 
-		                             position.width * minValueWidth, 
-		                             15);
-		Rect maxValuePos = new Rect (position.x + (nameWidth * position.width) + (minValueWidth * position.width), 
-		                             position.y, 
-		                             position.width * maxValueWidth, 
-		                             15);
-		Rect curValuePos = new Rect (position.x + (nameWidth * position.width) + (minValueWidth * position.width) + (maxValueWidth * position.width), 
-		                             position.y, 
-		                             position.width * curValueWidth, 
-		                             15);
-		Rect baseScalingPos = new Rect (position.x + 15, position.y + 20, position.width - 15, 15);
-		Rect regenScalingPos = new Rect (position.x + 15, position.y + 35, position.width - 15, 15);
+		SerializedProperty baseScalingStat = property.FindPropertyRelative("baseScaling");
+		SerializedProperty regenScalingStat = property.FindPropertyRelative("regenScaling");
+
+		Rect foldoutPos = new Rect (position.x, position.y, foldoutWidth, 15);
+		Rect namePos 	 = new Rect (position.x + foldoutWidth, position.y, position.width * nameWidth - foldoutWidth, 15);
+		Rect barPos	 = new Rect (position.x + (nameWidth * position.width), 
+		                         position.y,
+		                         position.width * barWidth,
+		                         15);
+
+		Rect baseScalingPos = new Rect (position.x + 15, position.y + 15, position.width - 15, 15);
+		Rect regenScalingPos = new Rect (position.x + 15, position.y + 30, position.width - 15, 15);
 
 		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
-		EditorGUI.LabelField (minValuePos, "min val : " + minValue.floatValue);
-		EditorGUI.LabelField (maxValuePos, "max val : " + maxValue.floatValue);
-		EditorGUI.LabelField (curValuePos, "cur val : " + curValue.floatValue);
+		EditorGUI.ProgressBar (barPos, curValue.floatValue / maxValue.floatValue,"");
 
-		EditorGUI.PropertyField (baseScalingPos, baseScalingStat);
-		EditorGUI.PropertyField (regenScalingPos, regenScalingStat);
+		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
+
+		if (showContent) {
+
+			EditorGUI.PropertyField (baseScalingPos, baseScalingStat);
+			EditorGUI.PropertyField (regenScalingPos, regenScalingStat);
+		}
+	}
+}
+
+
+
+[CustomPropertyDrawer (typeof(StatusVital))]
+public class StatusVitalDrawer : PropertyDrawer
+{
+	bool showContent = false;
+	float nameWidth = .30f;
+	float barWidth = .65f;
+	float foldoutWidth = 30f;
+
+	//float regenWidth;
+
+	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
+	{
+		if (showContent)
+			return 50;
+		else 
+			return 20;
+	}
+
+	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
+	{
+		SerializedProperty name = property.FindPropertyRelative ("name");
+		SerializedProperty maxValue = property.FindPropertyRelative ("maxValue");
+		SerializedProperty curValue = property.FindPropertyRelative ("curValue");
+
+		SerializedProperty baseValue = property.FindPropertyRelative ("baseValue");
+		SerializedProperty regenScalingStat = property.FindPropertyRelative("regenScaling");
+
+		Rect foldoutPos = new Rect (position.x, position.y, foldoutWidth, 15);
+		Rect namePos 	 = new Rect (position.x + foldoutWidth, position.y, position.width * nameWidth-foldoutWidth, 15);
+		Rect barPos	 = new Rect (position.x + (nameWidth * position.width), 
+		                         position.y,
+		                         position.width * barWidth,
+		                         15);
+		Rect baseValuePos = new Rect (position.x + 15, position.y + 15, position.width - 15, 15);
+		Rect regenScalingPos = new Rect (position.x + 15, position.y + 30, position.width - 15, 15);
+
+		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
+
+		EditorGUI.ProgressBar (barPos, curValue.floatValue / maxValue.floatValue,"");
+
+		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
+
+		if (showContent) {
+			EditorGUI.PropertyField (regenScalingPos, regenScalingStat);
+			EditorGUI.PropertyField (baseValuePos, baseValue);
+		}
 	}
 }
 

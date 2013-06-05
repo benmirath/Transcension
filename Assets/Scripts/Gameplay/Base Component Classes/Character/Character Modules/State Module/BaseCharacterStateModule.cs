@@ -124,27 +124,36 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		/// <summary>
 		/// Checks the ability vital, making sure there's enough to activate the ability.
 		/// </summary>
-		/// <returns><c>true</c>, if ability vital has enough to activate, <c>false</c> otherwise.</returns>
+		/// <returns><c>true</c>, if ability meets activation parameters, <c>false</c> otherwise.</returns>
 		/// <param name="ability">Ability.</param>
 	private bool CheckAbilityVital (AbilityProperties ability)
 	{
 		Debug.Log ("3");
 		if (ability.Cost > 0) {
 			//checks if ability is a special or not, determining vital type used.
-			if (ability.IsSpecial) {
-				if (stats.Energy.CurValue > ability.Cost) {
-					Debug.Log ("Special Ability activated");
-					stats.Energy.CurValue -= ability.Cost;
-					return true;
-				} else 
-					return false;
-			} else {
+			switch (ability.VitalType)
+			{
+			case Vital.PrimaryVitalName.Stamina:
 				if (stats.Stamina.CurValue > ability.Cost) {
 					Debug.Log ("Standard Ability activated");
 					stats.Stamina.CurValue -= ability.Cost;
 					return true;
 				} else 
 					return false;
+				break;
+
+			case Vital.PrimaryVitalName.Energy:
+				if (stats.Energy.CurValue > ability.Cost) {
+					Debug.Log ("Special Ability activated");
+					stats.Energy.CurValue -= ability.Cost;
+					return true;
+				} else 
+					return false;
+				break;
+			case Vital.PrimaryVitalName.Health:
+			default:
+				return true;
+				break;
 			}
 		} else {
 			Debug.Log ("Ability did not activate");
@@ -331,7 +340,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
 		_animation.material.color = Color.gray;
 		float timer1 = moveSet.CharMovement.Dodge.EnterLength + Time.time;
-		float timer2 = moveSet.CharMovement.Dodge.DurationLength + timer1;
+		float timer2 = moveSet.CharMovement.Dodge.ActiveLength + timer1;
 		while (timer1 >= Time.time) {
 			moveSet.CharMovement.Dodge.enterAbility ();
 			yield return null;

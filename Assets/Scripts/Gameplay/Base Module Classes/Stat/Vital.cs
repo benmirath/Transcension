@@ -80,7 +80,7 @@ public abstract class Vital : IVital
 		}
 	}
 
-	[SerializeField] protected ScalingStat regenScalingStat;
+	[SerializeField] protected ScalingStat regenScaling;
 	protected float buffValue;
 		//Events - in place to constantly update relevant vital of any change
 	public delegate void VitalChangedHandler (Vital vital);
@@ -106,7 +106,7 @@ public abstract class Vital : IVital
 
 
 	public float RegenRate {
-		get { return regenScalingStat.BaseValue;}
+		get { return regenScaling.BaseValue;}
 	}
 
 	public bool StopRegen {
@@ -163,10 +163,10 @@ public abstract class Vital : IVital
 {
 	//[SerializeField, ScalingStatAttribute(ScalingStatAttribute.ScalingType.Base)] 
 	[SerializeField] protected PrimaryVitalName name;
-	[SerializeField] private ScalingStat baseScalingStat;
+	[SerializeField] private ScalingStat baseScaling;
 
 	public override float MaxValue {
-		get { 	maxValue = baseScalingStat.BaseValue + BuffValue;
+		get { 	maxValue = baseScaling.BaseValue + BuffValue;
 			return maxValue;}
 	}
 
@@ -174,8 +174,8 @@ public abstract class Vital : IVital
 	{
 		base.SetScaling (user);
 		Debug.Log ("Scaling is Set");
-		baseScalingStat.SetScaling (user);
-		regenScalingStat.SetScaling (user);
+		baseScaling.SetScaling (user);
+		regenScaling.SetScaling (user);
 		user.StartCoroutine (StartRegen());
 		CurValue = MaxValue;
 	}
@@ -221,7 +221,7 @@ public abstract class Vital : IVital
 	{
 		//_user = user;
 		base.SetScaling (user);
-		regenScalingStat.SetScaling (user);
+		regenScaling.SetScaling (user);
 		user.StartCoroutine (StartRegen());
 		curValue = MinValue;
 	}

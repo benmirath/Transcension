@@ -49,7 +49,12 @@ public class BaseCharacterClassicStats : MonoBehaviour
 	//		[SerializeField] private List<Attribute> attributes;
 	//		[SerializeField] private List<PrimaryVital> primaryVitals;
 	//		[SerializeField] private List<StatusVital> statusVitals;
-	
+
+	//Primary Vitals
+	[SerializeField] protected PrimaryVital health;
+	[SerializeField] protected PrimaryVital stamina;
+	[SerializeField] protected PrimaryVital energy;
+
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Vitality)] protected CharacterAttribute vitality;
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Endurance)] protected CharacterAttribute endurance;
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Spirit)] protected CharacterAttribute spirit;
@@ -57,11 +62,7 @@ public class BaseCharacterClassicStats : MonoBehaviour
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Dexterity)] protected CharacterAttribute dexterity;
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Mind)] protected CharacterAttribute mind;
 	
-	//Primary Vitals
-	[SerializeField] protected PrimaryVital health;
-	[SerializeField] protected PrimaryVital stamina;
-	[SerializeField] protected PrimaryVital energy;
-	
+
 	//Status Vitals
 	[SerializeField] protected StatusVital stunResistance;		
 	

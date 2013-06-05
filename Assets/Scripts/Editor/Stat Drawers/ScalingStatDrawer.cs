@@ -17,11 +17,11 @@ public class ScalingStatDrawer : PropertyDrawer
 
 		Rect labelPosition = new Rect (position.x, position.y, position.width * labelWidth, position.height);
 		Rect attPosition = new Rect (position.x + (position.width*labelWidth), position.y, position.width * attWidth, position.height);
-		Rect ratioPosition = new Rect (position.x + (position.width-(position.width*ratioWidth)), position.y, position.width * ratioWidth, position.y);
+		Rect ratioPosition = new Rect (position.x + (position.width-(position.width*ratioWidth)), position.y, position.width * ratioWidth, position.height);
 
 		EditorGUI.LabelField (labelPosition, statName);
-		EditorGUI.Popup (attPosition, scalingAttribute.enumValueIndex, scalingAttribute.enumNames);
-		EditorGUI.Slider (ratioPosition, scalingRatio.floatValue, 0, 100);
+		scalingAttribute.enumValueIndex = EditorGUI.Popup (attPosition, scalingAttribute.enumValueIndex, scalingAttribute.enumNames);
+		scalingRatio.floatValue = EditorGUI.Slider (ratioPosition, scalingRatio.floatValue, 0, 100);
 	}
 }
 

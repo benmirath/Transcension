@@ -18,7 +18,6 @@ public interface IAbilityProperties
 //	}
 
 	#region Properties
-	[SerializeField] protected Vital.PrimaryVitalName vitalType;
 
 	private ICharacter _user;
 	private IInput _charInput;
@@ -27,12 +26,13 @@ public interface IAbilityProperties
 	public Action enterAbility;
 	public Action durationAbility;
 	public Action exitAbility;
+	[SerializeField] protected Vital.PrimaryVitalName vitalType;
 	[SerializeField] protected float cost;
 	[SerializeField] protected float enterLength;				//length of time between when ability is activated, and when it takes effect.
-	[SerializeField] protected float durationLength;			//length of time that the ability remains in effect.
+	[SerializeField] protected float activeLength;			//length of time that the ability remains in effect.
 	[SerializeField] protected float exitLength;				//length of time between when ability effect ends, and character can act again.
 
-	protected bool isSpecial;
+//	protected bool isSpecial;
 //determines whether ability will use stamina or energy
 	#endregion
 	
@@ -40,7 +40,7 @@ public interface IAbilityProperties
 	protected virtual void Awake ()
 	{
 		Debug.Log ("Ability Created");
-		isSpecial = false;
+//		isSpecial = false;
 	}
 	/// <summary>
 	/// Sets the primary values and variables required for the ability.
@@ -66,7 +66,7 @@ public interface IAbilityProperties
 	public IInput CharInput { get { return _charInput; } }
 		//public bool FollowupAvailable { get { return _followupAvailable; } }
 
-	public bool IsSpecial { get { return isSpecial; } }
+//	public bool IsSpecial { get { return isSpecial; } }
 
 	public Vital.PrimaryVitalName VitalType { get { return vitalType; } }
 
@@ -80,9 +80,9 @@ public interface IAbilityProperties
 		set { enterLength = value;}
 	}
 
-	public float DurationLength {
-		get { return durationLength;}
-		set { durationLength = value;}
+	public float ActiveLength {
+		get { return activeLength;}
+		set { activeLength = value;}
 	}
 
 	public float ExitLength {
@@ -117,10 +117,10 @@ public interface IAbilityProperties
 //	protected Action exitMoveEffect;
 //	protected Action lookEffect;
 
-	[SerializeField] private MovementPropertyType _movementType;
-	[SerializeField] protected float enterMoveSpeed;
-	[SerializeField] protected float activeMoveSpeed;
-	[SerializeField] protected float exitMoveSpeed;
+	[SerializeField] private MovementPropertyType movementType;
+//	[SerializeField] protected float enterMoveSpeed;
+	[SerializeField] protected float moveSpeed;
+//	[SerializeField] protected float exitMoveSpeed;
 	[SerializeField] protected float lookSpeed;
 	[SerializeField] protected Vector3 direction;
 
@@ -129,17 +129,17 @@ public interface IAbilityProperties
 		set { direction = value;}
 	}
 
-	public float EnterMoveSpeed {
-		get { return enterMoveSpeed;}
-	}
+//	public float EnterMoveSpeed {
+//		get { return enterMoveSpeed;}
+//	}
 
 	public float ActiveMoveSpeed {
-		get { return activeMoveSpeed;}
+		get { return moveSpeed;}
 	}
 
-	public float ExitMoveSpeed {
-		get { return exitMoveSpeed;}
-	}
+//	public float ExitMoveSpeed {
+//		get { return exitMoveSpeed;}
+//	}
 
 	public float TurnSpeed {
 		get { return TurnSpeed;}
@@ -150,9 +150,9 @@ public interface IAbilityProperties
 	public override void SetValue (ICharacter user)
 	{
 		Debug.Log ("AbilityProperty: Setting Values");
-		isSpecial = false;
+//		isSpecial = false;
 		base.SetValue (user);
-		switch (_movementType) {
+		switch (movementType) {
 		case MovementPropertyType.Aim:
 //			activeMoveEffect = null;
 //			lookEffect = Aim;
@@ -165,7 +165,7 @@ public interface IAbilityProperties
 //			activeMoveEffect = ConstantMove;
 //			lookEffect = Turn;
 			durationAbility = delegate {
-				ConstantMove (activeMoveSpeed);
+				ConstantMove (moveSpeed);
 				Turn ();
 			};
 			break;
@@ -174,7 +174,7 @@ public interface IAbilityProperties
 //			activeMoveEffect = ConstantMove;
 //			lookEffect = Aim;
 			durationAbility = delegate {
-				ConstantMove (activeMoveSpeed);
+				ConstantMove (moveSpeed);
 				Aim ();
 			};
 			break;
@@ -186,11 +186,11 @@ public interface IAbilityProperties
 
 			enterAbility = delegate {
 				//will be the code to accelerate the character from walking to running speed.
-				ConstantMove (enterMoveSpeed);
+				ConstantMove (moveSpeed * .7f);
 				Turn ();
 			};
 			durationAbility = delegate {
-				ConstantMove (activeMoveSpeed);
+				ConstantMove (moveSpeed);
 				Turn ();
 			};
 			break;
@@ -202,13 +202,13 @@ public interface IAbilityProperties
 
 			enterAbility = delegate {
 //				ConstantMove (enterMoveSpeed);
-				BurstMove (enterMoveSpeed);
+				BurstMove (moveSpeed);
 				Turn ();
 			
 			};
 			durationAbility = delegate {
 //				ConstantMove (activeMoveSpeed);
-				BurstMove (activeMoveSpeed);
+				BurstMove (moveSpeed * .8f);
 				Turn ();
 			
 			};
