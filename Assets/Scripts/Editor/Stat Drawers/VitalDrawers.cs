@@ -67,7 +67,7 @@ public class PrimaryVitalDrawer : PropertyDrawer
 		Rect regenScalingPos = new Rect (position.x + 15, position.y + 30, position.width - 15, 15);
 
 		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
-		EditorGUI.ProgressBar (barPos, curValue.floatValue / maxValue.floatValue,"");
+		EditorGUI.ProgressBar (barPos, curValue.floatValue / maxValue.floatValue,curValue.floatValue+" / "+maxValue.floatValue);
 
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
 

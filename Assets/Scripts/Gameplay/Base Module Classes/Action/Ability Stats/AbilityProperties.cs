@@ -18,29 +18,22 @@ public interface IAbilityProperties
 //	}
 
 	#region Properties
-
 	private ICharacter _user;
 	private IInput _charInput;
-		//private bool _followupAvailable;
-
 	public Action enterAbility;
 	public Action durationAbility;
 	public Action exitAbility;
 	[SerializeField] protected Vital.PrimaryVitalName vitalType;
 	[SerializeField] protected float cost;
-	[SerializeField] protected float enterLength;				//length of time between when ability is activated, and when it takes effect.
-	[SerializeField] protected float activeLength;			//length of time that the ability remains in effect.
-	[SerializeField] protected float exitLength;				//length of time between when ability effect ends, and character can act again.
-
-//	protected bool isSpecial;
-//determines whether ability will use stamina or energy
+	[SerializeField] protected float enterLength;//length of time between when ability is activated, and when it takes effect.
+	[SerializeField] protected float activeLength;//length of time that the ability remains in effect.
+	[SerializeField] protected float exitLength;//length of time between when ability effect ends, and character can act again.
 	#endregion
 	
 	#region Initialization
 	protected virtual void Awake ()
 	{
 		Debug.Log ("Ability Created");
-//		isSpecial = false;
 	}
 	/// <summary>
 	/// Sets the primary values and variables required for the ability.
@@ -62,11 +55,8 @@ public interface IAbilityProperties
 	
 	#region  Propertiess
 	public ICharacter User { get { return _user; } }
-	//public IPhysics CharPhysics {get { return _charPhysics; }}
-	public IInput CharInput { get { return _charInput; } }
-		//public bool FollowupAvailable { get { return _followupAvailable; } }
 
-//	public bool IsSpecial { get { return isSpecial; } }
+	public IInput CharInput { get { return _charInput; } }
 
 	public Vital.PrimaryVitalName VitalType { get { return vitalType; } }
 
@@ -112,15 +102,11 @@ public interface IAbilityProperties
 ,
 		Knockback
 	}
-//	protected Action enterMoveEffect;				//when move is starting up
-//	protected Action activeMoveEffect;				//when move is active
-//	protected Action exitMoveEffect;
-//	protected Action lookEffect;
 
 	[SerializeField] private MovementPropertyType movementType;
-//	[SerializeField] protected float enterMoveSpeed;
-	[SerializeField] protected float moveSpeed;
-//	[SerializeField] protected float exitMoveSpeed;
+	[SerializeField] protected float enterMoveSpeed;
+	[SerializeField] protected float activeMoveSpeed;
+	[SerializeField] protected float exitMoveSpeed;
 	[SerializeField] protected float lookSpeed;
 	[SerializeField] protected Vector3 direction;
 
@@ -129,17 +115,17 @@ public interface IAbilityProperties
 		set { direction = value;}
 	}
 
-//	public float EnterMoveSpeed {
-//		get { return enterMoveSpeed;}
-//	}
-
-	public float ActiveMoveSpeed {
-		get { return moveSpeed;}
+	public float EnterMoveSpeed {
+		get { return enterMoveSpeed;}
 	}
 
-//	public float ExitMoveSpeed {
-//		get { return exitMoveSpeed;}
-//	}
+	public float ActiveMoveSpeed {
+		get { return activeMoveSpeed;}
+	}
+
+	public float ExitMoveSpeed {
+		get { return exitMoveSpeed;}
+	}
 
 	public float TurnSpeed {
 		get { return TurnSpeed;}
@@ -150,65 +136,49 @@ public interface IAbilityProperties
 	public override void SetValue (ICharacter user)
 	{
 		Debug.Log ("AbilityProperty: Setting Values");
-//		isSpecial = false;
 		base.SetValue (user);
 		switch (movementType) {
 		case MovementPropertyType.Aim:
-//			activeMoveEffect = null;
-//			lookEffect = Aim;
 			durationAbility = delegate {
 				Aim ();
 			};
 			break;
 
 		case MovementPropertyType.Walk:
-//			activeMoveEffect = ConstantMove;
-//			lookEffect = Turn;
 			durationAbility = delegate {
-				ConstantMove (moveSpeed);
+				ConstantMove (activeMoveSpeed);
 				Turn ();
 			};
 			break;
 
 		case MovementPropertyType.Strafe:
-//			activeMoveEffect = ConstantMove;
-//			lookEffect = Aim;
 			durationAbility = delegate {
-				ConstantMove (moveSpeed);
+				ConstantMove (activeMoveSpeed);
 				Aim ();
 			};
 			break;
 
 		//these last two will likely add some extra control logic to fine tune momentum.
 		case MovementPropertyType.Run:
-//			activeMoveEffect = ConstantMove;
-//			lookEffect = Turn;
-
 			enterAbility = delegate {
 				//will be the code to accelerate the character from walking to running speed.
-				ConstantMove (moveSpeed * .7f);
+				ConstantMove (enterMoveSpeed);
 				Turn ();
 			};
 			durationAbility = delegate {
-				ConstantMove (moveSpeed);
+				ConstantMove (activeMoveSpeed);
 				Turn ();
 			};
 			break;
 
 		case MovementPropertyType.Dodge:
-			//if (CharInput == null)
-			
-						
-
 			enterAbility = delegate {
-//				ConstantMove (enterMoveSpeed);
-				BurstMove (moveSpeed);
+				BurstMove (enterMoveSpeed);
 				Turn ();
 			
 			};
 			durationAbility = delegate {
-//				ConstantMove (activeMoveSpeed);
-				BurstMove (moveSpeed * .8f);
+				BurstMove (activeMoveSpeed);
 				Turn ();
 			
 			};
@@ -222,7 +192,6 @@ public interface IAbilityProperties
 			Debug.Log ("Ability Set: User is Null");
 		if (CharInput == null)
 			Debug.Log ("Ability Set: Input is Null");
-		//durationAbility = activeMoveEffect + lookEffect;
 	}
 	#endregion
 	
@@ -293,25 +262,31 @@ public class StealthProperties : MovementProperties
 [System.Serializable] public abstract class AttackProperties : MovementProperties
 {
 	#region Properties
-	public enum AttackPropertyType
-	{
-		StandardMelee,
-		ChargeMelee,
-		MultiMelee,
-		StandardRanged,
-		ChargeRanged,
-		MultiRanged,
+//	public enum AttackPropertyType
+//	{
+//		StandardMelee
+//,
+//		ChargeMelee
+//,
+//		MultiMelee
+//,
+//		StandardRanged
+//,
+//		ChargeRanged
+//,
+//		MultiRanged
+//,
+//
+////		Standard
+////,
+////		Charge
+////,
+////		Multi
+////,
+////		Counter
+//	}
 
-//		Standard
-//,
-//		Charge
-//,
-//		Multi
-//,
-//		Counter
-	}
-
-	public enum DamageType
+	public enum DamageEffectType
 	{
 		//General Traits
 		Standard
@@ -335,51 +310,59 @@ public class StealthProperties : MovementProperties
 		Shocking
 ,
 	}
-	//[SerializeField] protected Vector3 range;										//vector3 that determines the proprotion of the attack
-	[SerializeField] private AttackPropertyType _attackType;
+	private BaseEquipment _weapon;
+	private BoxCollider _hitbox;
+	[SerializeField] protected DamageEffectType damageType;
+	[SerializeField] protected float damageModifier;		//amount that this attack modifies the base weapon's damage range. 
+	[SerializeField] protected float impactModifier;		//raw force behind attack, used for determining effectiveness of blocks and calculating hit stun
 
-	[SerializeField] protected DamageType dmgType;
-	[SerializeField] protected float dmgModifier;									//amount that this attack modifies the base weapon's damage range. 
-	[SerializeField] protected float attackStrength;								//raw force behind attack, used for determining effectiveness of blocks and calculating hit stun
-	//[SerializeField] protected bool comboable;
-	//[SerializeField] protected float comboWindow;									//the window of oppotunity to activate a followup attack (combo)
+	public BaseEquipment Weapon { get { return _weapon;}}
+	public BoxCollider Hitbox { get { return _hitbox;}}
+	public DamageEffectType DamageType { get { return damageType;}}
+	public float DamageModifier { get { return damageModifier;}}
+	public float ImpactModifier { get { return impactModifier;}}
 
-//	public Vector3 Range {
-//		get {return range;}
-//	}
-	public float DamageModifier {
-		get { return dmgModifier;}
+	public float AdjustedDamageValue {
+		get { return _weapon.Stats.AdjustedBaseDamage * damageModifier;}
 	}
-	public float AttackStrength {
-		get { return attackStrength;}
-	}
-
-//	public bool Comboable {
-//		get { return comboable;}
-//	}
-//	public float ComboWindow {
-//		get {return comboWindow;}
-//	}
 	#endregion Properties
 	
 	#region Initialization
-
+	protected override void Awake ()
+	{
+		base.Awake ();
+		damageType = DamageEffectType.Standard;
+		damageModifier = 1f;
+		impactModifier = 1f;
+	}
 	#endregion Initialization
 
 	#region Effects
+	//normal attack, single activation.
 	protected abstract void StandardAttack ();
 
+	//has features of normal attack, but it's startup continues while activation button is held. Effect amplifies while held as well
 	protected abstract void ChargeAttack ();
 
-	protected abstract void MultiAttack ();
+	//releases multiple distinct attacks (hitboxes) in succession
+//	protected abstract void MultiAttack ();
 
-	protected abstract void CounterAttack ();
+//	protected abstract void CounterAttack ();
 	#endregion
 }
 
 public class MeleeProperties : AttackProperties
 {
 	#region Effects 
+	void OnTriggerEnter (Collider hit) {
+		Debug.Log ("Hit Registered!");
+		BaseCharacter target;
+		if (hit.transform.GetComponent<BaseCharacter>()) {
+			target = hit.transform.GetComponent<BaseCharacter>();
+			target.CharStats.ApplyDamage(AdjustedDamageValue);
+		}
+	}
+
 	protected override void StandardAttack ()
 	{
 
@@ -390,15 +373,15 @@ public class MeleeProperties : AttackProperties
 
 	}
 
-	protected override void MultiAttack ()
-	{
-
-	}
-
-	protected override void CounterAttack ()
-	{
-
-	}
+//	protected override void MultiAttack ()
+//	{
+//
+//	}
+//
+//	protected override void CounterAttack ()
+//	{
+//
+//	}
 	#endregion
 
 }
@@ -410,9 +393,11 @@ public class RangedProperties : AttackProperties
 	#endregion
 
 	#region Effects
+
+
 	protected override void StandardAttack ()
 	{
-	
+
 	}
 
 	protected override void ChargeAttack ()
@@ -420,15 +405,15 @@ public class RangedProperties : AttackProperties
 		
 	}
 
-	protected override void MultiAttack ()
-	{
-	
-	}
-
-	protected override void CounterAttack ()
-	{
-		
-	}
+//	protected override void MultiAttack ()
+//	{
+//	
+//	}
+//
+//	protected override void CounterAttack ()
+//	{
+//		
+//	}
 	#endregion
 }
 

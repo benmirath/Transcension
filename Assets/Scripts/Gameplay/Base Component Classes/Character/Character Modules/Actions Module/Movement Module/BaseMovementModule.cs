@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 
 public interface IMovement {
 	MovementProperties Aim {
@@ -24,7 +24,8 @@ public interface IMovement {
 ///<summary>
 /// Character Movement Module. Holds movement-related values, as well as the relevant functions that use them. </summary>
 [System.Serializable] public class BaseMovementModule : IMovement{
-	#region Properties	
+	#region Properties
+
 	[SerializeField]protected MovementProperties aim;
 	[SerializeField]protected MovementProperties walk;
 	[SerializeField]protected MovementProperties strafe;

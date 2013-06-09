@@ -134,8 +134,8 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 			switch (ability.VitalType)
 			{
 			case Vital.PrimaryVitalName.Stamina:
-				if (stats.Stamina.CurValue > ability.Cost) {
-					Debug.Log ("Standard Ability activated");
+				if (stats.Stamina.CurValue >= ability.Cost) {
+					Debug.LogWarning ("Standard Ability activated");
 					stats.Stamina.CurValue -= ability.Cost;
 					return true;
 				} else 
@@ -143,8 +143,8 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 				break;
 
 			case Vital.PrimaryVitalName.Energy:
-				if (stats.Energy.CurValue > ability.Cost) {
-					Debug.Log ("Special Ability activated");
+				if (stats.Energy.CurValue >= ability.Cost) {
+					Debug.LogWarning ("Special Ability activated");
 					stats.Energy.CurValue -= ability.Cost;
 					return true;
 				} else 
@@ -325,7 +325,8 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	{
 		Debug.Log ("Attempting Transition: Dodge");
 		if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Walk.ToString () || currentState.ToString () == CharacterActions.Run.ToString ()) 
-			currentState = CharacterActions.Dodge;
+			if (CheckAbilityVital (moveSet.CharMovement.Dodge))
+				currentState = CharacterActions.Dodge;
 //		else if (attacking) {
 //			user.PrimaryWeapon.WeaponState.Followup = BaseEquipmentStateModule.FollowupType.Dodge;
 //		}

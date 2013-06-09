@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -23,6 +25,7 @@ public class BaseEquipmentMovesetModule : MonoBehaviour
 	BaseEquipment _weapon;
 	ICharacter _user;
 	BaseCharacterStateModule _userState;
+	[SerializeField]List<AttackProperties> moveset;
 
 	#endregion
 

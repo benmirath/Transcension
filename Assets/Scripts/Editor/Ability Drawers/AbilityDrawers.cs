@@ -2,52 +2,42 @@ using System;
 using UnityEngine;
 using UnityEditor;
 
-[CustomPropertyDrawer(typeof(MovementProperties))]
-public class MovementPropertyDrawer : PropertyDrawer
+//[CustomPropertyDrawer(typeof(MovementProperties))]
+public class BaseAbilityPropertyDrawer : PropertyDrawer
 {
-	bool showContent = true;
 	float foldoutWidth = 30f;
 	float abilityTypeWidth = .20f;
 	float vitalTypeWidth = .20f;
 	float costWidth = .5f;
 
-	float durationLabelWidth = .140f;
-	float durationValueWidth = .169f;
+	protected bool showContent = false;
+	protected bool showTimer = false;
+	protected Rect abilityTypePos;
 
-	float speedLabelWidth = .25f;
-	float speedValueWidth = .25f;
-
-	float enterMoveSpeedWidth = .25f;
-	float activeMoveSpeedWidth = .25f;
-	float exitMoveSpeedWidth = .25f;
-	float lookSpeedWidth = .25f;
-
+	protected float GetTimerHeight
+	{
+		get {
+			if (showTimer)
+				return 60;
+			else
+				return 15;
+		}
+	}
 	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 	{
-		if (showContent)
-			return 60;
-		else
-			return 15;
+		return GetTimerHeight;
 	}
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
-		//EditorGUIUtility.LookLikeControls();
-		EditorGUI.indentLevel = 1;
-		//Base Ability Properties
+		EditorGUIUtility.LookLikeControls();
+		#region Base Properties
 		SerializedProperty vitalType = property.FindPropertyRelative ("vitalType");
 		SerializedProperty cost = property.FindPropertyRelative ("cost");
 		SerializedProperty enterLength = property.FindPropertyRelative ("enterLength");
 		SerializedProperty activeLength = property.FindPropertyRelative ("activeLength");
 		SerializedProperty exitLength = property.FindPropertyRelative ("exitLength");
-
-		//Derived Ability Properties
-		SerializedProperty movementType = property.FindPropertyRelative ("movementType");
-//		SerializedProperty enterMoveSpeed = property.FindPropertyRelative ("enterMoveSpeed");
-//		SerializedProperty activeMoveSpeed = property.FindPropertyRelative ("activeMoveSpeed");
-//		SerializedProperty exitMoveSpeed = property.FindPropertyRelative ("exitMoveSpeed");
-		SerializedProperty moveSpeed = property.FindPropertyRelative ("moveSpeed");
-		SerializedProperty lookSpeed = property.FindPropertyRelative ("lookSpeed");
+		#endregion
 
 		#region Coordinates
 		Rect foldoutPos = new Rect (position.x, 
@@ -55,7 +45,7 @@ public class MovementPropertyDrawer : PropertyDrawer
 		                            foldoutWidth, 
 		                            15);
 
-		Rect movementTypePos = new Rect (position.x + foldoutWidth, 
+		abilityTypePos = new Rect (position.x + foldoutWidth, 
 		                                 position.y, 
 		                                 position.width*abilityTypeWidth, 
 		                                 15);
@@ -63,80 +53,140 @@ public class MovementPropertyDrawer : PropertyDrawer
 		                              position.y, 
 		                              position.width*vitalTypeWidth, 
 		                              15);
-		Rect costPos = new Rect (position.x + (position.width * costWidth) - 15, 
+		Rect costPos = new Rect (position.x + (position.width * costWidth),
 		                         position.y, 
 		                         position.width*costWidth, 
 		                         15);
 
-		Rect enterLengthPos = new Rect (position.x + (position.width * durationLabelWidth), 
-		                                position.y + 20, 
-		                                position.width * durationValueWidth, 
-		                                15);
-		Rect activeLenthPos = new Rect (position.x + (position.width * ((durationLabelWidth + (durationValueWidth * 2))) + 20),
-		                                position.y + 20,
-		                                position.width * durationValueWidth,
-		                                15);
-		Rect exitLenthPos = new Rect (position.width - (position.width * durationValueWidth) - 15,
-		                              position.y + 20,
-		                              position.width * durationValueWidth,
-		                              15);
 
-		Rect moveSpeedPos = new Rect (position.x + (position.width * speedLabelWidth),
-		                              position.y + 40,
-		                              position.width * speedValueWidth,
+		Rect showTimerPos = new Rect (position.x,
+		                              position.y + 15,
+		                              position.width,
 		                              15);
-		Rect lookSpeedPos = new Rect (position.width - (position.width * speedValueWidth) - 15,
-		                              position.y + 40,
-		                              position.width * speedValueWidth,
+		Rect enterLengthPos = new Rect (position.x, 
+		                                position.y + GetTimerHeight - 30, 
+		                                position.width, 
+		                                15);
+		Rect activeLengthPos = new Rect (position.x,
+		                                position.y + GetTimerHeight - 15,
+		                                position.width,
+		                                15);
+		Rect exitLengthPos = new Rect (position.x,
+		                              position.y + GetTimerHeight,
+		                              position.width,
 		                              15);
-//		Rect enterMovePos = new Rect (position.x);
 		#endregion
 
-
-
+		#region Inspector Elements
+		EditorGUI.indentLevel = 1;
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
-		movementType.enumValueIndex = EditorGUI.Popup (movementTypePos, movementType.enumValueIndex, movementType.enumNames);
 		vitalType.enumValueIndex = EditorGUI.Popup (vitalTypePos, vitalType.enumValueIndex, vitalType.enumNames);
 		cost.floatValue = EditorGUI.Slider (costPos, cost.floatValue, 0, 100);
-
-
 
 		if (showContent) {
 			EditorGUI.indentLevel = 2;
 			//Duration Timers
-			EditorGUI.LabelField (new Rect (position.x, position.y + 20, position.width * durationLabelWidth, 15), "Enter");
-			enterLength.floatValue = EditorGUI.FloatField (enterLengthPos, enterLength.floatValue);
-			EditorGUI.LabelField (new Rect (position.x + (position.width * (durationLabelWidth + durationValueWidth) + 10), position.y+20, position.width * durationLabelWidth, 15), "Active");
-			activeLength.floatValue = EditorGUI.FloatField (activeLenthPos, activeLength.floatValue);
-			EditorGUI.LabelField (new Rect (position.width - (position.width * (durationLabelWidth + durationValueWidth)), position.y+20, position.width * durationValueWidth, 15), "Exit");
-			exitLength.floatValue = EditorGUI.FloatField (exitLenthPos, exitLength.floatValue);
-
-			//Speed Values
-			EditorGUI.LabelField (new Rect (position.x, position.y + 40, position.width * speedLabelWidth, 15), "Move Speed");
-			moveSpeed.floatValue = EditorGUI.FloatField (moveSpeedPos, moveSpeed.floatValue);
-			EditorGUI.LabelField (new Rect (position.width - (position.width * (speedLabelWidth + speedValueWidth)), position.y + 40, position.width * speedLabelWidth, 15), "Look Speed");
-			lookSpeed.floatValue = EditorGUI.FloatField (lookSpeedPos, lookSpeed.floatValue);
-
+			showTimer = EditorGUI.Foldout (showTimerPos, showTimer, "Duration Values");
+			if (showTimer) {
+				EditorGUI.indentLevel = 4;
+				enterLength.floatValue = EditorGUI.Slider (enterLengthPos,  "Startup Duration", enterLength.floatValue, 0, 10);
+				activeLength.floatValue = EditorGUI.Slider (activeLengthPos, "Active Duration", activeLength.floatValue, 0, 10);
+				exitLength.floatValue = EditorGUI.Slider (exitLengthPos, "Cooldown Duration", exitLength.floatValue, 0, 10);
+			}
 		}
-
+		#endregion
 	}
-
-
 }
 
+[CustomPropertyDrawer(typeof(MovementProperties))]
+public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
+{
+	protected bool showSpeed = false;
+	float GetSpeedHeight {
+		get {
+			if (showSpeed)
+				return 75;
+			else 
+				return 15;
+		}
+	}
+	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
+	{
+		if (showContent)
+			return GetTimerHeight + GetSpeedHeight + 20;
+		else 
+			return 20;
+	}
+
+	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
+	{
+		base.OnGUI (position, property, label);
+		#region Movement Properties
+		SerializedProperty movementType = property.FindPropertyRelative ("movementType");
+		SerializedProperty enterMoveSpeed = property.FindPropertyRelative ("enterMoveSpeed");
+		SerializedProperty activeMoveSpeed = property.FindPropertyRelative ("activeMoveSpeed");
+		SerializedProperty exitMoveSpeed = property.FindPropertyRelative ("exitMoveSpeed");
+		SerializedProperty lookSpeed = property.FindPropertyRelative ("lookSpeed");
+		#endregion
+
+		#region Coordinates
+		Rect showSpeedPos = new Rect (position.x,
+		                              position.y + GetTimerHeight + 15,
+		                              position.width,
+		                              15);
+		Rect enterMoveSpeedPos = new Rect (position.x,
+		                              position.y + GetSpeedHeight - 45 + GetTimerHeight,
+		                              position.width,
+		                              15);
+		Rect activeMoveSpeedPos = new Rect (position.x,
+		                                   position.y + GetSpeedHeight - 30 + GetTimerHeight,
+		                                   position.width,
+		                                   15);
+		Rect exitMoveSpeedPos = new Rect (position.x,
+		                                   position.y + GetSpeedHeight - 15 + GetTimerHeight,
+		                                   position.width,
+		                                   15);
+		Rect lookSpeedPos = new Rect (position.x,
+		                              position.y + GetSpeedHeight + GetTimerHeight,
+		                              position.width,
+		                              15);
+		#endregion
+
+		#region Inspector Elements
+		EditorGUI.indentLevel = 1;
+		movementType.enumValueIndex = EditorGUI.Popup (abilityTypePos, movementType.enumValueIndex, movementType.enumNames);
+		if (showContent) {
+			EditorGUI.indentLevel = 2;
+			//Speed Values
+			showSpeed = EditorGUI.Foldout (showSpeedPos, showSpeed, "Speed Values");
+			if (showSpeed) {
+				EditorGUI.indentLevel = 4;
+				//EditorGUI.LabelField (new Rect (position.x, position.y + 40, position.width * speedLabelWidth, 15), "Move Speed");
+				//moveSpeed.floatValue = EditorGUI.FloatField (moveSpeedPos, moveSpeed.floatValue);
+				//EditorGUI.LabelField (new Rect (position.width - (position.width * (speedLabelWidth + speedValueWidth)), position.y + 40, position.width * speedLabelWidth, 15), "Look Speed");
+				//lookSpeed.floatValue = EditorGUI.FloatField (lookSpeedPos, lookSpeed.floatValue);
+				enterMoveSpeed.floatValue = EditorGUI.Slider (enterMoveSpeedPos, "Startup Speed", enterMoveSpeed.floatValue, 0, 50);
+				activeMoveSpeed.floatValue = EditorGUI.Slider (activeMoveSpeedPos, "Active Speed", activeMoveSpeed.floatValue, 0 , 50);
+				exitMoveSpeed.floatValue = EditorGUI.Slider (exitMoveSpeedPos, "Cooldown Speed", exitMoveSpeed.floatValue, 0, 50);
+				lookSpeed.floatValue = EditorGUI.Slider (lookSpeedPos, "Look Speed", lookSpeed.floatValue, 0, 50);
+			}
+		}
+		#endregion
+	}
+}
+
+
+
 [CustomPropertyDrawer(typeof(MeleeProperties))]
-public class MeleePropertyDrawer : PropertyDrawer
+public class Attack : MovementPropertyDrawer
 {
 
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
-		SerializedProperty enterLength = property.FindPropertyRelative ("enterLength");
-		SerializedProperty durationLength = property.FindPropertyRelative ("durationLength");
-		SerializedProperty exitLength = property.FindPropertyRelative ("exitLength");
-		SerializedProperty vitalType = property.FindPropertyRelative ("vitalType");
-		SerializedProperty cost = property.FindPropertyRelative ("cost");
-
+		SerializedProperty damageType;
+		SerializedProperty attackModifier;
+		SerializedProperty impactModifer;
 	}
 
 }
@@ -148,12 +198,6 @@ public class RangedPropertyDrawer : PropertyDrawer
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
-		SerializedProperty enterLength = property.FindPropertyRelative ("enterLength");
-		SerializedProperty durationLength = property.FindPropertyRelative ("durationLength");
-		SerializedProperty exitLength = property.FindPropertyRelative ("exitLength");
-
-		SerializedProperty vitalType = property.FindPropertyRelative ("vitalType");
-		SerializedProperty cost = property.FindPropertyRelative ("cost");
 
 	}
 
