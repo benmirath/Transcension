@@ -262,8 +262,8 @@ public class StealthProperties : MovementProperties
 [System.Serializable] public abstract class AttackProperties : MovementProperties
 {
 	#region Properties
-//	public enum AttackPropertyType
-//	{
+	public enum AttackPropertyType
+	{
 //		StandardMelee
 //,
 //		ChargeMelee
@@ -277,14 +277,14 @@ public class StealthProperties : MovementProperties
 //		MultiRanged
 //,
 //
-////		Standard
-////,
-////		Charge
-////,
-////		Multi
-////,
-////		Counter
-//	}
+		Standard
+,
+		Charge
+,
+		Multi
+,
+		Counter
+	}
 
 	public enum DamageEffectType
 	{
@@ -312,13 +312,26 @@ public class StealthProperties : MovementProperties
 	}
 	private BaseEquipment _weapon;
 	private BoxCollider _hitbox;
-	[SerializeField] protected DamageEffectType damageType;
+
+	[SerializeField] protected AttackPropertyType attackType;
+
+	[SerializeField] protected DamageEffectType primaryDamageType;
+	[SerializeField] protected DamageEffectType secondaryDamageType;
 	[SerializeField] protected float damageModifier;		//amount that this attack modifies the base weapon's damage range. 
 	[SerializeField] protected float impactModifier;		//raw force behind attack, used for determining effectiveness of blocks and calculating hit stun
 
 	public BaseEquipment Weapon { get { return _weapon;}}
 	public BoxCollider Hitbox { get { return _hitbox;}}
-	public DamageEffectType DamageType { get { return damageType;}}
+
+	/// <summary>
+	/// Gets the type of the attack. Dicates general nature of the attack, both input and output. </summary>
+	/// <value>The type of the attack.</value>
+	public AttackPropertyType AttackType { get {return attackType;}}
+	/// <summary>
+	/// Gets the damage type of the attack.</summary>
+	/// <value>The type of the damage.</value>
+	public DamageEffectType PrimaryDamageType { get { return primaryDamageType;}}
+	public DamageEffectType SecondaryDamageType { get { return secondaryDamageType;}}
 	public float DamageModifier { get { return damageModifier;}}
 	public float ImpactModifier { get { return impactModifier;}}
 
@@ -328,10 +341,16 @@ public class StealthProperties : MovementProperties
 	#endregion Properties
 	
 	#region Initialization
+	public virtual void SetValue (BaseEquipment weapon)
+	{
+		_weapon = weapon;
+		base.SetValue (_weapon.User);
+	}
+
 	protected override void Awake ()
 	{
 		base.Awake ();
-		damageType = DamageEffectType.Standard;
+		primaryDamageType = DamageEffectType.Standard;
 		damageModifier = 1f;
 		impactModifier = 1f;
 	}
@@ -351,7 +370,7 @@ public class StealthProperties : MovementProperties
 	#endregion
 }
 
-public class MeleeProperties : AttackProperties
+[System.Serializable]public class MeleeProperties : AttackProperties
 {
 	#region Effects 
 	void OnTriggerEnter (Collider hit) {

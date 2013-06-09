@@ -1,20 +1,21 @@
 ﻿<Properties GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Movement Module/BaseMovementModule.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Editor/Ability Drawers/AbilityDrawers.cs">
     <Files>
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Weapon Stats/BaseEquipmentProperties.cs" Line="95" Column="49" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Weapon Stats/BaseEquipmentProperties.cs" Line="99" Column="18" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/State Machine/BaseEquipmentStateModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/BaseEquipmentMovesetModule.cs" Line="28" Column="17" />
-      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="362" Column="54" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/BaseEquipmentMovesetModule.cs" Line="28" Column="49" />
+      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="373" Column="21" />
       <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Stat/CharacterAttribute.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Equipment Loadout Module/BaseEquipmentLoadoutModule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/__Base/BaseCharacter.cs" Line="89" Column="21" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/BaseInputModule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs" Line="146" Column="33" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Stats Module/BaseCharacterClassicStats.cs" Line="156" Column="28" />
-      <File FileName="Assets/Scripts/Editor/Ability Drawers/AbilityDrawers.cs" Line="191" Column="2" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/CharacterMovesetModule.cs" Line="9" Column="36" />
+      <File FileName="Assets/Scripts/Editor/Ability Drawers/AbilityDrawers.cs" Line="121" Column="3" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/CharacterMovesetModule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Movement Module/BaseMovementModule.cs" Line="27" Column="20" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Base Behavior/__Base/BaseEquipment.cs" Line="39" Column="1" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -31,9 +32,7 @@
                       <Node name="Character Modules" expanded="True">
                         <Node name="Actions Module" expanded="True">
                           <Node name="Equipment Loadout Module" expanded="True" />
-                          <Node name="Movement Module" expanded="True">
-                            <Node name="BaseMovementModule.cs" selected="True" />
-                          </Node>
+                          <Node name="Movement Module" expanded="True" />
                         </Node>
                         <Node name="Input Module" expanded="True" />
                         <Node name="State Module" expanded="True" />
@@ -65,7 +64,9 @@
             <Node name="Assets" expanded="True">
               <Node name="Scripts" expanded="True">
                 <Node name="Editor" expanded="True">
-                  <Node name="Ability Drawers" expanded="True" />
+                  <Node name="Ability Drawers" expanded="True">
+                    <Node name="AbilityDrawers.cs" selected="True" />
+                  </Node>
                   <Node name="Character Inspector" expanded="True" />
                   <Node name="Stat Drawers" expanded="True" />
                 </Node>

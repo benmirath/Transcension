@@ -12,6 +12,7 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 
 	protected bool showContent = false;
 	protected bool showTimer = false;
+	protected SerializedProperty abilityType;
 	protected Rect abilityTypePos;
 
 	protected float GetTimerHeight
@@ -27,7 +28,7 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 	{
 		return GetTimerHeight;
 	}
-
+	
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
 		EditorGUIUtility.LookLikeControls();
@@ -80,6 +81,7 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 		#region Inspector Elements
 		EditorGUI.indentLevel = 1;
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
+		if (abilityType != null) abilityType.enumValueIndex = EditorGUI.Popup (abilityTypePos, abilityType.enumValueIndex, abilityType.enumNames);
 		vitalType.enumValueIndex = EditorGUI.Popup (vitalTypePos, vitalType.enumValueIndex, vitalType.enumNames);
 		cost.floatValue = EditorGUI.Slider (costPos, cost.floatValue, 0, 100);
 
@@ -102,7 +104,7 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 {
 	protected bool showSpeed = false;
-	float GetSpeedHeight {
+	protected float GetSpeedHeight {
 		get {
 			if (showSpeed)
 				return 75;
@@ -122,7 +124,7 @@ public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 	{
 		base.OnGUI (position, property, label);
 		#region Movement Properties
-		SerializedProperty movementType = property.FindPropertyRelative ("movementType");
+		abilityType = property.FindPropertyRelative ("movementType");
 		SerializedProperty enterMoveSpeed = property.FindPropertyRelative ("enterMoveSpeed");
 		SerializedProperty activeMoveSpeed = property.FindPropertyRelative ("activeMoveSpeed");
 		SerializedProperty exitMoveSpeed = property.FindPropertyRelative ("exitMoveSpeed");
@@ -135,26 +137,26 @@ public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 		                              position.width,
 		                              15);
 		Rect enterMoveSpeedPos = new Rect (position.x,
-		                              position.y + GetSpeedHeight - 45 + GetTimerHeight,
+		                                   position.y + GetTimerHeight + GetSpeedHeight - 45,
 		                              position.width,
 		                              15);
 		Rect activeMoveSpeedPos = new Rect (position.x,
-		                                   position.y + GetSpeedHeight - 30 + GetTimerHeight,
+		                                    position.y + GetTimerHeight + GetSpeedHeight - 30,
 		                                   position.width,
 		                                   15);
 		Rect exitMoveSpeedPos = new Rect (position.x,
-		                                   position.y + GetSpeedHeight - 15 + GetTimerHeight,
+		                                  position.y + GetTimerHeight + GetSpeedHeight - 15,
 		                                   position.width,
 		                                   15);
 		Rect lookSpeedPos = new Rect (position.x,
-		                              position.y + GetSpeedHeight + GetTimerHeight,
+		                              position.y + GetTimerHeight + GetSpeedHeight,
 		                              position.width,
 		                              15);
 		#endregion
 
 		#region Inspector Elements
 		EditorGUI.indentLevel = 1;
-		movementType.enumValueIndex = EditorGUI.Popup (abilityTypePos, movementType.enumValueIndex, movementType.enumNames);
+//		DrawAbilityType ();
 		if (showContent) {
 			EditorGUI.indentLevel = 2;
 			//Speed Values
@@ -178,16 +180,79 @@ public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 
 
 [CustomPropertyDrawer(typeof(MeleeProperties))]
-public class Attack : MovementPropertyDrawer
+public class AttackPropertyDrawer : MovementPropertyDrawer
 {
-
+	bool showAttackStats = false;
+	public float GetAttackStatsHeight {
+		get {
+			if (showAttackStats)
+				return 60;
+			else
+				return 15;
+		}
+	}
+	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
+	{
+		if (showContent)
+			return GetTimerHeight + GetSpeedHeight + GetAttackStatsHeight + 20;
+		else 
+			return 20;
+	}
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
-		SerializedProperty damageType;
-		SerializedProperty attackModifier;
-		SerializedProperty impactModifer;
+		base.OnGUI (position, property, label);
+		#region Attack Properties
+		abilityType = property.FindPropertyRelative ("attackType");
+		SerializedProperty primaryDamageType = property.FindPropertyRelative ("primaryDamageType");
+		SerializedProperty secondaryDamageType = property.FindPropertyRelative ("secondaryDamageType");
+		SerializedProperty damageModifier = property.FindPropertyRelative ("damageModifier");
+		SerializedProperty impactModifer = property.FindPropertyRelative ("impactModifier");
+		#endregion
+
+		#region Coordinates
+		Rect showAttackStatsPos =  new Rect (position.x,
+		                                       position.y + GetTimerHeight + GetSpeedHeight + 15,
+		                                       position.width,
+		                                       15);
+		Rect primaryDamageTypePos = new Rect (position.x,
+		                                      position.y + GetTimerHeight + GetSpeedHeight + GetAttackStatsHeight - 30,
+		                                      position.width / 2,
+		                                      15);
+		Rect secondaryDamageTypePos = new Rect (position.x + (position.width / 2),
+		                                        position.y + GetTimerHeight + GetSpeedHeight + GetAttackStatsHeight - 30,
+		                                        position.width / 2,
+		                                        15);
+		Rect damageModifierPos = new Rect (position.x,
+		                                   position.y + GetTimerHeight + GetSpeedHeight + GetAttackStatsHeight - 15,
+		                                   position.width,
+		                                   15);
+		Rect impactModifierPos = new Rect (position.x,
+		                                   position.y + GetTimerHeight + GetSpeedHeight + GetAttackStatsHeight,
+		                                   position.width,
+		                                   15);
+		#endregion
+
+		#region Inspector Elements
+		EditorGUI.indentLevel = 1;
+		if (showContent) {
+			EditorGUI.indentLevel = 2;
+			showAttackStats = EditorGUI.Foldout (showAttackStatsPos, showAttackStats, "Attack Values");
+
+			if (showAttackStats) {
+				EditorGUI.indentLevel = 4;
+				primaryDamageType.enumValueIndex = EditorGUI.Popup (primaryDamageTypePos, primaryDamageType.enumValueIndex, primaryDamageType.enumNames);
+				secondaryDamageType.enumValueIndex = EditorGUI.Popup (secondaryDamageTypePos, secondaryDamageType.enumValueIndex, secondaryDamageType.enumNames);
+				damageModifier.floatValue = EditorGUI.Slider (damageModifierPos, "Damage Modifier", damageModifier.floatValue, 0, 5);
+				impactModifer.floatValue = EditorGUI.Slider (impactModifierPos, "Impact Modifier", impactModifer.floatValue, 0, 5);
+			}
+		}
+		#endregion
 	}
+}
+
+[CustomPropertyDrawer (typeof (MeleeProperties))]
+public class MeleePropertyDrawer : AttackPropertyDrawer {
 
 }
 
