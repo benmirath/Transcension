@@ -55,7 +55,6 @@ public interface IMovement {
 	public MovementProperties Dodge {
 		get {return dodge;}
 	}
-
 	#endregion
 	
 	#region Initialization

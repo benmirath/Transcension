@@ -67,62 +67,68 @@ public class SwordProperties : BaseEquipmentProperties
 		availableMovesets.Add (oneHandedPrimary);
 		availableMovesets.Add (twoHandedPrimary);
 		availableMovesets.Add (twoHandedSecondary);
+
+		oneHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.OneHanded_MainHand);
+		twoHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_MainHand);
+		twoHandedSecondary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_OffHand);
 	}
 
 	protected override void Start () {
 		base.Start ();
-		oneHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.OneHanded_MainHand);
-		twoHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_MainHand);
-		twoHandedSecondary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_OffHand);
-
-//		StartCoroutine (AddAbilities());
-
 	}
-//	private IEnumerator AddAbilities () {
-//		foreach (AttackProperties attack in activeMoveset) {
-////			if (attack == null)
-////				break;
-////			else  {	
-//				if ()
-//				availableActions.Add (attack);
-//				Debug.LogWarning("Adding attack "+attack);
-//				yield return null;
-////			}
-//
-//
-//		}
-//	}
-//
 
 	#region Moveset States
 	protected IEnumerator Combo1_EnterState ()
 	{
-		anim.material.color = Color.red;
-		if (activeMoveset == oneHandedPrimary)
-			Debug.Log ("ONEHANDED MOVESET");
-		if (activeMoveset == twoHandedPrimary) 
-			Debug.Log ("TWOHANDED MOVESET");
-//		float timer = Time.time + activeMoveset
+		//Attack Initialization
+		float _timer;
+		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
 
+		//Attack Startup
+		if (user == null)
+			Debug.LogError ("User is null");
+		if (user.CharActions == null)
+			Debug.LogError ("User Actions are null");
+		if (user.CharActions.CharMovement == null)
+			Debug.LogError ("User Movement is null");
+		if (user.CharActions.CharMovement.Aim == null)
+			Debug.LogError ("User Aim is null");
 
-		yield return new WaitForSeconds (.5f);
+		_timer = Time.time + attack.EnterLength;
+		do {
+			//attack info
+			anim.material.color = Color.grey;
+//			attack.Aim ();
+			yield return null;
+		} while (Time.time < _timer);
 
-		Debug.Log ("Checking followup stats");
+		//Attack Activte
+		_timer = Time.time + attack.ActiveLength;
+		do {
+			//attack info
+			attack.ActiveAbility();
+			anim.material.color = Color.red;
+			yield return null;
+		} while (Time.time < _timer);
+
+		//Attack Cooldown
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.ExitLength);
+
 		switch (followup) {
 		case FollowupType.Primary:
-			currentState = SwordActions.Combo2;
+			currentState = BaseEquipmentProperties.EquipmentActions.Combo2;
 			break;
 
 		case FollowupType.Dodge:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.None:
-			//break;
 		default:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			break;
 		}
 		yield break;
@@ -135,16 +141,33 @@ public class SwordProperties : BaseEquipmentProperties
 
 	protected IEnumerator Combo2_EnterState ()
 	{
-		anim.material.color = Color.magenta;
-		yield return new WaitForSeconds (.5f);
+		//Attack Initialization
+		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo2);
+
+		//Attack Startup
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.EnterLength);
+
+		//Attack Activte
+		float _timer = Time.time + attack.ActiveLength;
+		do {
+			//attack info
+			attack.ActiveAbility();
+			anim.material.color = Color.magenta;
+			yield return null;
+		} while (Time.time < _timer);
+
+		//Attack Cooldown
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.ExitLength);
 
 		switch (followup) {
 		case FollowupType.Primary:
-			currentState = SwordActions.Combo3;
+			currentState = BaseEquipmentProperties.EquipmentActions.Combo3;
 			break;
 
 		case FollowupType.Dodge:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
 			break;
@@ -165,15 +188,34 @@ public class SwordProperties : BaseEquipmentProperties
 
 	protected IEnumerator Combo3_EnterState ()
 	{
-		anim.material.color = Color.blue;
-		yield return new WaitForSeconds (.5f);
+		//Attack Initialization
+		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
+
+		//Attack Startup
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.EnterLength);
+
+		//Attack Activte
+		float _timer = Time.time + attack.ActiveLength;
+		do {
+			//attack info
+			attack.ActiveAbility();
+			anim.material.color = Color.blue;
+			yield return null;
+		} while (Time.time < _timer);
+
+		//Attack Cooldown
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.ExitLength);
+
+
 		switch (followup) {
 		case FollowupType.Primary:
-			currentState = SwordActions.Combo4;
+			currentState = BaseEquipmentProperties.EquipmentActions.Combo4;
 			break;
 
 		case FollowupType.Dodge:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
 			break;
@@ -181,7 +223,7 @@ public class SwordProperties : BaseEquipmentProperties
 		case FollowupType.None:
 			//break;
 		default:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			break;
 		}
 		yield break;
@@ -194,11 +236,29 @@ public class SwordProperties : BaseEquipmentProperties
 
 	protected IEnumerator Combo4_EnterState ()
 	{
-		anim.material.color = Color.blue;
-		yield return new WaitForSeconds (.5f);
+		//Attack Initialization
+		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
+
+		//Attack Startup
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.EnterLength);
+
+		//Attack Activte
+		float _timer = Time.time + attack.ActiveLength;
+		do {
+			//attack info
+			attack.ActiveAbility();
+			anim.material.color = Color.cyan;
+			yield return null;
+		} while (Time.time < _timer);
+
+		//Attack Cooldown
+		anim.material.color = Color.grey;
+		yield return new WaitForSeconds (attack.ExitLength);
+
 		switch (followup) {
 		case FollowupType.Dodge:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
 			break;
@@ -206,7 +266,7 @@ public class SwordProperties : BaseEquipmentProperties
 		case FollowupType.Primary:
 		case FollowupType.None:
 		default:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			break;
 		}
 		yield break;
@@ -223,7 +283,7 @@ public class SwordProperties : BaseEquipmentProperties
 		yield return new WaitForSeconds (.5f);
 		switch (followup) {
 		case FollowupType.Dodge:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
 			break;
@@ -231,7 +291,7 @@ public class SwordProperties : BaseEquipmentProperties
 		case FollowupType.None:
 		case FollowupType.Primary:
 		default:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			break;
 		}
 		yield break;
@@ -249,7 +309,7 @@ public class SwordProperties : BaseEquipmentProperties
 		yield return new WaitForSeconds (.5f);
 		switch (followup) {
 		case FollowupType.Dodge:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
 			break;
@@ -257,7 +317,7 @@ public class SwordProperties : BaseEquipmentProperties
 		case FollowupType.None:
 		case FollowupType.Primary:
 		default:
-			currentState = SwordActions.Idle;
+			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			break;
 		}
 		yield break;

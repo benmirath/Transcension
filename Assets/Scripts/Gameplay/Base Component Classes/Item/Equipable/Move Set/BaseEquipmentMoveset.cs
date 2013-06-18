@@ -32,69 +32,21 @@ public abstract class BaseEquipmentMoveset
 	protected BaseEquipment _weapon;
 	protected ICharacter _user;
 	protected BaseCharacterStateModule _userState;
-	//[SerializeField] protected List<MeleeProperties> moveset;
+	[SerializeField] protected List<AttackProperties> moveset;
+
+	public List<AttackProperties> Moveset { get { return moveset; } }
 	#endregion
 
 	#region Initialization & Setup
-	public void Setup (BaseEquipment weapon, MovesetType type) {
+	public virtual void Setup (BaseEquipment weapon, MovesetType type) {
 		_weapon = weapon;
 		_user = weapon.User;
 		_userState = _user.CharState;
 	}
-//	void Awake ()
-//	{
-//		_weapon = GetComponent<BaseEquipment>();
-//		_user = transform.parent.GetComponent<BaseCharacter>();
-//	}
-//	void SetMovesetType ()
-//	{
-//
-//		switch (movesetType) {
-//		case EquipmentMovesetType.PrimaryMelee:
-//			ActivateMoveset = PrimaryMeleeActivation;			//will be customizable down the line
-//			break;
-//
-//		case EquipmentMovesetType.PrimaryRanged:
-//		case EquipmentMovesetType.SecondaryMelee:
-//		case EquipmentMovesetType.SecondaryRanged:
-//		case EquipmentMovesetType.SecondaryUtility:
-//			break;
-//		}
-//
-//	}
-//	public void PopulateMoveList () {
-//		foreach ()
-//	}
 	#endregion
 
 	#region Equipment Activation
 	public abstract void ActivateMoveset ();
-//	private void PrimaryMeleeActivation ()
-//	{
-//		moveset.Find ();
-//		//if idle or walking -> Start combo
-//		//else if running -> Start run attack
-//		//else if dodging -> Start dodge attack
-//		if (_userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Idle.ToString () || _userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Walk.ToString ())
-//			_userState.Call (BaseEquipmentStateModule.EquipmentActions.Combo1, _weapon.WeaponProperties);
-//
-//		else if(_userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Run.ToString ())
-//			_userState.Call (BaseEquipmentStateModule.EquipmentActions.RunAttack, _weapon.WeaponProperties);
-//
-//		else if (_userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Dodge.ToString ()) 
-//			_userState.Call (BaseEquipmentStateModule.EquipmentActions.DodgeAttack, _weapon.WeaponProperties);
-//		else
-//			_weapon.WeaponProperties.Followup = BaseEquipmentProperties.FollowupType.Primary;
-//	}
-//	private void PrimaryRangedActivation ()
-//	{
-//		//if idle or walking -> Fire shot
-//	}
-//	private void SecondaryMeleeActivation ()
-//	{
-//		//if idle or walking -> Start finisher
-//		//if some combo -> Start combo finisher
-//	}
 	#endregion
 }
 [System.Serializable]
@@ -128,12 +80,39 @@ public class PrimaryMeleeThreeComboMoveset : BaseEquipmentMoveset {
 	public MeleeProperties Combo3 { get { return combo3; } }
 	public MeleeProperties RunAttack { get { return runAttack; } }
 	public MeleeProperties DodgeAttack { get { return dodgeAttack; } }
+
+	public override void Setup (BaseEquipment weapon, MovesetType type)
+	{
+		base.Setup (weapon, type);
+
+		combo1.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.Combo1);
+		combo2.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.Combo2);
+		combo3.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.Combo3);
+		runAttack.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.RunAttack);
+		dodgeAttack.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.DodgeAttack);
+
+		moveset.Add (combo1);
+		moveset.Add (combo2);
+		moveset.Add (combo3);
+		moveset.Add (runAttack);
+		moveset.Add (dodgeAttack);
+
+
+	}
 }
 
 [System.Serializable]
 public class PrimaryMeleeFourComboMoveset : PrimaryMeleeThreeComboMoveset{
 	[SerializeField] protected MeleeProperties combo4;
 	public MeleeProperties Combo4 { get { return combo4;}}
+
+	public override void Setup (BaseEquipment weapon, MovesetType type)
+	{
+		base.Setup (weapon, type);
+		combo4.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.Combo4);
+		moveset.Add (combo4);
+
+	}
 }
 
 [System.Serializable]
@@ -141,6 +120,13 @@ public class PrimaryMeleeFiveComboMoveset : PrimaryMeleeFourComboMoveset{
 	[SerializeField] protected MeleeProperties combo5;
 
 	public MeleeProperties Combo5 { get { return combo5;}}
+
+	public override void Setup (BaseEquipment weapon, MovesetType type)
+	{
+		base.Setup (weapon, type);
+		combo5.SetValue (weapon, BaseEquipmentProperties.EquipmentActions.Combo5);
+		moveset.Add (combo5);
+	}
 }
 
 

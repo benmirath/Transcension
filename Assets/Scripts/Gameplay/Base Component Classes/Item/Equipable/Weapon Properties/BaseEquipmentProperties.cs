@@ -187,30 +187,30 @@ public interface IEquipmentProperties
 	#region Initializers
 	protected override void OnAwake ()
 	{
-		user = transform.parent.GetComponent<BasePlayer> ();
+		user = transform.parent.GetComponent<BaseCharacter> ();
 		userState = transform.parent.GetComponent<PlayerStateModule> ();
 		curEquipment = GetComponent<BaseEquipment>();
 		anim = GetComponent<MeshRenderer> ();
-		//		Debug.LogError ("EQUIPMENT SETUP");
-		//currentState = EquipmentActions.Idle;
+//		Debug.LogError ("Components should now be set");
 	}
-//
+
 	protected virtual void Start ()
 	{
-//		curEquipment = thisWeapon;
 		scalingBuff.SetScaling(user);
+
+		availableActions = activeMoveset.Moveset;
 	}
 	#endregion Initializerss
 	
 	#region Moveset
 
-	void Idle_EnterState ()
+	protected void Idle_EnterState ()
 	{
 		anim.material.color = Color.white;
 		Return ();
 	}
 
-	void Idle_Update ()
+	protected void Idle_Update ()
 	{
 		//		userState
 	}

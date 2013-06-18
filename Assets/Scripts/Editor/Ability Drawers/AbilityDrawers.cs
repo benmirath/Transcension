@@ -284,9 +284,8 @@ public class AttackPropertyDrawer : MovementPropertyDrawer
 		#endregion
 
 		#region Inspector Elements
-		EditorGUI.LabelField(abilityLabelPos, abilityName);
-
 		EditorGUI.indentLevel = 1;
+		EditorGUI.LabelField(abilityLabelPos, abilityName);
 		if (showContent) {
 			EditorGUI.indentLevel = 2;
 			showAttackStats = EditorGUI.Foldout (showAttackStatsPos, showAttackStats, "Attack Values");

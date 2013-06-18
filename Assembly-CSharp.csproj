@@ -1,188 +1,187 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>10.0.20506</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{5332D209-C565-2331-4D26-0B553D601BEF}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace></RootNamespace>
-	<AssemblyName>Assembly-CSharp</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5332D209-C565-2331-4D26-0B553D601BEF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_OSX;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<NoWarn>0169</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_OSX;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>Temp\bin\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<NoWarn>0169</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Temp\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="System" />
-    <Reference Include="System.XML" />
-	<Reference Include="System.Core" />
-	<Reference Include="UnityEngine">
-	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
-	</Reference>
-	<Reference Include="UnityEditor">
-	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
-	</Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>..\..\..\Applications\Unity\Unity.app\Contents\Frameworks\Managed\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>Assets\AstarPathfindingProject\Plugins\DotNetZip\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="JsonFx.Json">
+      <HintPath>Assets\AstarPathfindingProject\Plugins\JsonFx\JsonFx.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\AstarPathfindingProject\Core\AI\AIPath.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\AI\NavmeshController.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\AI\Seeker.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\AstarData.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\AstarMath.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\AstarPath.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\GraphUpdateScene.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\GraphUpdateShape.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\AstarDebugger.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\BinaryHeap.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\GraphEditorBase.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\GraphModifier.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\Int3.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\ListPool.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\PathPool.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Misc\StackPool.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\MultithreadClasses.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Node.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\NodeLink.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Path.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerialize.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_01.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_04.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_05.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_07.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\JsonConverters.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\JsonSerializer.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Core\astarclasses.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\AIFollow.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\DoorController.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\DynamicGridObstacle.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\MineBotAI.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\ObjectPlacer.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\TargetMover.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\Base.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\GridGenerator.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\NavMeshGenerator.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\NodeClasses\GridNode.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\NodeClasses\MeshNode.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\PointGenerator.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\Utilities\BBTree.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\Utilities\NavMeshRenderer.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Generators\Utilities\ObjImporter.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Modifiers\AlternativePath.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Modifiers\FunnelModifier.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Modifiers\Modifiers.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Modifiers\RaycastModifier.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Modifiers\SimpleSmoothModifier.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Modifiers\StartEndModifier.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Pathfinders\ABPath.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarChecksum.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarMemory.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarParallel.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarProfiler.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\DotNetReplacements.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\GraphUpdateUtilities.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\LockFreeStack.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\PathUtilities.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\SizeProfiler.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
-     <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
-     <Compile Include="Assets\RagePixel\Code\IRagePixel.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelAnimation.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelBitmap.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelCamera.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelCell.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelRow.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelSettings.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelSprite.cs" />
-     <Compile Include="Assets\RagePixel\Code\RagePixelSpriteSheet.cs" />
-     <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\CharacterAttAttribute.cs" />
-     <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\IntRangeAttribute.cs" />
-     <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\PopupAttribute.cs" />
-     <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\ScalingStatAttribute.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BaseEnemy.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BasePlayer.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\__Base\BaseCharacter.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\CharacterMovesetModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Combat Module\BaseCombatModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Equipment Loadout Module\BaseEquipmentLoadoutModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Movement Module\BaseMovementModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Stealth Module\BaseStealthModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Animation Module\BaseAnimationModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\AIInput.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\BaseInputModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerInput.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerTargetting.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\BaseCharacterStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\PlayerStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\BaseCharacterClassicStats.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Consumable\Item.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Base Behavior\__Base\BaseEquipment.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\BuffItem.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseEquipmentMoveset.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseSword.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\SwordProperties.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\State Machine\BaseEquipmentStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Properties\BaseEquipmentProperties.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Properties\IMoveSet.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Action\Ability Stats\AbilityProperties.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\BaseStat.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\CharacterAttribute.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\ScalingStat.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\Vital.cs" />
-     <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\PlayerCamera.cs" />
-     <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\TargettingPrototype.cs" />
-     <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\VitalBar.cs" />
-     <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
-     <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
-     <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\DiffuseAlwaysVisible.shader" />
-     <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
-     <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\_Example Scenes.txt" />
-     <None Include="Assets\Additional Assets\UnlitFade.shader" />
-     <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
-     <None Include="Assets\RagePixel\readme.txt" />
-     <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Light.shader" />
-     <None Include="Assets\AstarPathfindingProject\Readme.txt" />
-     <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\License.txt" />
-     <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\Readme.txt" />
-     <None Include="Assets\RagePixel\Code\RagePixelBasicFlash.shader" />
-     <None Include="Assets\RagePixel\Code\RagePixelBasic.shader" />
-     <None Include="Assets\AstarPathfindingProject\link.xml" />
- <Reference Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\Ionic.Zip.Reduced">
- <HintPath>Assets\AstarPathfindingProject\Plugins\DotNetZip\Ionic.Zip.Reduced.dll</HintPath>
- </Reference>
- <Reference Include="Assets\AstarPathfindingProject\Plugins\JsonFx\JsonFx.Json">
- <HintPath>Assets\AstarPathfindingProject\Plugins\JsonFx\JsonFx.Json.dll</HintPath>
- </Reference>
+    <Compile Include="Assets\AstarPathfindingProject\Core\AI\AIPath.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\AI\NavmeshController.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\AI\Seeker.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\AstarData.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\AstarMath.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\AstarPath.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\GraphUpdateScene.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\GraphUpdateShape.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\AstarDebugger.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\BinaryHeap.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\GraphEditorBase.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\GraphModifier.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\Int3.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\ListPool.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\PathPool.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Misc\StackPool.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\MultithreadClasses.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Node.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\NodeLink.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Path.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerialize.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_01.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_04.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_05.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\GraphLoaderHistory\AstarSerializer3_07.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\JsonConverters.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\Serialization\JsonSerializer.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Core\astarclasses.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\AIFollow.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\DoorController.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\DynamicGridObstacle.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\MineBotAI.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\ObjectPlacer.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\ExampleScenes\ExampleScripts\TargetMover.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\Base.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\GridGenerator.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\NavMeshGenerator.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\NodeClasses\GridNode.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\NodeClasses\MeshNode.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\PointGenerator.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\Utilities\BBTree.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\Utilities\NavMeshRenderer.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Generators\Utilities\ObjImporter.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Modifiers\AlternativePath.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Modifiers\FunnelModifier.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Modifiers\Modifiers.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Modifiers\RaycastModifier.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Modifiers\SimpleSmoothModifier.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Modifiers\StartEndModifier.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Pathfinders\ABPath.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarChecksum.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarMemory.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarParallel.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\AstarProfiler.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\DotNetReplacements.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\GraphUpdateUtilities.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\LockFreeStack.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\PathUtilities.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\SizeProfiler.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\Utilities\UnityReferenceHelper.cs" />
+    <Compile Include="Assets\AstarPathfindingProject\changelog.cs" />
+    <Compile Include="Assets\RagePixel\Code\IRagePixel.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelAnimation.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelBitmap.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelCamera.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelCell.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelRow.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelSettings.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelSprite.cs" />
+    <Compile Include="Assets\RagePixel\Code\RagePixelSpriteSheet.cs" />
+    <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\CharacterAttAttribute.cs" />
+    <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\IntRangeAttribute.cs" />
+    <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\PopupAttribute.cs" />
+    <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\ScalingStatAttribute.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BaseEnemy.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BasePlayer.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\__Base\BaseCharacter.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\CharacterMovesetModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Combat Module\BaseCombatModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Equipment Loadout Module\BaseEquipmentLoadoutModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Movement Module\BaseMovementModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Stealth Module\BaseStealthModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Animation Module\BaseAnimationModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\AIInput.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\BaseInputModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerInput.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerTargetting.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\BaseCharacterStateModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\PlayerStateModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\BaseCharacterClassicStats.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Consumable\Item.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Base Behavior\__Base\BaseEquipment.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\BuffItem.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseEquipmentMoveset.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseSword.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\SwordProperties.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\State Machine\BaseEquipmentStateModule.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Properties\BaseEquipmentProperties.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Properties\IMoveSet.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Action\Ability Stats\AbilityProperties.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\BaseStat.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\CharacterAttribute.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\ScalingStat.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\Vital.cs" />
+    <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\PlayerCamera.cs" />
+    <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\TargettingPrototype.cs" />
+    <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\VitalBar.cs" />
+    <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
+    <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
+    <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
+    <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
+    <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\DiffuseAlwaysVisible.shader" />
+    <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
+    <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />
+    <None Include="Assets\AstarPathfindingProject\ExampleScenes\_Example Scenes.txt" />
+    <None Include="Assets\Additional Assets\UnlitFade.shader" />
+    <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
+    <None Include="Assets\RagePixel\readme.txt" />
+    <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Light.shader" />
+    <None Include="Assets\AstarPathfindingProject\Readme.txt" />
+    <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\License.txt" />
+    <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\Readme.txt" />
+    <None Include="Assets\RagePixel\Code\RagePixelBasicFlash.shader" />
+    <None Include="Assets\RagePixel\Code\RagePixelBasic.shader" />
+    <None Include="Assets\AstarPathfindingProject\link.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
-      <Project>{91C63B21-A904-8FFC-A559-449145D69984}</Project>      <Name>Assembly-CSharp-firstpass</Name>    </ProjectReference>
-    <ProjectReference Include="Assembly-UnityScript-firstpass.unityproj">
-      <Project>{490DBCB0-F0D4-3362-8C6B-C8849F2E9DC2}</Project>      <Name>Assembly-UnityScript-firstpass</Name>    </ProjectReference>
+      <Project>{91C63B21-A904-8FFC-A559-449145D69984}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -192,5 +191,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
+  <ItemGroup>
+    <Folder Include="Assets\Scripts\Settings Scripts\Helper Classes\" />
+  </ItemGroup>
 </Project>

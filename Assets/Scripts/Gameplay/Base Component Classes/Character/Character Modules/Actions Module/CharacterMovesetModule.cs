@@ -11,7 +11,7 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 	[SerializeField] protected BaseCombatModule charCombat;
 	[SerializeField] protected BaseStealthModule charStealth;
 
-	public IMovement CharMovement {
+	public BaseMovementModule CharMovement {
 		get {return charMovement;}
 	}
 	public BaseEquipmentLoadoutModule CharEquipment {
@@ -68,7 +68,7 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 public interface IMoveSet {
 	//IAbility CurrentAction {get;}
 
-	[SerializeField] IMovement CharMovement {get;}
+	[SerializeField] BaseMovementModule CharMovement {get;}
 	[SerializeField] BaseEquipmentLoadoutModule CharEquipment {get;}
 	[SerializeField] ICombat CharCombat {get;}
 	[SerializeField] IStealth CharStealth {get;}

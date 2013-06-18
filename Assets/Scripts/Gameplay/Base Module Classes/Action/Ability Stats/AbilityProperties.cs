@@ -81,6 +81,11 @@ public interface IAttack
 	#endregion
 	
 	#region  Propertiess
+//	protected string name;
+//	public abstract string name { get;}
+//		get {}
+//	}
+
 	public ICharacter User { get { return _user; } }
 
 	public IInput CharInput { get { return _charInput; } }
@@ -148,6 +153,7 @@ public interface IAttack
 	[SerializeField] protected float lookSpeed;
 	[SerializeField] protected Vector3 direction;
 
+//	public override string name { get { return movementType.ToString (); } }
 	public Vector3 Direction {
 		get { return direction;}
 		set { direction = value;}
@@ -177,9 +183,9 @@ public interface IAttack
 		base.SetValue (user);
 		switch (movementType) {
 		case MovementPropertyType.Aim:
-			activeAbility = delegate {
-				Aim ();
-			};
+			enterAbility = Aim;
+			activeAbility = Aim;
+			exitAbility = Aim;
 			break;
 
 		case MovementPropertyType.Walk:
@@ -257,7 +263,7 @@ public interface IAttack
 
 	protected void Aim ()
 	{
-		Debug.Log ("aim activating");
+		Debug.LogWarning ("aim activating");
 		//User.Coordinates.rotation = Quaternion.Euler (CharInput.LookDir);
 
 		Vector3 target = CharInput.LookDir;
@@ -351,6 +357,8 @@ public class StealthProperties : MovementProperties
 	private BaseEquipment _weapon;
 	private BoxCollider _hitbox;
 
+	[SerializeField] protected BaseEquipmentProperties.EquipmentActions attackName;
+//	public override string name { get { return attackName.ToString(); } }
 	[SerializeField] protected AttackPropertyType attackType;
 
 	[SerializeField] protected DamageEffectType primaryDamageType;
@@ -360,6 +368,8 @@ public class StealthProperties : MovementProperties
 
 	public BaseEquipment Weapon { get { return _weapon;}}
 	public BoxCollider Hitbox { get { return _hitbox;}}
+
+	public BaseEquipmentProperties.EquipmentActions AttackName { get { return attackName; } }
 
 	/// <summary>
 	/// Gets the type of the attack. Dicates general nature of the attack, both input and output. </summary>
@@ -379,10 +389,26 @@ public class StealthProperties : MovementProperties
 	#endregion Properties
 	
 	#region Initialization
-	public virtual void SetValue (BaseEquipment weapon)
+	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
 	{
+		base.SetValue (weapon.User);
 		_weapon = weapon;
-		base.SetValue (_weapon.User);
+		attackName = name;
+		switch (attackType) {
+		case AttackPropertyType.Standard:
+			activeAbility = delegate {
+				Aim ();
+				BurstMove (activeMoveSpeed);
+			};
+			break;
+		case AttackPropertyType.Charge:
+		case AttackPropertyType.Multi:
+		case AttackPropertyType.Counter:
+		default:
+			Debug.LogError ("Attack Type was not set properly!");
+			break;
+		}
+
 	}
 
 	protected override void Awake ()
@@ -422,12 +448,12 @@ public class StealthProperties : MovementProperties
 
 	protected override void StandardAttack ()
 	{
-
+		Aim ();
 	}
 
 	protected override void ChargeAttack ()
 	{
-
+		Aim ();
 	}
 
 //	protected override void MultiAttack ()
