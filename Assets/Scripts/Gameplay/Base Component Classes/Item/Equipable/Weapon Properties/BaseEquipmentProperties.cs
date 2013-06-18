@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public interface IEquipmentProperties
@@ -39,7 +41,7 @@ public interface IEquipmentProperties
 /// -Weapon Buff (determined based on any abilities/items/effects that boost the weapons damage)
 /// -Real Damage (((base damage * scaling buff) * ability buff) + Weapon Buff)
 /// </summary>	  	
-[System.Serializable] public class BaseEquipmentProperties : MonoBehaviour
+[System.Serializable] public abstract class BaseEquipmentProperties : StateMachineBehaviourEx
 {
 //	public enum EquipmentType {
 //		//DW only
@@ -90,51 +92,127 @@ public interface IEquipmentProperties
 //		Universal
 //	}	
 	
-	#region Fields
+	#region Properties
+	public enum EquipmentActions
+	{
+		Idle
+		,
+		//		ActivateWeapon
+		//,
+		//		//Primary Actions
+		//Basic startup attack for weapon. Might start a combo, fire a projectile, etc.
+		Combo1
+		,		//The alt attack for the primary moveset. 			
+		AltPrimary
+		,					
+		Combo2
+		,
+		Combo3
+		,
+		Combo4
+		,
+		Combo5
+		,
+		RunAttack
+		,
+		DodgeAttack
+		,
+		RangeAttack
+		,
+		//Secondary Actions
+		StartSecondary
+		,					//Basic secondary moveset attack. Might activate a shield, use a finisher, or start a counter.
+		AltSecondary
+		,
+		InterruptSecondary
+	}
+	//Internal Fields
+	public enum FollowupType
+	{
+		None
+		,
+		Primary
+		,
+		Secondary
+		,
+		Dodge
+		,
+	}
+	[SerializeField] protected FollowupType followup = FollowupType.None;
+
+	protected BaseCharacter user;
+	protected PlayerStateModule userState;
+	protected BaseEquipment curEquipment;
+	protected MeshRenderer anim;					//Will be turned into the animation element of this class once we have that more in place
+
 	//Inspector Fields
 	[SerializeField] protected string equipmentName;
-	[SerializeField] protected float baseDamage;
-//Base offensive efficacy of equipment, modified by stats and abilities
+	[SerializeField] protected float baseDamage;			//Base offensive efficacy of equipment, modified by stats and abilities
 	[SerializeField] protected ScalingStat scalingBuff;
-	protected BaseEquipment curEquipment;
+
+	protected List<BaseEquipmentMoveset> availableMovesets;
+	protected BaseEquipmentMoveset activeMoveset;
+
+	protected List<AttackProperties> availableActions;
+
+	public FollowupType Followup {
+		get { return followup;}
+		set { followup = value;}
+	}
+	public List<BaseEquipmentMoveset> AvailableMovesets { 
+		get { return availableMovesets;} 
+	}
+
+	public BaseEquipmentMoveset ActiveMoveset {
+		get { return activeMoveset;}
+		set { activeMoveset = value; }
+	}
+
+	public float BaseDamage { 
+		get { return baseDamage;} 
+	}
+	public ScalingStat ScalingBuff { 
+		get { return scalingBuff;} 
+	}
+	public float AdjustedBaseDamage { 
+		get { return baseDamage * scalingBuff.BaseValue;} 
+	}
+	public BaseEquipment CurEquipment { 
+		get { return curEquipment;} 
+	}
+
+	//Here will be a list of weapon movesets. You specify the number there will be, then within that you specify the type of moveset it will be.
 	#endregion
 	
 	#region Initializers
-	public BaseEquipmentProperties ()
+	protected override void OnAwake ()
 	{
-		//abilityBuff = 0;
+		user = transform.parent.GetComponent<BasePlayer> ();
+		userState = transform.parent.GetComponent<PlayerStateModule> ();
+		curEquipment = GetComponent<BaseEquipment>();
+		anim = GetComponent<MeshRenderer> ();
+		//		Debug.LogError ("EQUIPMENT SETUP");
+		//currentState = EquipmentActions.Idle;
 	}
-
-	public void Setup (BaseEquipment thisWeapon)
+//
+	protected virtual void Start ()
 	{
-		curEquipment = thisWeapon;
-		//scalingBuff.SetScaling(curEquipment.user.CharStats);
+//		curEquipment = thisWeapon;
+		scalingBuff.SetScaling(user);
 	}
 	#endregion Initializerss
 	
-	#region Properties
-	public float BaseDamage {
-		get { return baseDamage;}
-		set { baseDamage = value;}
+	#region Moveset
+
+	void Idle_EnterState ()
+	{
+		anim.material.color = Color.white;
+		Return ();
 	}
 
-	public float AdjustedBaseDamage {
-		get { return baseDamage * scalingBuff.BaseValue;}
+	void Idle_Update ()
+	{
+		//		userState
 	}
-//	public float BaseDefense {
-//		get {return baseDefense;}
-//		set {baseDefense = value;}
-//	}
-	public ScalingStat ScalingBuff {
-		get { return scalingBuff;}
-	}
-//	public float AbilityBuff {
-//		get {return abilityBuff;}
-//		set {abilityBuff = value;}
-//	}
-	public BaseEquipment CurEquipment {
-		get { return curEquipment;}
-		set { curEquipment = value;}
-	}
-	#endregion Properties
+	#endregion Moveset
 }

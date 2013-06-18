@@ -35,6 +35,7 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 		if (user == null)
 			Debug.Log ("Moveset user is currently null");
 		charMovement.Setup(user);
+		charEquipment.Setup ();
 	}
 
 

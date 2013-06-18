@@ -1,8 +1,27 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using System.Linq.Expressions;
 
-public interface IAbilityProperties
+public interface IAbility
+{
+	Action EnterAbility { get;}
+	Action ActiveAbility { get;}
+	Action ExitAbility { get;}
+	float EnterLength {
+		get;
+		set;
+	}
+	float ActiveLength {
+		get;
+		set;
+	}
+	float ExitLength {
+		get;
+		set;
+	}
+}
+public interface IAttack
 {
 
 }
@@ -20,14 +39,22 @@ public interface IAbilityProperties
 	#region Properties
 	private ICharacter _user;
 	private IInput _charInput;
-	public Action enterAbility;
-	public Action durationAbility;
-	public Action exitAbility;
+	protected Action enterAbility;
+	protected Action activeAbility;
+	protected Action exitAbility;
 	[SerializeField] protected Vital.PrimaryVitalName vitalType;
 	[SerializeField] protected float cost;
 	[SerializeField] protected float enterLength;//length of time between when ability is activated, and when it takes effect.
 	[SerializeField] protected float activeLength;//length of time that the ability remains in effect.
 	[SerializeField] protected float exitLength;//length of time between when ability effect ends, and character can act again.
+//	public string name {
+//		get {
+//			Expression _name = this;
+//			_name
+//
+//
+//		}
+//	}
 	#endregion
 	
 	#region Initialization
@@ -64,6 +91,17 @@ public interface IAbilityProperties
 		get { return cost;}
 		set { cost = value;}
 	}
+	public Action EnterAbility {
+		get { return enterAbility;}
+	}
+	public Action ActiveAbility {
+		get { return activeAbility;}
+	}
+	public Action ExitAbility {
+		get { return exitAbility;}
+	}
+
+
 	//How long each phase of the ability lasts. If duration is 0, then it will be an updating ability.
 	public float EnterLength {
 		get { return enterLength;}
@@ -139,20 +177,20 @@ public interface IAbilityProperties
 		base.SetValue (user);
 		switch (movementType) {
 		case MovementPropertyType.Aim:
-			durationAbility = delegate {
+			activeAbility = delegate {
 				Aim ();
 			};
 			break;
 
 		case MovementPropertyType.Walk:
-			durationAbility = delegate {
+			activeAbility = delegate {
 				ConstantMove (activeMoveSpeed);
 				Turn ();
 			};
 			break;
 
 		case MovementPropertyType.Strafe:
-			durationAbility = delegate {
+			activeAbility = delegate {
 				ConstantMove (activeMoveSpeed);
 				Aim ();
 			};
@@ -165,7 +203,7 @@ public interface IAbilityProperties
 				ConstantMove (enterMoveSpeed);
 				Turn ();
 			};
-			durationAbility = delegate {
+			activeAbility = delegate {
 				ConstantMove (activeMoveSpeed);
 				Turn ();
 			};
@@ -177,7 +215,7 @@ public interface IAbilityProperties
 				Turn ();
 			
 			};
-			durationAbility = delegate {
+			activeAbility = delegate {
 				BurstMove (activeMoveSpeed);
 				Turn ();
 			
@@ -336,7 +374,7 @@ public class StealthProperties : MovementProperties
 	public float ImpactModifier { get { return impactModifier;}}
 
 	public float AdjustedDamageValue {
-		get { return _weapon.Stats.AdjustedBaseDamage * damageModifier;}
+		get { return _weapon.WeaponProperties.AdjustedBaseDamage * damageModifier;}
 	}
 	#endregion Properties
 	

@@ -42,7 +42,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	#region Properties
 	[SerializeField]protected BaseCharacterClassicStats stats;
 	[SerializeField]protected CharacterMovesetModule moveSet;
-	protected BaseEquipmentLoadoutModule equipment;
+//	protected BaseEquipmentLoadoutModule equipment;
 //used to access actions for state activation
 
 	[SerializeField]protected ICharacter user;
@@ -76,7 +76,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		base.OnAwake ();
 		stats = GetComponent<BaseCharacterClassicStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
-		equipment = GetComponent<BaseEquipmentLoadoutModule> ();
+		//equipment = GetComponent<BaseEquipmentLoadoutModule> ();
 		_animation = GetComponent<MeshRenderer> ();
 
 
@@ -225,7 +225,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		Debug.Log ("Current velocity is :"+input.MoveDir);
 
 		if (input.LockedOn) {
-			moveSet.CharMovement.Aim.durationAbility ();
+			moveSet.CharMovement.Aim.ActiveAbility ();
 		}
 		if (input.MoveDir != Vector3.zero) {
 			TransitionToWalk ();
@@ -263,9 +263,9 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		if (input.MoveDir == Vector3.zero) 					//no directional input, stop walking
 			currentState = CharacterActions.Idle;
 		else if (!armed)									//not armed, simply walk
-			moveSet.CharMovement.Walk.durationAbility ();
+			moveSet.CharMovement.Walk.ActiveAbility ();
 		else 												//armed, will walk/strafe
-			moveSet.CharMovement.Strafe.durationAbility ();
+			moveSet.CharMovement.Strafe.ActiveAbility ();
 	}
 
 	protected void Walk_ExitState ()
@@ -291,7 +291,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		Debug.Log ("1");
 		float timer = moveSet.CharMovement.Run.EnterLength + Time.time;
 		while (timer >= Time.time) {
-			moveSet.CharMovement.Run.enterAbility ();
+			moveSet.CharMovement.Run.EnterAbility ();
 			yield return null;
 		}
 		yield break;
@@ -305,7 +305,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 			currentState = CharacterActions.Idle;
 		else {
 			if (CheckAbilityVital (moveSet.CharMovement.Run))//Character has enough stamina to activate run
-				moveSet.CharMovement.Run.durationAbility ();
+				moveSet.CharMovement.Run.ActiveAbility ();
 			else 											//otherwise return to walk
 				TransitionToWalk ();
 		}
@@ -343,11 +343,11 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		float timer1 = moveSet.CharMovement.Dodge.EnterLength + Time.time;
 		float timer2 = moveSet.CharMovement.Dodge.ActiveLength + timer1;
 		while (timer1 >= Time.time) {
-			moveSet.CharMovement.Dodge.enterAbility ();
+			moveSet.CharMovement.Dodge.EnterAbility ();
 			yield return null;
 		}
 		while (timer2 >= Time.time) {
-			moveSet.CharMovement.Dodge.durationAbility ();
+			moveSet.CharMovement.Dodge.ActiveAbility ();
 			yield return null;
 		}
 		Debug.Log ("TEST123");
@@ -401,9 +401,13 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		if (armed) {
 			Debug.Log ("Entering Primary Attack");
 			_animation.material.color = Color.green;
-			attacking = true;		
-					
-			equipment.Primary.Moveset.ActivateMoveset ();
+			attacking = true;	
+
+			if (moveSet == null) Debug.LogError("no moveset set");
+			if (moveSet.CharEquipment == null) Debug.LogError("no moveset equipment set");
+			if (moveSet.CharEquipment.PrimaryMoveset == null) Debug.LogError("no primary moveset set");
+
+			moveSet.CharEquipment.PrimaryMoveset.ActivateMoveset ();
 //					if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Walk.ToString ())
 //							Call (BaseEquipmentStateModule.EquipmentActions.StartPrimary, user.PrimaryWeapon.WeaponState);
 //
@@ -424,22 +428,22 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 
 	}
 
-	protected IEnumerator PrimaryAttack_EnterState ()
-	{
-		Debug.Log ("Entering Primary Attack");
-		_animation.material.color = Color.green;
-		Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.CharEquipment.Primary.WeaponState);
-		Debug.Log ("Succesfully returned from equipment action");
-		currentState = CharacterActions.Idle;
-				
-		yield break;
-	}
-
-	protected void PrimaryAttack_ExitState ()
-	{
-		Debug.Log ("Exiting from equipment action");
-		currentState = CharacterActions.Idle;
-	}
+//	protected IEnumerator PrimaryAttack_EnterState ()
+//	{
+//		Debug.Log ("Entering Primary Attack");
+//		_animation.material.color = Color.green;
+//		//Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.CharEquipment.Primary.WeaponState);
+//		Debug.Log ("Succesfully returned from equipment action");
+//		currentState = CharacterActions.Idle;
+//				
+//		yield break;
+//	}
+//
+//	protected void PrimaryAttack_ExitState ()
+//	{
+//		Debug.Log ("Exiting from equipment action");
+//		currentState = CharacterActions.Idle;
+//	}
 	#endregion
 
 	protected IEnumerator SecondaryAttack_EnterState ()

@@ -9,6 +9,8 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 	PlayerStateModule userState;
 	MeshRenderer anim;
 	//State Flags
+
+	//Dictates what the intended followup after the attack will be. 
 	public enum FollowupType
 	{
 		None
@@ -36,11 +38,11 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 	{
 		Idle
 ,
-		ActivateWeapon
-,
-		//Primary Actions
+//		ActivateWeapon
+//,
+//		//Primary Actions
 		//Basic startup attack for weapon. Might start a combo, fire a projectile, etc.
-		StartPrimary
+		Combo1
 ,		//The alt attack for the primary moveset. 			
 		AltPrimary
 ,					
@@ -55,6 +57,8 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		RunAttack
 ,
 		DodgeAttack
+,
+		RangeAttack
 ,
 		//Secondary Actions
 		StartSecondary
@@ -100,96 +104,96 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 //		userState
 	}
 	//This will be turned into a delegate, with functionality specified from the current moveset (found in the moveset module)
-	IEnumerator ActivateWeapon_EnterState ()
-	{
-		anim.material.color = Color.green;
-		Debug.Log ("The current state is:"+currentState);
-		Debug.Log ("The user's current state is:"+userState.currentState);
-		Debug.Log ("The last state is:"+lastState);
-		Debug.Log ("The users last state is:"+userState.lastState);
-		switch (userState.lastState.ToString ()) {
-		//Character is idle or walking
-		case "Idle":
-		case "Walk":
-			currentState = EquipmentActions.StartPrimary;			
-			break;
-		
-		//Character is running
-		case "Run":
-			currentState = EquipmentActions.RunAttack;
-			break;
-
-		//Character is dodging
-		case "Dodge":
-			currentState = EquipmentActions.DodgeAttack;
-			break;
-
-		case "StartPrimary":
-		case "Combo2":
-		case "Combo3":
-			followup = FollowupType.Primary;
-			Return ();
-			break;
-
-		default:
-			currentState = EquipmentActions.Idle;
-			break;
-
-
-		//Character is in the middle of combo1
-		//Character is in the middle of combo2
-		//Character is in the middle of combo3
-				
-		}
-		yield return new WaitForSeconds (1);
-		Debug.LogWarning ("Preparing to return from weapon call");
-//		Return ();				
-	}
-
-	public void ActivateWeapon ()
-	{
-		anim.material.color = Color.green;
-		Debug.Log ("The current state is:"+currentState);
-		Debug.Log ("The user's current state is:"+userState.currentState);
-		Debug.Log ("The last state is:"+lastState);
-		Debug.Log ("The users last state is:"+userState.lastState);
-		switch (userState.lastState.ToString ()) {
-		//Character is idle or walking
-		case "Idle":
-		case "Walk":
-			currentState = EquipmentActions.StartPrimary;			
-			break;
-
-		//Character is running
-		case "Run":
-			currentState = EquipmentActions.RunAttack;
-			break;
-
-		//Character is dodging
-		case "Dodge":
-			currentState = EquipmentActions.DodgeAttack;
-			break;
-
-		case "StartPrimary":
-		case "Combo2":
-		case "Combo3":
-			followup = FollowupType.Primary;
-			break;
-
-		default:
-			currentState = EquipmentActions.Idle;
-			break;
-
-
-		//Character is in the middle of combo1
-		//Character is in the middle of combo2
-		//Character is in the middle of combo3
-
-		}
+//	IEnumerator ActivateWeapon_EnterState ()
+//	{
+//		anim.material.color = Color.green;
+//		Debug.Log ("The current state is:"+currentState);
+//		Debug.Log ("The user's current state is:"+userState.currentState);
+//		Debug.Log ("The last state is:"+lastState);
+//		Debug.Log ("The users last state is:"+userState.lastState);
+//		switch (userState.lastState.ToString ()) {
+//		//Character is idle or walking
+//		case "Idle":
+//		case "Walk":
+//			currentState = EquipmentActions.StartPrimary;			
+//			break;
+//		
+//		//Character is running
+//		case "Run":
+//			currentState = EquipmentActions.RunAttack;
+//			break;
+//
+//		//Character is dodging
+//		case "Dodge":
+//			currentState = EquipmentActions.DodgeAttack;
+//			break;
+//
+//		case "StartPrimary":
+//		case "Combo2":
+//		case "Combo3":
+//			followup = FollowupType.Primary;
+//			Return ();
+//			break;
+//
+//		default:
+//			currentState = EquipmentActions.Idle;
+//			break;
+//
+//
+//		//Character is in the middle of combo1
+//		//Character is in the middle of combo2
+//		//Character is in the middle of combo3
+//				
+//		}
 //		yield return new WaitForSeconds (1);
-		Debug.LogWarning ("Preparing to return from weapon call");
-		//		Return ();				
-	}
+//		Debug.LogWarning ("Preparing to return from weapon call");
+////		Return ();				
+//	}
+//
+//	public void ActivateWeapon ()
+//	{
+//		anim.material.color = Color.green;
+//		Debug.Log ("The current state is:"+currentState);
+//		Debug.Log ("The user's current state is:"+userState.currentState);
+//		Debug.Log ("The last state is:"+lastState);
+//		Debug.Log ("The users last state is:"+userState.lastState);
+//		switch (userState.lastState.ToString ()) {
+//		//Character is idle or walking
+//		case "Idle":
+//		case "Walk":
+//			currentState = EquipmentActions.StartPrimary;			
+//			break;
+//
+//		//Character is running
+//		case "Run":
+//			currentState = EquipmentActions.RunAttack;
+//			break;
+//
+//		//Character is dodging
+//		case "Dodge":
+//			currentState = EquipmentActions.DodgeAttack;
+//			break;
+//
+//		case "StartPrimary":
+//		case "Combo2":
+//		case "Combo3":
+//			followup = FollowupType.Primary;
+//			break;
+//
+//		default:
+//			currentState = EquipmentActions.Idle;
+//			break;
+//
+//
+//		//Character is in the middle of combo1
+//		//Character is in the middle of combo2
+//		//Character is in the middle of combo3
+//
+//		}
+////		yield return new WaitForSeconds (1);
+//		Debug.LogWarning ("Preparing to return from weapon call");
+//		//		Return ();				
+//	}
 
 	protected IEnumerator StartPrimary_EnterState ()
 	{
@@ -337,6 +341,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 	protected IEnumerator DodgeAttack_EnterState ()
 	{
 		anim.material.color = Color.grey;
+
 		yield return new WaitForSeconds (.5f);
 		switch (followup) {
 		case FollowupType.Dodge:

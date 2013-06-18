@@ -15,11 +15,11 @@ public interface IEquippable
 		get;
 	}
 
-	BaseEquipmentProperties Stats {
+	BaseEquipmentProperties WeaponProperties {
 		get;
 	}
 
-	BaseEquipmentMovesetModule Moveset {
+	BaseEquipmentMoveset Moveset {
 		get;
 	}
 
@@ -41,8 +41,8 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 
 	protected ICharacter user;
 	protected Collider hitBox;
-	[SerializeField] protected BaseEquipmentProperties stats;				//Holds the raw stats for the weapon
-	[SerializeField] protected BaseEquipmentMovesetModule moveset;				//Holds the various moves a given weapon can utilize
+	[SerializeField] protected BaseEquipmentProperties weaponProperties;				//Holds the raw stats for the weapon
+	[SerializeField] protected BaseEquipmentMoveset moveset;				//Holds the various moves a given weapon can utilize
 	[SerializeField] protected BaseEquipmentStateModule weaponState;			//Coordinates use of moveset by controlling character
 
 
@@ -57,11 +57,11 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 		set { hitBox = value;}
 	}
 
-	public BaseEquipmentProperties Stats {
-		get { return stats;}
+	public BaseEquipmentProperties WeaponProperties {
+		get { return weaponProperties;}
 	}
 
-	public BaseEquipmentMovesetModule Moveset {
+	public BaseEquipmentMoveset Moveset {
 		get { return moveset;}
 	}
 
@@ -73,19 +73,14 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 	#region Initialization
 	protected virtual void Awake ()
 	{
-		user = transform.parent.GetComponent<BaseCharacter> ();
 		hitBox = GetComponent<Collider> ();
-	
-		stats = GetComponent<BaseEquipmentProperties> ();
-		moveset = GetComponent<BaseEquipmentMovesetModule> ();
-		weaponState = GetComponent <BaseEquipmentStateModule> ();
-
+		user = transform.parent.GetComponent<BaseCharacter> ();
+		weaponProperties = GetComponent<BaseEquipmentProperties> ();
 	}
 
 	protected virtual void Start ()
 	{
-		//stats.Setup(this);
-		
+//		WeaponProperties.Setup ();
 		hitBox.isTrigger = true;
 		hitBox.enabled = false;	
 	}

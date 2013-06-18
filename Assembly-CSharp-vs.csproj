@@ -139,9 +139,12 @@
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Consumable\Item.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Base Behavior\__Base\BaseEquipment.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\BuffItem.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseEquipmentMovesetModule.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseEquipmentMoveset.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\BaseSword.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Move Set\SwordProperties.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\State Machine\BaseEquipmentStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Stats\BaseEquipmentProperties.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Properties\BaseEquipmentProperties.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Equipable\Weapon Properties\IMoveSet.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Action\Ability Stats\AbilityProperties.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\BaseStat.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Module Classes\Stat\CharacterAttribute.cs" />

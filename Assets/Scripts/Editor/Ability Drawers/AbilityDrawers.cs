@@ -5,15 +5,33 @@ using UnityEditor;
 //[CustomPropertyDrawer(typeof(MovementProperties))]
 public class BaseAbilityPropertyDrawer : PropertyDrawer
 {
-	float foldoutWidth = 30f;
-	float abilityTypeWidth = .20f;
-	float vitalTypeWidth = .20f;
-	float costWidth = .5f;
+	protected virtual float foldoutWidth { get { return 30f;} }
+	protected virtual float abilityTypeWidth { get { return .20f;} }
+	protected virtual float vitalTypeWidth { get { return .20f;} }
+	protected virtual float costWidth { get { return .5f;} }
 
 	protected bool showContent = false;
 	protected bool showTimer = false;
+
 	protected SerializedProperty abilityType;
 	protected Rect abilityTypePos;
+	protected virtual void UpdateAbilityType (SerializedProperty prop) {}
+	protected virtual Rect UpdateAbilityTypePos (Rect masterPos) {
+		Rect newPos = new Rect (masterPos.x + foldoutWidth, 
+		                           masterPos.y, 
+		                           masterPos.width*abilityTypeWidth, 
+		                           15);
+		return newPos;
+	}
+
+	protected Rect vitalTypePos;
+	protected virtual Rect UpdateVitalTypePos (Rect masterPos) {
+		Rect newPos = new Rect (masterPos.x + (masterPos.width * abilityTypeWidth) + foldoutWidth, 
+		                         masterPos.y, 
+		                         masterPos.width*vitalTypeWidth, 
+		                         15);
+		return newPos;
+	}
 
 	protected float GetTimerHeight
 	{
@@ -33,6 +51,7 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 	{
 		EditorGUIUtility.LookLikeControls();
 		#region Base Properties
+		UpdateAbilityType (property);
 		SerializedProperty vitalType = property.FindPropertyRelative ("vitalType");
 		SerializedProperty cost = property.FindPropertyRelative ("cost");
 		SerializedProperty enterLength = property.FindPropertyRelative ("enterLength");
@@ -46,14 +65,8 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 		                            foldoutWidth, 
 		                            15);
 
-		abilityTypePos = new Rect (position.x + foldoutWidth, 
-		                                 position.y, 
-		                                 position.width*abilityTypeWidth, 
-		                                 15);
-		Rect vitalTypePos = new Rect (position.x + (position.width * abilityTypeWidth) + foldoutWidth, 
-		                              position.y, 
-		                              position.width*vitalTypeWidth, 
-		                              15);
+		abilityTypePos = UpdateAbilityTypePos (position);
+		vitalTypePos = UpdateVitalTypePos (position);
 		Rect costPos = new Rect (position.x + (position.width * costWidth),
 		                         position.y, 
 		                         position.width*costWidth, 
@@ -81,7 +94,11 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 		#region Inspector Elements
 		EditorGUI.indentLevel = 1;
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
-		if (abilityType != null) abilityType.enumValueIndex = EditorGUI.Popup (abilityTypePos, abilityType.enumValueIndex, abilityType.enumNames);
+
+		if (abilityType != null) abilityType.enumValueIndex = EditorGUI.Popup (abilityTypePos, 
+			                                              abilityType.enumValueIndex, 
+			                                              abilityType.enumNames);
+
 		vitalType.enumValueIndex = EditorGUI.Popup (vitalTypePos, vitalType.enumValueIndex, vitalType.enumNames);
 		cost.floatValue = EditorGUI.Slider (costPos, cost.floatValue, 0, 100);
 
@@ -104,6 +121,11 @@ public class BaseAbilityPropertyDrawer : PropertyDrawer
 public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 {
 	protected bool showSpeed = false;
+
+	protected override void UpdateAbilityType (SerializedProperty prop)
+	{
+		abilityType = prop.FindPropertyRelative ("movementType");
+	}
 	protected float GetSpeedHeight {
 		get {
 			if (showSpeed)
@@ -124,7 +146,6 @@ public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 	{
 		base.OnGUI (position, property, label);
 		#region Movement Properties
-		abilityType = property.FindPropertyRelative ("movementType");
 		SerializedProperty enterMoveSpeed = property.FindPropertyRelative ("enterMoveSpeed");
 		SerializedProperty activeMoveSpeed = property.FindPropertyRelative ("activeMoveSpeed");
 		SerializedProperty exitMoveSpeed = property.FindPropertyRelative ("exitMoveSpeed");
@@ -183,6 +204,29 @@ public class MovementPropertyDrawer : BaseAbilityPropertyDrawer
 public class AttackPropertyDrawer : MovementPropertyDrawer
 {
 	bool showAttackStats = false;
+	protected override float abilityTypeWidth { get { return .15f; } }
+	private float abilityLabelWidth = .15f;
+
+	protected override void UpdateAbilityType (SerializedProperty prop)
+	{
+		abilityType = prop.FindPropertyRelative ("attackType");
+	}
+	protected override Rect UpdateAbilityTypePos (Rect masterPos)
+	{
+		Rect newPos = new Rect (masterPos.x + foldoutWidth + (abilityLabelWidth * masterPos.width), 
+		                           masterPos.y, 
+		                           masterPos.width*abilityTypeWidth, 
+		                           15);
+		return newPos;
+	}
+	protected override Rect UpdateVitalTypePos (Rect masterPos)
+	{
+		Rect newPos = new Rect (masterPos.x + foldoutWidth + (abilityLabelWidth * masterPos.width) + (abilityTypeWidth * masterPos.width), 
+		                        masterPos.y, 
+		                        masterPos.width*abilityTypeWidth, 
+		                        15);
+		return newPos;
+	}
 	public float GetAttackStatsHeight {
 		get {
 			if (showAttackStats)
@@ -203,7 +247,8 @@ public class AttackPropertyDrawer : MovementPropertyDrawer
 	{
 		base.OnGUI (position, property, label);
 		#region Attack Properties
-		abilityType = property.FindPropertyRelative ("attackType");
+		//abilityType = property.FindPropertyRelative ("attackType");
+		string abilityName = property.name;
 		SerializedProperty primaryDamageType = property.FindPropertyRelative ("primaryDamageType");
 		SerializedProperty secondaryDamageType = property.FindPropertyRelative ("secondaryDamageType");
 		SerializedProperty damageModifier = property.FindPropertyRelative ("damageModifier");
@@ -211,6 +256,11 @@ public class AttackPropertyDrawer : MovementPropertyDrawer
 		#endregion
 
 		#region Coordinates
+		Rect abilityLabelPos = new Rect (position.x + foldoutWidth, 
+		                            position.y, 
+		                            position.width*abilityLabelWidth, 
+		                            15);
+
 		Rect showAttackStatsPos =  new Rect (position.x,
 		                                       position.y + GetTimerHeight + GetSpeedHeight + 15,
 		                                       position.width,
@@ -234,6 +284,8 @@ public class AttackPropertyDrawer : MovementPropertyDrawer
 		#endregion
 
 		#region Inspector Elements
+		EditorGUI.LabelField(abilityLabelPos, abilityName);
+
 		EditorGUI.indentLevel = 1;
 		if (showContent) {
 			EditorGUI.indentLevel = 2;
@@ -253,7 +305,11 @@ public class AttackPropertyDrawer : MovementPropertyDrawer
 
 [CustomPropertyDrawer (typeof (MeleeProperties))]
 public class MeleePropertyDrawer : AttackPropertyDrawer {
-
+	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
+	{
+		base.OnGUI (position, property, label);
+		//abilityType = property.FindPropertyRelative ("attackType");
+	}
 }
 
 [CustomPropertyDrawer(typeof(RangedProperties))]
