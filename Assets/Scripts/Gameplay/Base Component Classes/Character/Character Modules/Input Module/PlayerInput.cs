@@ -41,7 +41,7 @@ using System;
 //		float dodgeTimer = 0;
 //		float targettingTimer = 0;
 
-		Debug.Log ("the character is aiming at :"+lookDir);
+//		Debug.Log ("the character is aiming at :"+lookDir);
 
 		//_targetting.UpdateTargetting();
 		moveDir = UpdateDirection ();

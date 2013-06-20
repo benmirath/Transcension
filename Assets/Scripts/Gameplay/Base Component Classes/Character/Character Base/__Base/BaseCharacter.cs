@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// This abstract script lays down the basic functionality (stats, movement, basic states)for any in-game character, 
 /// which will be fine tuned in later derived scripts. </summary>
 [RequireComponent (typeof(IAnimation), typeof(CharacterController), typeof(Rigidbody))]		//Engine Logic
-[RequireComponent (typeof(BaseCharacterClassicStats), typeof(CharacterMovesetModule), typeof(BaseCharacterStateModule))]
+[RequireComponent (typeof(CharacterStats), typeof(CharacterMovesetModule), typeof(BaseCharacterStateModule))]
 public abstract class BaseCharacter : MonoBehaviour, ICharacter 
 {
 	#region Fields
@@ -43,7 +43,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	protected BaseCharacterStateModule charState;
 
 //	[SerializeField]
-	protected BaseCharacterClassicStats charStats; //This holds all gameplay and combat stats that are inherent to the character
+	protected CharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
 //	[SerializeField]
 	protected CharacterMovesetModule charMoveSet;
 	protected BaseEquipmentLoadoutModule charEquipment;
@@ -86,7 +86,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	public CharacterMovesetModule CharActions {
 		get {return charMoveSet;}
 	}
-	public BaseCharacterClassicStats CharStats {
+	public CharacterStats CharStats {
 		get {return charStats;}
 	}
 	public BaseEquipmentLoadoutModule CharEquipment {
@@ -139,7 +139,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 		_controller = GetComponent<CharacterController>();
 		_rigidbody = GetComponent<Rigidbody>();
 
-		charStats = GetComponent<BaseCharacterClassicStats>();
+		charStats = GetComponent<CharacterStats>();
 		charMoveSet = GetComponent<CharacterMovesetModule>();
 
 		//primaryWeapon = transform.GetComponentInChildren<>();
@@ -228,7 +228,7 @@ public interface ICharacter {
 	//IGUI (will turn into a full module down the line, handle health bars and other gui elements)
 
 	//USER
-	BaseCharacterClassicStats CharStats {get;}
+	CharacterStats CharStats {get;}
 	CharacterMovesetModule CharActions {get;}
 	BaseEquipmentLoadoutModule CharEquipment { get;}
 //	BaseEquipment PrimaryWeapon {get;}

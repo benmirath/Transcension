@@ -8,7 +8,7 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 
 	[SerializeField] protected BaseMovementModule charMovement;
 	[SerializeField] protected BaseEquipmentLoadoutModule charEquipment;
-	[SerializeField] protected BaseCombatModule charCombat;
+	[SerializeField] protected CharacterStatusModule charStatus;
 	[SerializeField] protected BaseStealthModule charStealth;
 
 	public BaseMovementModule CharMovement {
@@ -17,8 +17,8 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 	public BaseEquipmentLoadoutModule CharEquipment {
 		get {return charEquipment;}
 	}
-	public ICombat CharCombat {
-		get {return charCombat;}
+	public IStatus CharStatus {
+		get {return charStatus;}
 	}
 	public IStealth CharStealth {
 		get {return charStealth;}
@@ -70,7 +70,7 @@ public interface IMoveSet {
 
 	[SerializeField] BaseMovementModule CharMovement {get;}
 	[SerializeField] BaseEquipmentLoadoutModule CharEquipment {get;}
-	[SerializeField] ICombat CharCombat {get;}
+	[SerializeField] IStatus CharStatus {get;}
 	[SerializeField] IStealth CharStealth {get;}
 
 	//	void AttackRecoil (Vector3 hitDir);

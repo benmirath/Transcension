@@ -40,7 +40,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 ,
 	}
 	#region Properties
-	[SerializeField]protected BaseCharacterClassicStats stats;
+	[SerializeField]protected CharacterStats stats;
 	[SerializeField]protected CharacterMovesetModule moveSet;
 //	protected BaseEquipmentLoadoutModule equipment;
 //used to access actions for state activation
@@ -74,7 +74,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	protected override void OnAwake ()
 	{
 		base.OnAwake ();
-		stats = GetComponent<BaseCharacterClassicStats> ();
+		stats = GetComponent<CharacterStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
 		//equipment = GetComponent<BaseEquipmentLoadoutModule> ();
 		_animation = GetComponent<MeshRenderer> ();
@@ -131,32 +131,40 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		Debug.Log ("3");
 		if (ability.Cost > 0) {
 			//checks if ability is a special or not, determining vital type used.
-			switch (ability.VitalType)
-			{
-			case Vital.PrimaryVitalName.Stamina:
-				if (stats.Stamina.CurValue >= ability.Cost) {
-					Debug.LogWarning ("Standard Ability activated");
-					stats.Stamina.CurValue -= ability.Cost;
-					return true;
-				} else 
-					return false;
-				break;
-
-			case Vital.PrimaryVitalName.Energy:
-				if (stats.Energy.CurValue >= ability.Cost) {
-					Debug.LogWarning ("Special Ability activated");
-					stats.Energy.CurValue -= ability.Cost;
-					return true;
-				} else 
-					return false;
-				break;
-			case Vital.PrimaryVitalName.Health:
-			default:
+			if (ability.UserVital.CurValue >= ability.Cost) {
+				Debug.LogWarning ("Ability activated");
+				ability.UserVital.CurValue -= ability.Cost;
+				StartCoroutine (ability.UserVital.PauseRegen());
 				return true;
-				break;
-			}
+			} else 
+				Debug.LogWarning ("Not enough points in vital");
+				return false;
+//			switch (ability.VitalType)
+//			{
+//			case Vital.PrimaryVitalName.Stamina:
+//				if (stats.Stamina.CurValue >= ability.Cost) {
+//					Debug.LogWarning ("Standard Ability activated");
+//					stats.Stamina.CurValue -= ability.Cost;
+//					return true;
+//				} else 
+//					return false;
+//				break;
+//
+//			case Vital.PrimaryVitalName.Energy:
+//				if (stats.Energy.CurValue >= ability.Cost) {
+//					Debug.LogWarning ("Special Ability activated");
+//					stats.Energy.CurValue -= ability.Cost;
+//					return true;
+//				} else 
+//					return false;
+//				break;
+//			case Vital.PrimaryVitalName.Health:
+//			default:
+//				return true;
+//				break;
+//			}
 		} else {
-			Debug.Log ("Ability did not activate");
+			Debug.LogWarning ("Ability has no cost");
 			return true;
 		}
 	}
@@ -304,7 +312,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		if (input.MoveDir == Vector3.zero)					//Character stopped moving
 			currentState = CharacterActions.Idle;
 		else {
-			if (CheckAbilityVital (moveSet.CharMovement.Run))//Character has enough stamina to activate run
+			if (moveSet.CharMovement.Run.UserVital.CurValue > moveSet.CharMovement.Run.Cost)//Character has enough stamina to activate run
 				moveSet.CharMovement.Run.ActiveAbility ();
 			else 											//otherwise return to walk
 				TransitionToWalk ();

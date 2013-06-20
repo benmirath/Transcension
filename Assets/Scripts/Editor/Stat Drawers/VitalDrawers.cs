@@ -38,6 +38,9 @@ public class PrimaryVitalDrawer : PropertyDrawer
 	float nameWidth = .30f;
 	float barWidth = .65f;
 
+	float testCur;
+	float testMax;
+
 	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 	{
 		if (showContent)
@@ -67,7 +70,20 @@ public class PrimaryVitalDrawer : PropertyDrawer
 		Rect regenScalingPos = new Rect (position.x + 15, position.y + 30, position.width - 15, 15);
 
 		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
-		EditorGUI.ProgressBar (barPos, curValue.floatValue / maxValue.floatValue,curValue.floatValue+" / "+maxValue.floatValue);
+
+		if (maxValue == null || maxValue.floatValue <= 0) //Debug.LogWarning ("CUR VALUE IS NULL");
+			testMax = 1;
+		else
+			testMax = maxValue.floatValue;
+
+		if (testCur == null || testCur < 0)
+			testCur = 1;
+		else
+			testCur = curValue.floatValue;
+
+		EditorGUI.ProgressBar (barPos, 
+		                       testCur / testMax, 
+		                       testCur+" / "+testMax);
 
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
 
@@ -90,6 +106,8 @@ public class StatusVitalDrawer : PropertyDrawer
 	float foldoutWidth = 30f;
 
 	//float regenWidth;
+	float testMax;
+	float testCur;
 
 	public override float GetPropertyHeight (SerializedProperty property, GUIContent label)
 	{
@@ -119,7 +137,17 @@ public class StatusVitalDrawer : PropertyDrawer
 
 		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
 
-		EditorGUI.ProgressBar (barPos, curValue.floatValue / maxValue.floatValue,"");
+		if (maxValue == null || maxValue.floatValue <= 0)
+			testMax = 1;
+		else 
+			testMax = maxValue.floatValue;
+
+		if (curValue == null || curValue.floatValue < 0)
+			testCur = 1;
+		else 
+			testCur = curValue.floatValue;
+
+		EditorGUI.ProgressBar (barPos, testCur / testMax,"");
 
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
 

@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_OSX;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE_OSX;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;UNITY_STANDALONE;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_GAMECENTER;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_1_5;UNITY_4_1;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -122,7 +122,7 @@
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BasePlayer.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\__Base\BaseCharacter.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\CharacterMovesetModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Combat Module\BaseCombatModule.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Combat Module\CharacterStatusModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Equipment Loadout Module\BaseEquipmentLoadoutModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Movement Module\BaseMovementModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Stealth Module\BaseStealthModule.cs" />
@@ -133,7 +133,7 @@
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerTargetting.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\BaseCharacterStateModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\PlayerStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\BaseCharacterClassicStats.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\CharacterStats.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Item\Consumable\Item.cs" />

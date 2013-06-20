@@ -38,7 +38,8 @@ public interface IAttack
 
 	#region Properties
 	private ICharacter _user;
-	private IInput _charInput;
+	private IInput _userInput;
+	private IVital _userVital;
 	protected Action enterAbility;
 	protected Action activeAbility;
 	protected Action exitAbility;
@@ -69,7 +70,26 @@ public interface IAttack
 	public virtual void SetValue (ICharacter user)
 	{
 		_user = user;
-		_charInput = _user.CharInput;
+		_userInput = _user.CharInput;
+
+		if (_user == null)
+			Debug.LogError ("user is null");
+		if (_user.CharStats == null)
+			Debug.LogError ("user stats are null");
+
+
+		_userVital = _user.CharStats.CharVitals.Find (i => i.Name == vitalType.ToString());
+
+		if (cost > 0) {
+			enterAbility += delegate {
+				_userVital.StopRegen = true;
+			};
+			exitAbility += delegate {
+				_userVital.StopRegen = false;
+			};
+		}
+
+//		Debug.LogError (_userVital.Name);
 	}
 	#endregion
 
@@ -88,7 +108,9 @@ public interface IAttack
 
 	public ICharacter User { get { return _user; } }
 
-	public IInput CharInput { get { return _charInput; } }
+	public IInput CharInput { get { return _userInput; } }
+
+	public IVital UserVital { get { return _userVital; } }
 
 	public Vital.PrimaryVitalName VitalType { get { return vitalType; } }
 
@@ -179,24 +201,24 @@ public interface IAttack
 	#region Initialization
 	public override void SetValue (ICharacter user)
 	{
-		Debug.Log ("AbilityProperty: Setting Values");
+//		Debug.Log ("AbilityProperty: Setting Values");
 		base.SetValue (user);
 		switch (movementType) {
 		case MovementPropertyType.Aim:
-			enterAbility = Aim;
-			activeAbility = Aim;
-			exitAbility = Aim;
+			enterAbility += Aim;
+			activeAbility += Aim;
+			exitAbility += Aim;
 			break;
 
 		case MovementPropertyType.Walk:
-			activeAbility = delegate {
+			activeAbility += delegate {
 				ConstantMove (activeMoveSpeed);
 				Turn ();
 			};
 			break;
 
 		case MovementPropertyType.Strafe:
-			activeAbility = delegate {
+			activeAbility += delegate {
 				ConstantMove (activeMoveSpeed);
 				Aim ();
 			};
@@ -204,24 +226,30 @@ public interface IAttack
 
 		//these last two will likely add some extra control logic to fine tune momentum.
 		case MovementPropertyType.Run:
-			enterAbility = delegate {
+			enterAbility += delegate {
 				//will be the code to accelerate the character from walking to running speed.
 				ConstantMove (enterMoveSpeed);
 				Turn ();
+				UserVital.StopRegen = true;
 			};
-			activeAbility = delegate {
+			activeAbility += delegate {
 				ConstantMove (activeMoveSpeed);
 				Turn ();
+				//if (UserVital.CurValue < cost) user.CharState.currentState = BaseCharacterStateModule.CharacterActions.Idle;
+				UserVital.CurValue -= (cost * Time.deltaTime);
+			};
+			exitAbility += delegate {
+				UserVital.StopRegen = false;
 			};
 			break;
 
 		case MovementPropertyType.Dodge:
-			enterAbility = delegate {
+			enterAbility += delegate {
 				BurstMove (enterMoveSpeed);
 				Turn ();
 			
 			};
-			activeAbility = delegate {
+			activeAbility += delegate {
 				BurstMove (activeMoveSpeed);
 				Turn ();
 			

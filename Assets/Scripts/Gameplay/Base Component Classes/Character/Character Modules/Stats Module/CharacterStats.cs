@@ -23,7 +23,7 @@ public interface ICharacterClassicStats
 /// <summary>
 /// Character Stat Module. Holds all relevant in-mechanics values, especially those (down the line) visible to the player. </summary>
 [System.Serializable] 
-public class BaseCharacterClassicStats : MonoBehaviour
+public class CharacterStats : MonoBehaviour
 {
 //	public interface IAttribute {
 //		int BaseValue				{get; set;}
@@ -65,6 +65,13 @@ public class BaseCharacterClassicStats : MonoBehaviour
 
 	//Status Vitals
 	[SerializeField] protected StatusVital stunResistance;		
+
+
+	protected List<IVital> charVitals;
+	protected List<CharacterAttribute> charAtts;
+
+	public List<IVital> CharVitals { get { return charVitals; } }
+	public List<CharacterAttribute> CharAtts { get { return charAtts; } }
 	
 	//Stat Lists
 	//		[SerializeField] protected List<Attribute> attList;
@@ -134,6 +141,11 @@ public class BaseCharacterClassicStats : MonoBehaviour
 	public void Awake ()
 	{
 		_user = GetComponent<BaseCharacter>();
+		charVitals = new List<IVital> ();
+		charAtts = new List<CharacterAttribute> ();
+
+		charVitals.AddRange (new List<IVital>(){health, stamina, energy, stunResistance});
+		charAtts.AddRange (new List<CharacterAttribute>(){vitality, endurance, spirit, strength, dexterity, mind});
 	}
 	public void Start () 
 	{
@@ -143,12 +155,17 @@ public class BaseCharacterClassicStats : MonoBehaviour
 		else
 				Debug.Log ("user is set");
 
+		charVitals.ForEach ((IVital vit)=> {
+			vit.SetScaling(_user);
+		});
 
-		health.SetScaling(_user);
-		stamina.SetScaling(_user);
-		energy.SetScaling(_user);
-
-		stunResistance.SetScaling(_user);
+//		health.SetScaling(_user);
+//		stamina.SetScaling(_user);
+//		energy.SetScaling(_user);
+//
+//		stunResistance.SetScaling(_user);
+		Debug.LogWarning (charVitals);
+		Debug.LogWarning (charAtts);
 	}
 	#endregion
 

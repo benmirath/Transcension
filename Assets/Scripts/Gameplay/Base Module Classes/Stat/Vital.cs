@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface IVital
 {
+	string Name 		{ get; }
+
 	float MinValue 		{ get; }
 
 	float MaxValue 		{ get; }
@@ -16,11 +18,17 @@ public interface IVital
 
 	event Vital.VitalChangedHandler VitalChanged;
 
+	void SetScaling (BaseCharacter user);
 	IEnumerator StartRegen ();
+	IEnumerator PauseRegen ();
 //		IEnumerator Regen ();
 }
 
 [System.Serializable] 
+/// <summary>
+/// The Vital Class. A shifting min-max stat, used to represent shifting statistics like health, stamina and other status conditions.
+/// Will also have option delegates that called when the min or max region is used, which can be filled in by the different stats for different mechanical effects.
+/// </summary>
 public abstract class Vital : IVital
 {
 	#region Properties
@@ -52,29 +60,39 @@ public abstract class Vital : IVital
 	}
 		//Inspector Fields
 
-	public float 				minValue = 0;
-	public virtual float 			MinValue { get { return minValue; } }
+	[SerializeField] protected float 	minValue;
+	public virtual float	MinValue { get { return minValue; } }
+	public Action		MinValueEffect;
 
-	public float 				maxValue = 100;
-	public virtual float 			MaxValue { get { return maxValue; } }
+	[SerializeField] protected float 	maxValue;
+	public virtual float 	MaxValue { get { return maxValue; } }
+	public Action 		MaxValueEffect;
 
 	[SerializeField] protected float curValue;
 
-	public float 				CurValue {
+	public abstract string Name {
+		get;
+	}
+
+	public float CurValue {
 		get { return curValue; }
 		set {
 			float val = value;
 				
-			// Make 
-			if (val > MaxValue)
+			if (val > MaxValue) {
 				val = MaxValue;
-			else if (val < MinValue)
-				val = MinValue;
+				if (MaxValueEffect != null)
+					MaxValueEffect ();
+			}
 
-			if (val < curValue)
-				_user.StartCoroutine (PauseRegen());
+			else if (val < MinValue) {
+				val = MinValue;
+				if (MinValueEffect != null)
+					MinValueEffect ();
+			}
 
 			curValue = val;
+
 			if (VitalChanged != null)
 				VitalChanged (this);
 		}
@@ -102,8 +120,6 @@ public abstract class Vital : IVital
 	//			public ScalingStat BaseScalingStat {
 	//				get {return baseScalingStat;}
 	//			}
-	
-
 
 	public float RegenRate {
 		get { return regenScaling.BaseValue;}
@@ -114,15 +130,15 @@ public abstract class Vital : IVital
 		set { _stopRegen = value;}
 	}
 	#endregion
-	
-	#region Initialization
-	public Vital ()
-	{
-		curValue = 100;
-		buffValue = 0;
-	}
-	#endregion
-	
+//	
+//	#region Initialization
+//	public Vital ()
+//	{
+//		curValue = 100;
+//		buffValue = 0;
+//	}
+//	#endregion
+//	
 	#region Setup
 	public virtual void SetScaling (BaseCharacter user)
 	{
@@ -131,13 +147,34 @@ public abstract class Vital : IVital
 	#endregion
 	
 	#region Methods
-	public abstract IEnumerator StartRegen ();
+//	public abstract IEnumerator StartRegen ();
 
-	private IEnumerator PauseRegen ()
+	public IEnumerator StartRegen () {
+		while (true) {
+			if (_stopRegen == true) 
+				Debug.LogError ("regenerating paused");
+
+			else {
+				Debug.LogWarning("regenerating...");
+				CurValue += (RegenRate * Time.deltaTime);	//apply regen rate at steady time increments
+				
+			}
+			yield return null;
+		}
+		Debug.LogError("Outside of regen loop");
+		yield return null;
+	}
+
+	public IEnumerator PauseRegen ()
 	{
-		_stopRegen = true;
-		yield return new WaitForSeconds (1);
-		_stopRegen = false;
+		if (_stopRegen == false) {
+			_stopRegen = true;
+			yield return new WaitForSeconds (1.5f);
+			_stopRegen = false;
+			yield break;
+		}
+		else
+			yield break;
 	}
 //		public IEnumerator Regen ()
 //		{
@@ -165,9 +202,12 @@ public abstract class Vital : IVital
 	[SerializeField] protected PrimaryVitalName name;
 	[SerializeField] private ScalingStat baseScaling;
 
+	public override string Name { get { return name.ToString(); } }
 	public override float MaxValue {
-		get { 	maxValue = baseScaling.BaseValue + BuffValue;
-			return maxValue;}
+		get {
+			maxValue = baseScaling.BaseValue + BuffValue;
+			return maxValue;
+		}
 	}
 
 	public override void SetScaling (BaseCharacter user)
@@ -181,31 +221,31 @@ public abstract class Vital : IVital
 	}
 	/// <summary>
 	/// Starts the regen effect for this primar vital. </summary>
-	public override IEnumerator StartRegen ()
-	{
-		while (!StopRegen) {
-			float _regenTimer = Time.time;
-			
-			if (_prevValue <= CurValue) {
-				if (_regenTimer == 0) {
-					_regenTimer = Time.time + 0.75f;
-					yield return null;
-				}
-				
-				if (_regenTimer <= Time.time) {
-					CurValue += (RegenRate * Time.deltaTime);
-					_prevValue = CurValue;
-					yield return null;
-				} else
-					yield return null;
-			} else {
-				_regenTimer = 0;
-				_prevValue = CurValue;
-				yield return null;
-			}
-		}
-		yield return null;			
-	}
+//	public override IEnumerator StartRegen ()
+//	{
+//		while (!StopRegen) {
+//			float _regenTimer = Time.time;
+//			
+//			if (_prevValue <= CurValue) {
+//				if (_regenTimer == 0) {
+//					_regenTimer = Time.time + 0.75f;
+//					yield return null;
+//				}
+//				
+//				if (_regenTimer <= Time.time) {
+//					CurValue += (RegenRate * Time.deltaTime);
+//					_prevValue = CurValue;
+//					yield return null;
+//				} else
+//					yield return null;
+//			} else {
+//				_regenTimer = 0;
+//				_prevValue = CurValue;
+//				yield return null;
+//			}
+//		}
+//		yield return null;			
+//	}
 }
 
 [System.Serializable] public class StatusVital : Vital
@@ -213,6 +253,7 @@ public abstract class Vital : IVital
 	[SerializeField] protected StatusVitalName name;
 	[SerializeField, Range(0, 100)] private float baseValue;
 
+	public override string Name { get { return name.ToString(); } }
 	public override float MaxValue {
 		get { return baseValue + BuffValue;}
 	}
@@ -226,24 +267,24 @@ public abstract class Vital : IVital
 		curValue = MinValue;
 	}
 
-	public override IEnumerator StartRegen ()
-	{
-		while (!StopRegen) {
-			CurValue -= (RegenRate * Time.deltaTime);
-			yield return null;
-		}
-		yield return null;
-	}
-
-	public IEnumerator ActivateEffect (float dur)
-	{
-		float t = Time.time + dur;
-		while (Time.time < t) {
-			Effect ();
-			yield return null;
-		}
-		yield break;
-	}
-
-	private Action Effect;
+//	public override IEnumerator StartRegen ()
+//	{
+//		while (!StopRegen) {
+//			CurValue -= (RegenRate * Time.deltaTime);
+//			yield return null;
+//		}
+//		yield return null;
+//	}
+//
+//	public IEnumerator ActivateEffect (float dur)
+//	{
+//		float t = Time.time + dur;
+//		while (Time.time < t) {
+//			Effect ();
+//			yield return null;
+//		}
+//		yield break;
+//	}
+//
+//	private Action Effect;
 }
