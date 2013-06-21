@@ -200,7 +200,38 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		#endregion
 
 
+	protected IEnumerator ActivateStateAbility (AbilityProperties ability) {
+		float timer;
 
+		if (ability.Cost > 0)
+			ability.UserVital.StopRegen = true;
+
+		if (ability.EnterLength > 0) {
+			timer = Time.time + ability.EnterLength;
+			while (timer > Time.time) {
+				ability.EnterAbility ();
+				yield return null;
+			}
+		}
+		if (ability.ActiveLength > 0) {
+			timer = Time.time + ability.ActiveLength;
+			while (timer > Time.time) {
+				ability.ActiveAbility ();
+				yield return null;
+			}
+		}
+		if (ability.ExitLength > 0) {
+			timer = Time.time + ability.ExitLength;
+			while (timer > Time.time) {
+				ability.ExitAbility ();
+				yield return null;
+			}
+		}
+
+		if (ability.UserVital.StopRegen = true)
+			ability.UserVital.StopRegen = false;
+		yield break;
+	}
 
 		#region Idle
 	protected void Idle_EnterState ()
@@ -321,7 +352,7 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 
 	protected void Run_ExitState ()
 	{
-
+		moveSet.CharMovement.Run.ExitAbility ();
 	}
 		#endregion
 
@@ -348,17 +379,21 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		//Vector3 trajectory = input.MoveDir;
 		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
 		_animation.material.color = Color.gray;
-		float timer1 = moveSet.CharMovement.Dodge.EnterLength + Time.time;
-		float timer2 = moveSet.CharMovement.Dodge.ActiveLength + timer1;
-		while (timer1 >= Time.time) {
-			moveSet.CharMovement.Dodge.EnterAbility ();
-			yield return null;
-		}
-		while (timer2 >= Time.time) {
-			moveSet.CharMovement.Dodge.ActiveAbility ();
-			yield return null;
-		}
-		Debug.Log ("TEST123");
+//		float timer1 = moveSet.CharMovement.Dodge.EnterLength + Time.time;
+//		float timer2 = moveSet.CharMovement.Dodge.ActiveLength + timer1;
+//		while (timer1 >= Time.time) {
+//			moveSet.CharMovement.Dodge.EnterAbility ();
+//			yield return null;
+//		}
+//		while (timer2 >= Time.time) {
+//			moveSet.CharMovement.Dodge.ActiveAbility ();
+//			yield return null;
+//		}
+//		Debug.Log ("TEST123");
+
+//		yield return StartCoroutine(ActivateStateAbility (moveSet.CharMovement.Dodge));
+		yield return StartCoroutine (moveSet.CharMovement.Dodge.ActivateAbility());
+
 		currentState = CharacterActions.Idle;
 		yield break;
 	}

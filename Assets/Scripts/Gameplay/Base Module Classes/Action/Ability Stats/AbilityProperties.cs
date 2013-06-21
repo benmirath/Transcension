@@ -95,7 +95,38 @@ public interface IAttack
 
 	#region Effects
 
+	public IEnumerator ActivateAbility () {
+		float timer;
 
+		if (cost > 0)
+			_userVital.StopRegen = true;
+
+		if (enterLength > 0) {
+			timer = Time.time + enterLength;
+			while (timer > Time.time) {
+				enterAbility ();
+				yield return null;
+			}
+		}
+		if (activeLength > 0) {
+			timer = Time.time + activeLength;
+			while (timer > Time.time) {
+				activeAbility ();
+				yield return null;
+			}
+		}
+		if (exitLength > 0) {
+			timer = Time.time + exitLength;
+			while (timer > Time.time) {
+				exitAbility ();
+				yield return null;
+			}
+		}
+
+		if (_userVital.StopRegen = true)
+			_userVital.StopRegen = false;
+		yield break;
+	}
 
 	//public Action ActivateAbility;
 	#endregion
@@ -382,8 +413,8 @@ public class StealthProperties : MovementProperties
 		Shocking
 ,
 	}
-	private BaseEquipment _weapon;
-	private BoxCollider _hitbox;
+	protected BaseEquipment _weapon;
+	protected BoxCollider _hitbox;
 
 	[SerializeField] protected BaseEquipmentProperties.EquipmentActions attackName;
 //	public override string name { get { return attackName.ToString(); } }
@@ -417,27 +448,27 @@ public class StealthProperties : MovementProperties
 	#endregion Properties
 	
 	#region Initialization
-	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
-	{
-		base.SetValue (weapon.User);
-		_weapon = weapon;
-		attackName = name;
-		switch (attackType) {
-		case AttackPropertyType.Standard:
-			activeAbility = delegate {
-				Aim ();
-				BurstMove (activeMoveSpeed);
-			};
-			break;
-		case AttackPropertyType.Charge:
-		case AttackPropertyType.Multi:
-		case AttackPropertyType.Counter:
-		default:
-			Debug.LogError ("Attack Type was not set properly!");
-			break;
-		}
-
-	}
+//	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
+//	{
+//		base.SetValue (weapon.User);
+//		_weapon = weapon;
+//		attackName = name;
+//		switch (attackType) {
+//		case AttackPropertyType.Standard:
+//			activeAbility = delegate {
+//				Aim ();
+//				BurstMove (activeMoveSpeed);
+//			};
+//			break;
+//		case AttackPropertyType.Charge:
+//		case AttackPropertyType.Multi:
+//		case AttackPropertyType.Counter:
+//		default:
+//			Debug.LogError ("Attack Type was not set properly!");
+//			break;
+//		}
+//
+//	}
 
 	protected override void Awake ()
 	{
@@ -472,6 +503,32 @@ public class StealthProperties : MovementProperties
 			target = hit.transform.GetComponent<BaseCharacter>();
 			target.CharStats.ApplyDamage(AdjustedDamageValue);
 		}
+	}
+
+	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
+	{
+		base.SetValue (weapon.User);
+		_weapon = weapon;
+		attackName = name;
+		switch (attackType) {
+		case AttackPropertyType.Standard:
+			activeAbility = delegate {
+				_hitbox.enabled = true;
+				Aim ();
+				BurstMove (activeMoveSpeed);
+			};
+			exitAbility = delegate {
+				_hitbox.enabled = false;
+			};
+			break;
+			case AttackPropertyType.Charge:
+			case AttackPropertyType.Multi:
+			case AttackPropertyType.Counter:
+			default:
+			Debug.LogError ("Attack Type was not set properly!");
+			break;
+		}
+
 	}
 
 	protected override void StandardAttack ()

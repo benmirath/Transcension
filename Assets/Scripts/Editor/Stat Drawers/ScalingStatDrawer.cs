@@ -11,6 +11,8 @@ public class ScalingStatDrawer : PropertyDrawer
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
 	{
+		EditorGUIUtility.LookLikeInspector ();
+
 		string statName = property.name;
 		SerializedProperty scalingAttribute = property.FindPropertyRelative ("scalingAttribute");
 		SerializedProperty scalingRatio = property.FindPropertyRelative ("scalingRatio");
@@ -21,7 +23,7 @@ public class ScalingStatDrawer : PropertyDrawer
 
 		EditorGUI.LabelField (labelPosition, statName);
 		scalingAttribute.enumValueIndex = EditorGUI.Popup (attPosition, scalingAttribute.enumValueIndex, scalingAttribute.enumNames);
-		scalingRatio.floatValue = EditorGUI.Slider (ratioPosition, scalingRatio.floatValue, 0, 100);
+		scalingRatio.floatValue = EditorGUI.Slider (ratioPosition, scalingRatio.floatValue, 0, 5);
 	}
 }
 
