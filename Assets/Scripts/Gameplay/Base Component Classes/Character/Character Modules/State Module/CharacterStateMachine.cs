@@ -69,6 +69,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		user = GetComponent<BaseCharacter> ();
 		stats = GetComponent<CharacterStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
+
 		_animation = GetComponent<MeshRenderer> ();
 		input = GetComponent<BaseInputModule> ();
 
@@ -93,10 +94,12 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	public virtual void Start ()
 	{
 		//input.Setup ();
-		StartCoroutine (monitorState());
+		if (stats.Stun != null)
+			user.CharStats.Stun.MaxValueEffect = TransitionToStun;
+		else
+			Debug.LogError ("no stun stat set!");
 
-		user.CharStats.Stun.MaxValueEffect = TransitionToStun;
-		user.CharStats.Health.MinValueEffect = TransitionToDead;
+		stats.Health.MinValueEffect = TransitionToDead;
 
 		switch (user.CharType) {
 			case BaseCharacter.CharacterType.Player:
@@ -108,10 +111,11 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 			CharInput.sheatheSignal += TransitionToSheatheWeapon;
 			break;
 		case BaseCharacter.CharacterType.Enemy:
-
+			input = GetComponent<AIInput>();
 			break;
 		}
 		currentState = CharacterActions.Idle;
+		StartCoroutine (monitorState());
 	}
 	/// <summary> States
 	/// To change state, simply change the currentState variable. To creat a nested sub-state, use Call (name of state).
@@ -356,8 +360,8 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 
 	protected void TransitionToStun () {
 		Debug.LogError ("Should be stunned");
-		Call (CharacterActions.Stun);
-
+//		Call (CharacterActions.Stun);
+		Return (CharacterActions.Stun);
 	}
 	protected IEnumerator Stun_EnterState () 
 	{

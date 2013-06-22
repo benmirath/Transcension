@@ -54,6 +54,7 @@ public class CharacterStats : MonoBehaviour
 	[SerializeField] protected PrimaryVital health;
 	[SerializeField] protected PrimaryVital stamina;
 	[SerializeField] protected PrimaryVital energy;
+	[SerializeField] protected StatusVital stun;		
 
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Vitality)] protected CharacterAttribute vitality;
 	[SerializeField, CharacterAttAttribute(CharacterAttribute.AttributeName.Endurance)] protected CharacterAttribute endurance;
@@ -64,7 +65,6 @@ public class CharacterStats : MonoBehaviour
 	
 
 	//Status Vitals
-	[SerializeField] protected StatusVital stun;		
 
 
 	protected List<IVital> charVitals;

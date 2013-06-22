@@ -44,6 +44,7 @@ public class CharacterStatusModule : IStatus {
 	public void Setup (BaseCharacter _user) {
 		user = _user;
 		charStats = user.CharStats;
+		hitStun.SetValue (user);
 	}
 	#endregion
 
@@ -74,47 +75,6 @@ public class CharacterStatusModule : IStatus {
 		ApplyVitalUse (-hitStrength, charStats.Stun);
 
 	}
-
-	
-//	protected IEnumerator HitStun () {
-//#if DEBUG
-//		if (user.Rigid != null) Debug.Log("rigidbody is attached");
-//#endif
-//		float _timer = 0; 
-//		user.Rigid.isKinematic = false;
-//		
-//		while (_timer - Time.time >= 0.05f)								//Initial Knockback
-//		{
-//			Debug.LogWarning("STUNNED AND MOVING");
-//			//user.Controller(user.CharPhysics.KnockDir);
-//			yield return new WaitForFixedUpdate();
-//		}
-//		while (_timer - Time.time >0)									//Stun Period
-//		{
-//			yield return null;
-//		}
-//		user.Rigid.isKinematic = true;
-//		//user.CharPhysics.KnockDir = Vector3.zero;
-//		
-////		if (WeaponReady) state = CharState.CombatReady;
-////		else state = CharState.Idle;
-////		StateTransition();
-//		yield break;
-//
-//	}
-//	protected IEnumerator RecoilStun () {
-//		#if DEBUG
-//		if (user.Rigid != null) Debug.Log("rigidbody is attached");
-//		#endif
-//		float _timer = 0; 
-//
-//		while (_timer - Time.time >0)									//Stun Period
-//		{
-//			yield return null;
-//		}
-//		yield break;
-//
-//	}
 	#endregion
 
 	#region Vital Effect Modifiers
@@ -123,10 +83,10 @@ public class CharacterStatusModule : IStatus {
 		GameObject.Destroy (user.gameObject);
 	}
 
-	protected void Stunned () {
-		Debug.LogError ("stunned");
-		user.StartCoroutine(hitStun.ActivateAbility());
-	}
+//	protected void Stunned () {
+//		Debug.LogError ("stunned");
+//		user.StartCoroutine(hitStun.ActivateAbility());
+//	}
 
 	protected void Poisoned () {
 

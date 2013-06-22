@@ -6,12 +6,12 @@ using UnityEditor;
 public class ScalingStatDrawer : PropertyDrawer
 {
 	float labelWidth = .25f;
-	float attWidth = .25f;
+	float attWidth = .20f;
 	float ratioWidth = .525f;
 
 	public override void OnGUI (Rect position, SerializedProperty property, GUIContent label)
-	{
-		EditorGUIUtility.LookLikeInspector ();
+	{	
+		EditorGUIUtility.LookLikeControls();
 
 		string statName = property.name;
 		SerializedProperty scalingAttribute = property.FindPropertyRelative ("scalingAttribute");

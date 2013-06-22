@@ -44,8 +44,9 @@ public class AIInput : BaseInputModule {
 	#endregion
 	// Use this for initialization
 	void Awake () {
+
 		_seeker = gameObject.AddComponent <Seeker>();
-		_char = GetComponent<BaseCharacter>();
+		user = GetComponent<BaseCharacter>();
 		_tr = transform;
 		_seeker.pathCallback += OnPathComplete;
 		
@@ -56,9 +57,12 @@ public class AIInput : BaseInputModule {
 		target = go.transform;
 		
 //		canMove = false;
-		
 		//navController = GetComponent<NavmeshController>();
 		//rigid = rigidbody;		
+
+		user.CharState.currentState = CharacterStateMachine.CharacterActions.Idle;
+
+
 		StartCoroutine (RepeatTrySearchPath ());	
 		
 	}

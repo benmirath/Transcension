@@ -137,10 +137,10 @@ public class StatusVitalDrawer : PropertyDrawer
 
 		name.enumValueIndex = EditorGUI.Popup (namePos, name.enumValueIndex, name.enumNames);
 
-		if (maxValue == null || maxValue.floatValue <= 0)
+		if (baseValue == null || baseValue.floatValue <= 0)
 			testMax = 1;
 		else 
-			testMax = maxValue.floatValue;
+			testMax = baseValue.floatValue;
 
 		if (curValue == null || curValue.floatValue < 0)
 			testCur = 1;
