@@ -42,6 +42,7 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	//ActionsModule (This will connect to charEquipment to become a list of all available actions a character may perform.)
 
 	//[SerializeField] protected IAnimation charAnimation;
+<<<<<<< HEAD
 	[SerializeField] protected CharacterType charType;
 	protected Material charAnimation;
 	protected BaseInputModule charInput;
@@ -49,10 +50,32 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	protected CharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
 	protected CharacterMovesetModule charMoveSet;
 	protected BaseEquipmentLoadoutModule charEquipment;
+=======
+	protected Material charAnimation;
+	protected BaseInputModule charInput;
+	protected BaseCharacterStateModule charState;
+	protected CharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
+	protected CharacterMovesetModule charMoveSet;
+	protected BaseEquipmentLoadoutModule charEquipment;
+
+	[SerializeField] protected CharacterType charType;
+
+//	[SerializeField]
+//	protected BaseEquipment primaryWeapon;
+//	[SerializeField]
+//	protected BaseEquipment secondaryWeapon;
+
+	//[SerializeField] protected BaseMovementModule charMovement; //This will likely get wrapped up into character stats and physics
+	//[SerializeField] protected BaseEquipmentLoadoutModule charEquipment; //This holds all gameplay and combat stats that are inherent to the loadout
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 	#endregion
 
 	#region Properties
 
+<<<<<<< HEAD
+=======
+	public CharacterType CharType { get { return charType; } }
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 	public Transform Coordinates 
 	{
 		get {return _coordinates;}
@@ -68,6 +91,7 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 		get {return _rigidbody;}
 		set {_rigidbody = value;}
 	}
+<<<<<<< HEAD
 	public CharacterType CharType 				{ get { return charType; } }
 	public BaseInputModule CharInput 			{ get { return charInput; } }
 	public CharacterStateMachine CharState 			{ get { return charState; } }
@@ -77,6 +101,57 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	#endregion Properites
 	
 	#region Initialization
+=======
+	
+//	public IAnimation CharAnimation {
+//		get {return charAnimation;}
+//	}
+	public BaseInputModule CharInput {
+		get {return charInput;}
+	}
+	public BaseCharacterStateModule CharState {
+		get {return charState;}
+	}
+	public CharacterMovesetModule CharActions {
+		get {return charMoveSet;}
+	}
+	public CharacterStats CharStats {
+		get {return charStats;}
+	}
+	public BaseEquipmentLoadoutModule CharEquipment {
+		get {return charEquipment;}
+	}
+
+//	public BaseEquipment PrimaryWeapon {
+//		get {return primaryWeapon;}
+//	}
+//
+//	public BaseEquipment SecondaryWeapon {
+//		get {return secondaryWeapon;}
+//	}
+	#endregion Properites
+	
+	#region Initialization
+//	protected virtual void ModuleInitialization ()
+//	{
+//		//Initialize Components
+//		_coordinates = GetComponent<Transform>();
+//		_body = GetComponent<CharacterController>();
+//		_charPhysics = GetComponent<Rigidbody>();
+//		_charAnimation = GetComponent<RagePixelSprite>();	
+//
+//		CharMovement.Setup(this);
+//		
+//		//Set Internal Values
+////		MoveDir = Vector3.zero;
+////		LookDir = Vector3.zero;
+//	}
+//	protected virtual void ModuleSetup () {
+//		SetVitals();
+//		//StartVitalRegen();
+//	}
+
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 	/// <summary>
 	/// Initializes the values associated to this character instance. </summary>
 	protected virtual void Awake () 
@@ -93,18 +168,39 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 		//Add specialized character components
 		switch (charType) {
 		case CharacterType.Player:
+<<<<<<< HEAD
 			charState = gameObject.AddComponent <CharacterStateMachine> ();			//dictates character's moveset and availble actions
+=======
+			charState = gameObject.AddComponent <PlayerStateModule> ();			//dictates character's moveset and availble actions
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 			charInput = gameObject.AddComponent <PlayerInput> ();				//dictates characters focus and behaviour
 			break;
 
 		case CharacterType.Enemy:
 			charState = gameObject.AddComponent <EnemyStateModule> ();
 			charInput = gameObject.AddComponent <AIInput> ();
+<<<<<<< HEAD
+=======
+//			charAnimation.color = Color.red;
+//			charAnimation.color = ;
+//			charAnimation.color = 
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 			break;
 
 		default:
 			break;
 		}
+<<<<<<< HEAD
+=======
+
+
+		//primaryWeapon = transform.GetComponentInChildren<>();
+	}	
+	
+	protected virtual void Setup () {
+		//CharMovement.Setup(this);
+		//CharStats.Setup(this);
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 	}
 
 	/// <summary>

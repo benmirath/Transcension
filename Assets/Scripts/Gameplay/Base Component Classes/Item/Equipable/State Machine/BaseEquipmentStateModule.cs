@@ -71,7 +71,11 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 	protected override void OnAwake ()
 	{
 		user = transform.parent.GetComponent<BaseCharacter> ();
+<<<<<<< HEAD
 		userState = transform.parent.GetComponent<CharacterStateMachine> ();
+=======
+		userState = transform.parent.GetComponent<PlayerStateModule> ();
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 		anim = GetComponent<MeshRenderer> ();
 //		Debug.LogError ("EQUIPMENT SETUP");
 		currentState = EquipmentActions.Idle;

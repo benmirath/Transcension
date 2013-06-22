@@ -134,8 +134,14 @@
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\BaseInputModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerInput.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerTargetting.cs" />
+<<<<<<< HEAD
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\CharacterStateMachine.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\EnemyStateModule.cs" />
+=======
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\BaseCharacterStateModule.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\EnemyStateModule.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\PlayerStateModule.cs" />
+>>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\CharacterStats.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />
