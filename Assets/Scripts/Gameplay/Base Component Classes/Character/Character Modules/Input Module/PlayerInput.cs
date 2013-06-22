@@ -11,10 +11,6 @@ using System;
 	public void Awake () 
 	{
 		user = GetComponent<BaseCharacter>();
-<<<<<<< HEAD
-=======
-		//ActivateRun += evasion;
->>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3
 	}
 
 	public void Start () {

@@ -41,18 +41,10 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	
 	}
 	#region Properties
-<<<<<<< HEAD:Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs
+
 	[SerializeField]protected BaseCharacter user;
 	[SerializeField]protected CharacterStats stats;
 	[SerializeField]protected CharacterMovesetModule moveSet;
-=======
-	[SerializeField]protected ICharacter user;
-	[SerializeField]protected CharacterStats stats;
-	[SerializeField]protected CharacterMovesetModule moveSet;
-//	protected BaseEquipmentLoadoutModule equipment;
-//used to access actions for state activation
-
->>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3:Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs
 	[SerializeField]protected MeshRenderer _animation;
 	[SerializeField]protected BaseInputModule input;			//used to monitor advanced state timing and activation
 
@@ -75,10 +67,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	{
 		base.OnAwake ();
 		user = GetComponent<BaseCharacter> ();
-<<<<<<< HEAD:Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs
-=======
-
->>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3:Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs
 		stats = GetComponent<CharacterStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
 		_animation = GetComponent<MeshRenderer> ();
@@ -89,22 +77,17 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 
 		armed = false;
 		attacking = false;
-
-
-<<<<<<< HEAD:Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs
 	}
 
 
 	public virtual void SetInputs () {
 //		user.CharStats.Health.MinValueEffect += Death;
-=======
 //		sneaking = false;
 //
 //		stunned = false;
 //		running = false;
 //		defending = false;
 //		countering = false;
->>>>>>> 4dc69985bd335f0692f84f530e82348a9e76a8b3:Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs
 	}
 
 	public virtual void Start ()
