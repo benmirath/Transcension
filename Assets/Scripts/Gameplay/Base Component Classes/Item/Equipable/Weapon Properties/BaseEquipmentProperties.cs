@@ -141,19 +141,21 @@ public interface IEquipmentProperties
 	[SerializeField] protected FollowupType followup = FollowupType.None;
 
 	protected BaseCharacter user;
-	protected PlayerStateModule userState;
+	protected CharacterStateMachine userState;
 	protected BaseEquipment curEquipment;
-	protected MeshRenderer anim;					//Will be turned into the animation element of this class once we have that more in place
+	public MeshRenderer anim;					//Will be turned into the animation element of this class once we have that more in place
 
 	//Inspector Fields
 	[SerializeField] protected string equipmentName;
-	[SerializeField] protected float baseDamage;			//Base offensive efficacy of equipment, modified by stats and abilities
+
+	[SerializeField] protected float baseDamage;			//Base offensive efficacy of equipment, modified by stats and abilities.
+	[SerializeField] protected float baseImpact;			//Base kinetic force of an attack, used when calculating stun and knockback.
 	[SerializeField] protected ScalingStat scalingBuff;
 
-	protected List<BaseEquipmentMoveset> availableMovesets;
-	protected BaseEquipmentMoveset activeMoveset;
+	protected List<BaseEquipmentMoveset> availableMovesets;		//movesets on offer
+	protected BaseEquipmentMoveset activeMoveset;			//moveset that will be looked at by inherited property classes for filling in proper stats
 
-	protected List<AttackProperties> availableActions;
+	protected List<AttackProperties> availableActions;		//actions available in the currently active moveset
 
 	public FollowupType Followup {
 		get { return followup;}
@@ -171,6 +173,11 @@ public interface IEquipmentProperties
 	public float BaseDamage { 
 		get { return baseDamage;} 
 	}
+
+	public float BaseImpact {
+		get { return baseImpact; }
+	}
+
 	public ScalingStat ScalingBuff { 
 		get { return scalingBuff;} 
 	}
@@ -188,10 +195,9 @@ public interface IEquipmentProperties
 	protected override void OnAwake ()
 	{
 		user = transform.parent.GetComponent<BaseCharacter> ();
-		userState = transform.parent.GetComponent<PlayerStateModule> ();
+		userState = transform.parent.GetComponent<CharacterStateMachine> ();
 		curEquipment = GetComponent<BaseEquipment>();
 		anim = GetComponent<MeshRenderer> ();
-//		Debug.LogError ("Components should now be set");
 	}
 
 	protected virtual void Start ()

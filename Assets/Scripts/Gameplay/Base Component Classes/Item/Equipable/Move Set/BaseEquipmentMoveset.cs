@@ -31,7 +31,7 @@ public abstract class BaseEquipmentMoveset
 	//private members
 	protected BaseEquipment _weapon;
 	protected ICharacter _user;
-	protected BaseCharacterStateModule _userState;
+	protected CharacterStateMachine _userState;
 	[SerializeField] protected List<AttackProperties> moveset;
 
 	public List<AttackProperties> Moveset { get { return moveset; } }
@@ -57,13 +57,13 @@ public class PrimaryMeleeThreeComboMoveset : BaseEquipmentMoveset {
 		//if idle or walking -> Start combo
 		//else if running -> Start run attack
 		//else if dodging -> Start dodge attack
-		if (_userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Idle.ToString () || _userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Walk.ToString ())
+		if (_userState.currentState.ToString () == CharacterStateMachine.CharacterActions.Idle.ToString () || _userState.currentState.ToString () == CharacterStateMachine.CharacterActions.Walk.ToString ())
 			_userState.Call (BaseEquipmentProperties.EquipmentActions.Combo1, _weapon.WeaponProperties);
 
-		else if(_userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Run.ToString ())
+		else if(_userState.currentState.ToString () == CharacterStateMachine.CharacterActions.Run.ToString ())
 			_userState.Call (BaseEquipmentProperties.EquipmentActions.RunAttack, _weapon.WeaponProperties);
 
-		else if (_userState.currentState.ToString () == BaseCharacterStateModule.CharacterActions.Dodge.ToString ()) 
+		else if (_userState.currentState.ToString () == CharacterStateMachine.CharacterActions.Dodge.ToString ()) 
 			_userState.Call (BaseEquipmentProperties.EquipmentActions.DodgeAttack, _weapon.WeaponProperties);
 		else
 			_weapon.WeaponProperties.Followup = BaseEquipmentProperties.FollowupType.Primary;

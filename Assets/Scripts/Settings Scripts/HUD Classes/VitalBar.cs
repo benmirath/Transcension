@@ -42,30 +42,30 @@ public class VitalBar : MonoBehaviour {
 		if (isPlayerBar)
 		{
 			GameObject player = GameObject.FindWithTag("Player");
-			user = player.GetComponent<BasePlayer>();
+			user = player.GetComponent<BaseCharacter>();
 			if (user == null) Debug.LogError("No user for vitality bars set");
 			else Debug.LogError("VITALITY BAR SET");
 			ToggleDisplay(true);
 		}
 		else 
 		{
-			user = transform.parent.GetComponent<BaseEnemy>();			
+//			user = transform.parent.GetComponent<BaseEnemy>();			
 			ToggleDisplay(false);
 		}
 		switch (vitalType)
 		{
 		case VitalType.Health:
-			user.CharStats.Health.VitalChanged += UpdateBar;
+//			user.CharStats.Health.VitalChanged += UpdateBar;
 			Debug.LogError("HEALTH BAR SET");
 			break;
 			
 		case VitalType.Stamina:
-			user.CharStats.Stamina.VitalChanged += UpdateBar;
+//			user.CharStats.Stamina.VitalChanged += UpdateBar;
 			Debug.LogError("STAMINA BAR SET");
 			break;
 			
 		case VitalType.Energy:
-			user.CharStats.Energy.VitalChanged += UpdateBar;
+//			user.CharStats.Energy.VitalChanged += UpdateBar;
 			Debug.LogError("ENERGY BAR SET");
 			break;
 		}

@@ -1,22 +1,14 @@
 ﻿<Properties GitUserInfo="UsingMD">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Base Module Classes/Stat/Vital.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs">
     <Files>
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Weapon Properties/BaseEquipmentProperties.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/BaseEquipmentMoveset.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="89" Column="6" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/CharacterMovesetModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/State Machine/BaseEquipmentStateModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Movement Module/BaseMovementModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Combat Module/CharacterStatusModule.cs" Line="103" Column="4" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Stats Module/CharacterStats.cs" Line="110" Column="15" />
-      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Stat/Vital.cs" Line="154" Column="26" />
-      <File FileName="Assets/Scripts/Editor/Stat Drawers/VitalDrawers.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/BaseCharacterStateModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/BaseInputModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/PlayerInput.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/BasePlayer.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/PlayerStateModule.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Weapon Properties/BaseEquipmentProperties.cs" Line="104" Column="3" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/BaseEquipmentMoveset.cs" Line="61" Column="66" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Combat Module/CharacterStatusModule.cs" Line="48" Column="22" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs" Line="6" Column="35" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/__Base/BaseCharacter.cs" Line="146" Column="62" />
+      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="518" Column="42" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/SwordProperties.cs" Line="238" Column="16" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -27,11 +19,28 @@
                 <Node name="Gameplay" expanded="True">
                   <Node name="Base Component Classes" expanded="True">
                     <Node name="Character" expanded="True">
+                      <Node name="Character Base" expanded="True">
+                        <Node name="__Base" expanded="True" />
+                      </Node>
                       <Node name="Character Modules" expanded="True">
                         <Node name="Actions Module" expanded="True">
                           <Node name="Combat Module" expanded="True" />
+                          <Node name="Equipment Loadout Module" expanded="True" />
+                        </Node>
+                        <Node name="Input Module" expanded="True" />
+                        <Node name="State Module" expanded="True">
+                          <Node name="CharacterStateMachine.cs" selected="True" />
                         </Node>
                         <Node name="Stats Module" expanded="True" />
+                      </Node>
+                    </Node>
+                    <Node name="Item" expanded="True">
+                      <Node name="Equipable" expanded="True">
+                        <Node name="Base Behavior" expanded="True">
+                          <Node name="__Base" expanded="True" />
+                        </Node>
+                        <Node name="Move Set" expanded="True" />
+                        <Node name="Weapon Properties" expanded="True" />
                       </Node>
                     </Node>
                   </Node>
@@ -39,10 +48,10 @@
                     <Node name="Action" expanded="True">
                       <Node name="Ability Stats" expanded="True" />
                     </Node>
-                    <Node name="Stat" expanded="True">
-                      <Node name="Vital.cs" selected="True" />
-                    </Node>
                   </Node>
+                </Node>
+                <Node name="Settings Scripts" expanded="True">
+                  <Node name="HUD Classes" expanded="True" />
                 </Node>
               </Node>
             </Node>

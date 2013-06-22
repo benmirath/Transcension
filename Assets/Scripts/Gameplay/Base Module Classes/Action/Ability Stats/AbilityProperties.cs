@@ -95,7 +95,7 @@ public interface IAttack
 
 	#region Effects
 
-	public IEnumerator ActivateAbility () {
+	public virtual IEnumerator ActivateAbility () {
 		float timer;
 
 		if (cost > 0)
@@ -434,6 +434,7 @@ public class StealthProperties : MovementProperties
 	/// Gets the type of the attack. Dicates general nature of the attack, both input and output. </summary>
 	/// <value>The type of the attack.</value>
 	public AttackPropertyType AttackType { get {return attackType;}}
+
 	/// <summary>
 	/// Gets the damage type of the attack.</summary>
 	/// <value>The type of the damage.</value>
@@ -445,41 +446,51 @@ public class StealthProperties : MovementProperties
 	public float AdjustedDamageValue {
 		get { return _weapon.WeaponProperties.AdjustedBaseDamage * damageModifier;}
 	}
+	public float AdjustedImpactValue {
+		get { return _weapon.WeaponProperties.BaseImpact * impactModifier;}
+	}
 	#endregion Properties
 	
 	#region Initialization
-//	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
-//	{
-//		base.SetValue (weapon.User);
-//		_weapon = weapon;
-//		attackName = name;
-//		switch (attackType) {
-//		case AttackPropertyType.Standard:
-//			activeAbility = delegate {
-//				Aim ();
-//				BurstMove (activeMoveSpeed);
-//			};
-//			break;
-//		case AttackPropertyType.Charge:
-//		case AttackPropertyType.Multi:
-//		case AttackPropertyType.Counter:
-//		default:
-//			Debug.LogError ("Attack Type was not set properly!");
-//			break;
-//		}
-//
-//	}
-
 	protected override void Awake ()
 	{
 		base.Awake ();
+		_hitbox = _weapon.GetComponent<BoxCollider> ();
 		primaryDamageType = DamageEffectType.Standard;
 		damageModifier = 1f;
 		impactModifier = 1f;
 	}
+
+	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
+	{
+		base.SetValue (weapon.User);
+		_weapon = weapon;
+		_hitbox = weapon.HitBox;
+		attackName = name;
+		//		switch (attackType) {
+		//			case AttackPropertyType.Standard:
+		//			activeAbility = delegate {
+		//				_hitbox.enabled = true;
+		//				Aim ();
+		//				BurstMove (activeMoveSpeed);
+		//			};
+		//			exitAbility = delegate {
+		//				_hitbox.enabled = false;
+		//			};
+		//			break;
+		//			case AttackPropertyType.Charge:
+		//			case AttackPropertyType.Multi:
+		//			case AttackPropertyType.Counter:
+		//			default:
+		//			Debug.LogError ("Attack Type was not set properly!");
+		//			break;
+		//		}
+
+	}
 	#endregion Initialization
 
 	#region Effects
+	public abstract void OnTriggerEnter (Collider hit);
 	//normal attack, single activation.
 	protected abstract void StandardAttack ();
 
@@ -496,35 +507,44 @@ public class StealthProperties : MovementProperties
 [System.Serializable]public class MeleeProperties : AttackProperties
 {
 	#region Effects 
-	void OnTriggerEnter (Collider hit) {
+	public override void OnTriggerEnter (Collider hit) {
 		Debug.Log ("Hit Registered!");
 		BaseCharacter target;
-		if (hit.transform.GetComponent<BaseCharacter>()) {
+
+		if (hit.transform.GetComponent<BaseCharacter>().CharType != User.CharType) {
+			Debug.LogError ("LANDED A HIT!!!");
 			target = hit.transform.GetComponent<BaseCharacter>();
-			target.CharStats.ApplyDamage(AdjustedDamageValue);
+//			target.CharStats.ApplyDamage(AdjustedDamageValue);
+			target.CharActions.CharStatus.ApplyAttack (this, User.Coordinates);
 		}
 	}
 
 	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
 	{
-		base.SetValue (weapon.User);
-		_weapon = weapon;
-		attackName = name;
+		base.SetValue (weapon, name);
+//		Debug.LogError ("Setting weapon values...");
 		switch (attackType) {
 		case AttackPropertyType.Standard:
+			enterAbility = delegate {
+				_weapon.ActiveAttack = this;
+				_weapon.WeaponProperties.anim.material.color = Color.grey;
+			};
 			activeAbility = delegate {
 				_hitbox.enabled = true;
 				Aim ();
 				BurstMove (activeMoveSpeed);
+				_weapon.WeaponProperties.anim.material.color = Color.red;
 			};
 			exitAbility = delegate {
 				_hitbox.enabled = false;
+				_weapon.WeaponProperties.anim.material.color = Color.grey;
 			};
 			break;
-			case AttackPropertyType.Charge:
-			case AttackPropertyType.Multi:
-			case AttackPropertyType.Counter:
-			default:
+
+		case AttackPropertyType.Charge:
+		case AttackPropertyType.Multi:
+		case AttackPropertyType.Counter:
+		default:
 			Debug.LogError ("Attack Type was not set properly!");
 			break;
 		}
@@ -562,6 +582,10 @@ public class RangedProperties : AttackProperties
 
 	#region Effects
 
+	public override void OnTriggerEnter (Collider hit)
+	{
+
+	}
 
 	protected override void StandardAttack ()
 	{

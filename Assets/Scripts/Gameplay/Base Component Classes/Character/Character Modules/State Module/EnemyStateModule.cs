@@ -1,12 +1,9 @@
 using System;
+using UnityEngine;
 
-namespace AssemblyCSharp
+public class EnemyStateModule : CharacterStateMachine
 {
-	public class EnemyStateModule
-	{
-		public EnemyStateModule ()
-		{
-		}
-	}
+
 }
+
 

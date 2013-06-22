@@ -14,7 +14,7 @@ public interface ICharacterClassicStats
 	IVital Health {get;}
 	IVital Stamina {get;}
 	IVital Energy {get;}
-	IVital StunResistance {get;}
+	IVital Stun {get;}
 	
 	float StunDuration {get;}
 	float StunStrength {get;}
@@ -64,7 +64,7 @@ public class CharacterStats : MonoBehaviour
 	
 
 	//Status Vitals
-	[SerializeField] protected StatusVital stunResistance;		
+	[SerializeField] protected StatusVital stun;		
 
 
 	protected List<IVital> charVitals;
@@ -119,9 +119,9 @@ public class CharacterStats : MonoBehaviour
 	{
 		get {return energy;}
 	}
-	public IVital StunResistance 
+	public IVital Stun 
 	{
-		get {return stunResistance;}
+		get {return stun;}
 	}
 	
 //	public float StunDuration
@@ -144,7 +144,7 @@ public class CharacterStats : MonoBehaviour
 		charVitals = new List<IVital> ();
 		charAtts = new List<CharacterAttribute> ();
 
-		charVitals.AddRange (new List<IVital>(){health, stamina, energy, stunResistance});
+		charVitals.AddRange (new List<IVital>(){health, stamina, energy, stun});
 		charAtts.AddRange (new List<CharacterAttribute>(){vitality, endurance, spirit, strength, dexterity, mind});
 	}
 	public void Start () 

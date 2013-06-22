@@ -11,7 +11,7 @@ public interface IEquippable
 		get;
 	}
 
-	Collider HitBox {
+	BoxCollider HitBox {
 		get;
 	}
 
@@ -40,10 +40,11 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 {
 
 	protected ICharacter user;
-	protected Collider hitBox;
+	protected BoxCollider hitBox;
 	[SerializeField] protected BaseEquipmentProperties weaponProperties;				//Holds the raw stats for the weapon
 	[SerializeField] protected BaseEquipmentMoveset moveset;				//Holds the various moves a given weapon can utilize
 	[SerializeField] protected BaseEquipmentStateModule weaponState;			//Coordinates use of moveset by controlling character
+	protected AttackProperties activeAttack;
 
 
 	#region Properties
@@ -52,28 +53,28 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 		set { user = value;}
 	}
 
-	public Collider HitBox {
+	public BoxCollider HitBox {
 		get { return hitBox;}
 		set { hitBox = value;}
 	}
 
-	public BaseEquipmentProperties WeaponProperties {
-		get { return weaponProperties;}
+	public BaseEquipmentProperties WeaponProperties { get { return weaponProperties;} }
+
+	public BaseEquipmentMoveset Moveset { get { return moveset;} }
+
+	public BaseEquipmentStateModule WeaponState { get { return weaponState;} }
+
+	public AttackProperties ActiveAttack { 
+		get { return activeAttack; } 
+		set { activeAttack = value;}
 	}
 
-	public BaseEquipmentMoveset Moveset {
-		get { return moveset;}
-	}
-
-	public BaseEquipmentStateModule WeaponState {
-		get { return weaponState;}
-	}
 	#endregion
 
 	#region Initialization
 	protected virtual void Awake ()
 	{
-		hitBox = GetComponent<Collider> ();
+		hitBox = GetComponent<BoxCollider> ();
 		user = transform.parent.GetComponent<BaseCharacter> ();
 		weaponProperties = GetComponent<BaseEquipmentProperties> ();
 	}
@@ -83,6 +84,12 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 //		WeaponProperties.Setup ();
 		hitBox.isTrigger = true;
 		hitBox.enabled = false;	
+	}
+
+	void OnTriggerEnter (Collider hit) {
+		Debug.LogError("First level of hit activation!");
+		Debug.LogError (activeAttack);
+		activeAttack.OnTriggerEnter (hit);
 	}
 	#endregion Initialization
 

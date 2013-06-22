@@ -123,8 +123,6 @@
      <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\IntRangeAttribute.cs" />
      <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\PopupAttribute.cs" />
      <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\ScalingStatAttribute.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BaseEnemy.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\BasePlayer.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Base\__Base\BaseCharacter.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\CharacterMovesetModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Combat Module\CharacterStatusModule.cs" />
@@ -136,8 +134,8 @@
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\BaseInputModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerInput.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerTargetting.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\BaseCharacterStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\PlayerStateModule.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\CharacterStateMachine.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\EnemyStateModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\CharacterStats.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />

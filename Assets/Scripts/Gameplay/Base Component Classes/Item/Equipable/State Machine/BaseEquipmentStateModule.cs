@@ -6,7 +6,7 @@ using UnityEngine;
 public class BaseEquipmentStateModule : StateMachineBehaviourEx
 {
 	BaseCharacter user;
-	PlayerStateModule userState;
+	CharacterStateMachine userState;
 	MeshRenderer anim;
 	//State Flags
 
@@ -70,8 +70,8 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 
 	protected override void OnAwake ()
 	{
-		user = transform.parent.GetComponent<BasePlayer> ();
-		userState = transform.parent.GetComponent<PlayerStateModule> ();
+		user = transform.parent.GetComponent<BaseCharacter> ();
+		userState = transform.parent.GetComponent<CharacterStateMachine> ();
 		anim = GetComponent<MeshRenderer> ();
 //		Debug.LogError ("EQUIPMENT SETUP");
 		currentState = EquipmentActions.Idle;
@@ -209,7 +209,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		case FollowupType.Dodge:
 			currentState = EquipmentActions.Idle;
 			Return ();
-			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
+			currentState = CharacterStateMachine.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.None:
@@ -239,7 +239,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		case FollowupType.Dodge:
 			currentState = EquipmentActions.Idle;
 			Return ();
-			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
+			currentState = CharacterStateMachine.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.None:
@@ -269,7 +269,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		case FollowupType.Dodge:
 			currentState = EquipmentActions.Idle;
 			Return ();
-			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
+			currentState = CharacterStateMachine.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.None:
@@ -295,7 +295,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		case FollowupType.Dodge:
 			currentState = EquipmentActions.Idle;
 			Return ();
-			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
+			currentState = CharacterStateMachine.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.Primary:
@@ -321,7 +321,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		case FollowupType.Dodge:
 			currentState = EquipmentActions.Idle;
 			Return ();
-			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
+			currentState = CharacterStateMachine.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.None:
@@ -347,7 +347,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 		case FollowupType.Dodge:
 			currentState = EquipmentActions.Idle;
 			Return ();
-			currentState = BaseCharacterStateModule.CharacterActions.Dodge;
+			currentState = CharacterStateMachine.CharacterActions.Dodge;
 			break;
 
 		case FollowupType.None:
@@ -369,7 +369,7 @@ public interface IEquipmentStateModule
 {
 	BaseCharacter User { get; }
 
-	PlayerStateModule UserState { get; }
+	CharacterStateMachine UserState { get; }
 
 	MeshRenderer Anim { get; }
 

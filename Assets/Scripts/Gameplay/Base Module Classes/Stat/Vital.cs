@@ -5,16 +5,14 @@ using UnityEngine;
 public interface IVital
 {
 	string Name 		{ get; }
-
 	float MinValue 		{ get; }
-
 	float MaxValue 		{ get; }
-
 	float CurValue 		{ get; set; }
-
 	float BuffValue 	{ get; set; }
-
 	bool StopRegen 		{ get; set; }
+
+	Action MinValueEffect { get; set;}
+	Action MaxValueEffect { get; set;}
 
 	event Vital.VitalChangedHandler VitalChanged;
 
@@ -62,11 +60,21 @@ public abstract class Vital : IVital
 
 	[SerializeField] protected float 	minValue;
 	public virtual float	MinValue { get { return minValue; } }
-	public Action		MinValueEffect;
+	protected Action		minValueEffect;
 
+	public Action MinValueEffect {
+		get { return minValueEffect;}
+		set { minValueEffect = value;}
+	}
+	
 	[SerializeField] protected float 	maxValue;
 	public virtual float 	MaxValue { get { return maxValue; } }
-	public Action 		MaxValueEffect;
+	protected Action 		maxValueEffect;
+
+	public Action MaxValueEffect {
+		get { return maxValueEffect;}
+		set { maxValueEffect = value;}
+	}
 
 	[SerializeField] protected float curValue;
 
@@ -81,14 +89,14 @@ public abstract class Vital : IVital
 				
 			if (val > MaxValue) {
 				val = MaxValue;
-				if (MaxValueEffect != null)
-					MaxValueEffect ();
+				if (maxValueEffect != null)
+					maxValueEffect ();
 			}
 
 			else if (val < MinValue) {
 				val = MinValue;
-				if (MinValueEffect != null)
-					MinValueEffect ();
+				if (minValueEffect != null)
+					minValueEffect ();
 			}
 
 			curValue = val;
@@ -149,21 +157,7 @@ public abstract class Vital : IVital
 	#region Methods
 //	public abstract IEnumerator StartRegen ();
 
-	public IEnumerator StartRegen () {
-		while (true) {
-			if (_stopRegen == true) 
-				Debug.LogError ("regenerating paused");
-
-			else {
-				Debug.LogWarning("regenerating...");
-				CurValue += (RegenRate * Time.deltaTime);	//apply regen rate at steady time increments
-				
-			}
-			yield return null;
-		}
-		Debug.LogError("Outside of regen loop");
-		yield return null;
-	}
+	public abstract IEnumerator StartRegen ();
 
 	public IEnumerator PauseRegen ()
 	{
@@ -219,6 +213,24 @@ public abstract class Vital : IVital
 		user.StartCoroutine (StartRegen());
 		CurValue = MaxValue;
 	}
+
+
+	public override IEnumerator StartRegen () {
+		while (true) {
+			if (_stopRegen == true) 
+				Debug.LogError ("regenerating paused");
+
+			else {
+				Debug.LogWarning("regenerating...");
+				CurValue += (RegenRate * Time.deltaTime);	//apply regen rate at steady time increments
+
+			}
+			yield return null;
+		}
+		Debug.LogError("Outside of regen loop");
+		yield return null;
+	}
+
 	/// <summary>
 	/// Starts the regen effect for this primar vital. </summary>
 //	public override IEnumerator StartRegen ()
@@ -266,6 +278,23 @@ public abstract class Vital : IVital
 		user.StartCoroutine (StartRegen());
 		curValue = MinValue;
 	}
+
+	public override IEnumerator StartRegen () {
+		while (true) {
+			if (_stopRegen == true) 
+				Debug.LogError ("regenerating paused");
+
+			else {
+				Debug.LogWarning("regenerating...");
+				CurValue -= (RegenRate * Time.deltaTime);	//apply regen rate at steady time increments
+
+			}
+			yield return null;
+		}
+		Debug.LogError("Outside of regen loop");
+		yield return null;
+	}
+
 
 //	public override IEnumerator StartRegen ()
 //	{

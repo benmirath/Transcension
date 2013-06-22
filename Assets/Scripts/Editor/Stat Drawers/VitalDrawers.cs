@@ -147,7 +147,9 @@ public class StatusVitalDrawer : PropertyDrawer
 		else 
 			testCur = curValue.floatValue;
 
-		EditorGUI.ProgressBar (barPos, testCur / testMax,"");
+		EditorGUI.ProgressBar (barPos, 
+		                       testCur / testMax,
+		                       testCur+" / "+testMax);
 
 		showContent = EditorGUI.Foldout (foldoutPos, showContent, "");
 

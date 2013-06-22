@@ -3,34 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseCharacterStateModule : StateMachineBehaviourEx
+public class CharacterStateMachine : StateMachineBehaviourEx
 {
 	public enum CharacterActions
 	{
 		/// <summary>
 		/// Base States. These are the first level of states that a character can exist in. They have no set time limit, and can 
 		/// act as defaults. </summary>
-				
+		Dead
+,
 		Idle
-,
-		SheatheWeapon
-,
-		Lockon
-,
-			/// <summary> Attacking State. This stops normal input recognition such as walking, and transfers control to the current weapon's state machine </summary>
-		PrimaryAttack
-,
-		SecondaryAttack
-,
-			/// <summary> Sneaking State. This features mostly similar. </summary>
-		Sneak
-, 			//base state, weapon sheathed
-
-			/// <summary> Action States. These are the next level of states that a character can exist in. They have some limitation on use and 
-			/// duration, often with a clear beginning, middle and end. </summary>
-		Stun
-,
-		KnockedBack
 ,
 		Walk
 ,
@@ -38,22 +20,37 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 ,
 		Dodge
 ,
+		/// <summary> Attacking State. This stops normal input recognition such as walking, and transfers control to the current weapon's state machine </summary>
+		PrimaryAttack
+,
+		SecondaryAttack
+,
+		/// <summary> Sneaking State. This features mostly similar. </summary>
+		Sneak
+, 		
+		/// <summary> Action States. These are the next level of states that a character can exist in. They have some limitation on use and 
+		/// duration, often with a clear beginning, middle and end. </summary>
+		SheatheWeapon
+,
+		Lockon
+,
+		Stun
+,
+		Knockback
+,
+	
 	}
 	#region Properties
+	[SerializeField]protected BaseCharacter user;
 	[SerializeField]protected CharacterStats stats;
 	[SerializeField]protected CharacterMovesetModule moveSet;
-//	protected BaseEquipmentLoadoutModule equipment;
-//used to access actions for state activation
-
-	[SerializeField]protected ICharacter user;
 	[SerializeField]protected MeshRenderer _animation;
-	[SerializeField]protected BaseInputModule input;
-//used to monitor advanced state timing and activation
+	[SerializeField]protected BaseInputModule input;			//used to monitor advanced state timing and activation
 
 	public string LatestState;
 	public string LastState;
 
-	public IInput CharInput { get { return input; } }
+	public BaseInputModule CharInput { get { return input; } }
 
 	public IMoveSet MoveSet { get { return moveSet; } }
 	#endregion
@@ -62,40 +59,52 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	#region State Flags
 	[SerializeField] bool armed;
 	[SerializeField] bool attacking;
-//	[SerializeField] bool invincible;
-//	[SerializeField] bool sneaking;
-//	[SerializeField] bool stunned;
-//	[SerializeField] bool running;
-//	[SerializeField] bool defending;
-//	[SerializeField] bool countering;
 	#endregion
 
 	#region Setup
 	protected override void OnAwake ()
 	{
 		base.OnAwake ();
+		user = GetComponent<BaseCharacter> ();
 		stats = GetComponent<CharacterStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
-		//equipment = GetComponent<BaseEquipmentLoadoutModule> ();
 		_animation = GetComponent<MeshRenderer> ();
+		input = GetComponent<BaseInputModule> ();
 
 
 		armed = false;
 		attacking = false;
-//		sneaking = false;
-//
-//		stunned = false;
-//		running = false;
-//		defending = false;
-//		countering = false;
+
+
+	}
+
+
+	public virtual void SetInputs () {
+//		user.CharStats.Health.MinValueEffect += Death;
 	}
 
 	public virtual void Start ()
 	{
 		//input.Setup ();
-		currentState = CharacterActions.Idle;
 		StartCoroutine (monitorState());
 
+		user.CharStats.Stun.MaxValueEffect = TransitionToStun;
+		user.CharStats.Health.MinValueEffect = TransitionToDead;
+
+		switch (user.CharType) {
+			case BaseCharacter.CharacterType.Player:
+			input = GetComponent<PlayerInput>();
+			CharInput.walkSignal += TransitionToWalk;
+			CharInput.runSignal += TransitionToRun;
+			CharInput.dodgeSignal += TransitionToDodge;
+			CharInput.primarySignal += TransitionToPrimary;
+			CharInput.sheatheSignal += TransitionToSheatheWeapon;
+			break;
+		case BaseCharacter.CharacterType.Enemy:
+
+			break;
+		}
+		currentState = CharacterActions.Idle;
 	}
 	/// <summary> States
 	/// To change state, simply change the currentState variable. To creat a nested sub-state, use Call (name of state).
@@ -121,16 +130,15 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 			yield return null;
 		}
 	}
-		/// <summary>
-		/// Checks the ability vital, making sure there's enough to activate the ability.
-		/// </summary>
-		/// <returns><c>true</c>, if ability meets activation parameters, <c>false</c> otherwise.</returns>
-		/// <param name="ability">Ability.</param>
+	/// <summary>
+	/// Checks the ability vital, making sure there's enough to activate the ability.
+	/// </summary>
+	/// <returns><c>true</c>, if ability meets activation parameters, <c>false</c> otherwise.</returns>
+	/// <param name="ability">Ability.</param>
 	private bool CheckAbilityVital (AbilityProperties ability)
 	{
 		Debug.Log ("3");
 		if (ability.Cost > 0) {
-			//checks if ability is a special or not, determining vital type used.
 			if (ability.UserVital.CurValue >= ability.Cost) {
 				Debug.LogWarning ("Ability activated");
 				ability.UserVital.CurValue -= ability.Cost;
@@ -139,48 +147,12 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 			} else 
 				Debug.LogWarning ("Not enough points in vital");
 				return false;
-//			switch (ability.VitalType)
-//			{
-//			case Vital.PrimaryVitalName.Stamina:
-//				if (stats.Stamina.CurValue >= ability.Cost) {
-//					Debug.LogWarning ("Standard Ability activated");
-//					stats.Stamina.CurValue -= ability.Cost;
-//					return true;
-//				} else 
-//					return false;
-//				break;
-//
-//			case Vital.PrimaryVitalName.Energy:
-//				if (stats.Energy.CurValue >= ability.Cost) {
-//					Debug.LogWarning ("Special Ability activated");
-//					stats.Energy.CurValue -= ability.Cost;
-//					return true;
-//				} else 
-//					return false;
-//				break;
-//			case Vital.PrimaryVitalName.Health:
-//			default:
-//				return true;
-//				break;
-//			}
 		} else {
 			Debug.LogWarning ("Ability has no cost");
 			return true;
 		}
 	}
-		#endregion
-
-
-
-
-
-
-
-
-	protected void TransitionToStunned ()
-	{
-
-	}
+	#endregion
 
 	protected void TransitionToKnockback ()
 	{
@@ -228,36 +200,23 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 			}
 		}
 
-		if (ability.UserVital.StopRegen = true)
+		if (ability.UserVital.StopRegen == true)
 			ability.UserVital.StopRegen = false;
 		yield break;
 	}
 
-		#region Idle
+	#region Movement States
 	protected void Idle_EnterState ()
 	{
 		attacking = false;
-		_animation.material.color = Color.white;
+
+		if (user.CharType == BaseCharacter.CharacterType.Player)
+			_animation.material.color = Color.white;
+		else if (user.CharType == BaseCharacter.CharacterType.Enemy)
+			_animation.material.color = Color.red; 
 		//initialization for the state happens here
 		Debug.Log ("entering idle state");
-//		Debug.LogError("THIS BEGINS THE TEST");
-//		while ((CharState)currentState == CharState.Idle) {
-//			if (user.CharInput.MoveDir != Vector3.zero) {
-//				if (dodgeSignal == true) user.CharActions.CharMovement.Dodge.Activate();
-//
-//				//if (dodgeSignal == true && user.CharActions.CharMovement.Dodge();
-//				//else if (IsRunning == true && user.CharActions.CharMovement.RunCost < CharStats.Stamina.CurValue) CharMovement.Run ();
-//				//else IActions.Walk ();
-//			}
-//					
-//			Debug.LogWarning("Current state is : "+currentState);
-//					//			Debug.LogWarning("Velocity: " + Body.velocity);
-//					//			Debug.LogWarning("WalkSpeed: " + CharMovement.WalkSpeed);
-//					//Debug.LogWarning();
-//		yield return null;
-//		}
 	}
-
 	protected void Idle_Update ()
 	{
 		Debug.Log ("Currently idling");
@@ -271,14 +230,11 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		}
 
 	}
-
 	protected void Idle_ExitState ()
 	{
 		Debug.LogWarning ("leaving idle state");
 	}
-		#endregion
 
-		#region Walk
 	protected void TransitionToWalk ()
 	{
 		Debug.Log ("Attempting Transition: Walk");
@@ -288,13 +244,11 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		} else {
 		}//dont transition;
 	}
-
 	protected void Walk_EnterState ()
 	{
 		_animation.material.color = Color.cyan;
 		Debug.LogWarning ("Entering Walk State");
 	}
-
 	public void Walk_FixedUpdate ()
 	{
 		Debug.Log ("currently walking");
@@ -306,14 +260,11 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		else 												//armed, will walk/strafe
 			moveSet.CharMovement.Strafe.ActiveAbility ();
 	}
-
 	protected void Walk_ExitState ()
 	{
 
 	}
-		#endregion
-
-		#region Run
+		
 	protected void TransitionToRun ()
 	{
 		Debug.Log ("Attempting Transition: Run");
@@ -323,7 +274,6 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		}//dont transition;
 
 	}
-
 	protected IEnumerator Run_EnterState ()
 	{
 		_animation.material.color = Color.blue;
@@ -335,7 +285,6 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		}
 		yield break;
 	}
-
 	protected void Run_FixedUpdate ()
 	{
 		Debug.Log ("2");
@@ -349,62 +298,40 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 				TransitionToWalk ();
 		}
 	}
-
 	protected void Run_ExitState ()
 	{
 		moveSet.CharMovement.Run.ExitAbility ();
 	}
-		#endregion
 
-		#region Dodge
-		/// <summary>
-		/// Activates the character's dodge. Returns from the enter state due to having a definite duration.
-		/// </summary>
+	/// <summary>
+	/// Activates the character's dodge. Returns from the enter state due to having a definite duration.
+	/// </summary>
 	protected void TransitionToDodge ()
 	{
 		Debug.Log ("Attempting Transition: Dodge");
 		if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Walk.ToString () || currentState.ToString () == CharacterActions.Run.ToString ()) 
 			if (CheckAbilityVital (moveSet.CharMovement.Dodge))
 				currentState = CharacterActions.Dodge;
-//		else if (attacking) {
-//			user.PrimaryWeapon.WeaponState.Followup = BaseEquipmentStateModule.FollowupType.Dodge;
-//		}
 		else {
 		}
 		//dont transition;
 	}
-
 	protected IEnumerator Dodge_EnterState ()
 	{
-		//Vector3 trajectory = input.MoveDir;
 		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
 		_animation.material.color = Color.gray;
-//		float timer1 = moveSet.CharMovement.Dodge.EnterLength + Time.time;
-//		float timer2 = moveSet.CharMovement.Dodge.ActiveLength + timer1;
-//		while (timer1 >= Time.time) {
-//			moveSet.CharMovement.Dodge.EnterAbility ();
-//			yield return null;
-//		}
-//		while (timer2 >= Time.time) {
-//			moveSet.CharMovement.Dodge.ActiveAbility ();
-//			yield return null;
-//		}
-//		Debug.Log ("TEST123");
-
-//		yield return StartCoroutine(ActivateStateAbility (moveSet.CharMovement.Dodge));
 		yield return StartCoroutine (moveSet.CharMovement.Dodge.ActivateAbility());
 
 		currentState = CharacterActions.Idle;
 		yield break;
 	}
-
 	protected void Dodge_ExitState ()
 	{
 		Debug.Log ("Exiting Dodge");
 	}
-		#endregion
+	#endregion
 
-	#region Sheathe Weapon
+	#region Status States
 	protected void TransitionToSheatheWeapon ()
 	{
 		if (currentState.ToString() == CharacterActions.Idle.ToString () || currentState.ToString() == CharacterActions.Walk.ToString () || currentState.ToString() == CharacterActions.Run.ToString ())
@@ -419,26 +346,27 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 		currentState = CharacterActions.Idle;
 		yield break;
 	}
+
+	protected void TransitionToStun () {
+		Debug.LogError ("Should be stunned");
+		Call (CharacterActions.Stun);
+
+	}
+	protected IEnumerator Stun_EnterState () 
+	{
+		yield return StartCoroutine (moveSet.CharStatus.HitStun.ActivateAbility());
+		currentState = CharacterActions.Idle;
+		Return ();
+	}
+	protected void TransitionToDead () {
+		Call (CharacterActions.Dead);
+	}
+	protected void Dead_EnterState () {
+		GameObject.Destroy (user.gameObject);
+	}
 	#endregion
 
-	#region Primary Attack
-//		protected void TransitionToPrimary ()
-//		{
-//			if (armed) {
-////				if (currentState.ToString () == CharacterActions.Idle.ToString () || 
-////				    currentState.ToString () == CharacterActions.Walk.ToString () || 
-////				    currentState.ToString () == CharacterActions.Run.ToString () ||
-////				    currentState.ToString () == CharacterActions.Dodge.ToString ()) {
-////					currentState = CharacterActions.PrimaryAttack;
-//					Debug.Log ("Entering Primary Attack");
-//					_animation.material.color = Color.green;
-//					//Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.PrimaryWeapon.WeaponState);
-//					user.PrimaryWeapon.WeaponState.ActivateWeapon();
-//					Debug.Log ("Succesfully returned from equipment action");
-////				}	
-//			}
-//
-//		}
+	#region Equipment State Delegates
 	protected void TransitionToPrimary ()
 	{
 		if (armed) {
@@ -451,46 +379,13 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 			if (moveSet.CharEquipment.PrimaryMoveset == null) Debug.LogError("no primary moveset set");
 
 			moveSet.CharEquipment.PrimaryMoveset.ActivateMoveset ();
-//					if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Walk.ToString ())
-//							Call (BaseEquipmentStateModule.EquipmentActions.StartPrimary, user.PrimaryWeapon.WeaponState);
-//
-//					else if(currentState.ToString () == CharacterActions.Run.ToString ())
-//							Call (BaseEquipmentStateModule.EquipmentActions.RunAttack, user.PrimaryWeapon.WeaponState);
-//						    
-//					else if (currentState.ToString () == CharacterActions.Dodge.ToString ()) 
-//							Call (BaseEquipmentStateModule.EquipmentActions.DodgeAttack, user.PrimaryWeapon.WeaponState);
-//					else
-//							user.PrimaryWeapon.WeaponState.Followup = BaseEquipmentStateModule.FollowupType.Primary;
-					
-//					attacking = false;
-			//Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.PrimaryWeapon.WeaponState);
-//				user.PrimaryWeapon.WeaponState.ActivateWeapon();
 			Debug.Log ("Succesfully returned from equipment action");
-			//				}	
 		}
 
 	}
-
-//	protected IEnumerator PrimaryAttack_EnterState ()
-//	{
-//		Debug.Log ("Entering Primary Attack");
-//		_animation.material.color = Color.green;
-//		//Call (BaseEquipmentStateModule.EquipmentActions.ActivateWeapon, user.CharEquipment.Primary.WeaponState);
-//		Debug.Log ("Succesfully returned from equipment action");
-//		currentState = CharacterActions.Idle;
-//				
-//		yield break;
-//	}
-//
-//	protected void PrimaryAttack_ExitState ()
-//	{
-//		Debug.Log ("Exiting from equipment action");
-//		currentState = CharacterActions.Idle;
-//	}
-	#endregion
-
 	protected IEnumerator SecondaryAttack_EnterState ()
 	{
 		yield break;
 	}
+	#endregion
 }
