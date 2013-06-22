@@ -24,12 +24,12 @@ using System;
 
 	public void Awake () 
 	{
-		user = GetComponent<BasePlayer>();
-		_targetting = new PlayerTargetting ();
+		user = GetComponent<BaseCharacter>();
 		//ActivateRun += evasion;
 	}
 
 	public void Start () {
+		_targetting = new PlayerTargetting ();
 		_targetting.Setup (user);
 //		user = GetComponent<BaseCharacter>();
 
@@ -280,7 +280,7 @@ using System;
 			RaycastHit hit;
 			ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if (Physics.Raycast(ray, out hit, 100)) {
-				if (hit.transform.GetComponent<BaseEnemy>()) {
+				if (hit.transform.GetComponent<BaseCharacter>().CharType == BaseCharacter.CharacterType.Enemy) {
 					if (hit.transform.GetComponent<CharacterController>()) {
 						if (_potentialTarget == null) _potentialTarget = hit.transform.GetComponent<BaseCharacter>();	
 						return true;

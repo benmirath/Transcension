@@ -40,12 +40,12 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 ,
 	}
 	#region Properties
+	[SerializeField]protected ICharacter user;
 	[SerializeField]protected CharacterStats stats;
 	[SerializeField]protected CharacterMovesetModule moveSet;
 //	protected BaseEquipmentLoadoutModule equipment;
 //used to access actions for state activation
 
-	[SerializeField]protected ICharacter user;
 	[SerializeField]protected MeshRenderer _animation;
 	[SerializeField]protected BaseInputModule input;
 //used to monitor advanced state timing and activation
@@ -74,14 +74,20 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	protected override void OnAwake ()
 	{
 		base.OnAwake ();
+		user = GetComponent<BaseCharacter> ();
+
 		stats = GetComponent<CharacterStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
 		//equipment = GetComponent<BaseEquipmentLoadoutModule> ();
 		_animation = GetComponent<MeshRenderer> ();
 
+		input = GetComponent<BaseInputModule> ();
+
 
 		armed = false;
 		attacking = false;
+
+
 //		sneaking = false;
 //
 //		stunned = false;
@@ -237,7 +243,11 @@ public class BaseCharacterStateModule : StateMachineBehaviourEx
 	protected void Idle_EnterState ()
 	{
 		attacking = false;
-		_animation.material.color = Color.white;
+
+		if (user.CharType == BaseCharacter.CharacterType.Player)
+			_animation.material.color = Color.white;
+		else if (user.CharType == BaseCharacter.CharacterType.Enemy)
+			_animation.material.color = Color.red; 
 		//initialization for the state happens here
 		Debug.Log ("entering idle state");
 //		Debug.LogError("THIS BEGINS THE TEST");

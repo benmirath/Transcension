@@ -44,7 +44,7 @@ public class AIInput : BaseInputModule {
 	#endregion
 	// Use this for initialization
 	void Awake () {
-		_seeker = GetComponent <Seeker>();
+		_seeker = gameObject.AddComponent <Seeker>();
 		_char = GetComponent<BaseCharacter>();
 		_tr = transform;
 		_seeker.pathCallback += OnPathComplete;

@@ -9,12 +9,20 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Base Character script that acts as the foundation for all other character related scripts and components.
-/// This abstract script lays down the basic functionality (stats, movement, basic states)for any in-game character, 
+/// This script lays down the basic functionality (stats, movement, basic states)for any in-game character, 
 /// which will be fine tuned in later derived scripts. </summary>
 [RequireComponent (typeof(IAnimation), typeof(CharacterController), typeof(Rigidbody))]		//Engine Logic
-[RequireComponent (typeof(CharacterStats), typeof(CharacterMovesetModule), typeof(BaseCharacterStateModule))]
-public abstract class BaseCharacter : MonoBehaviour, ICharacter 
+[RequireComponent (typeof(CharacterStats), typeof(CharacterMovesetModule))]
+public class BaseCharacter : MonoBehaviour, ICharacter 
 {
+	public enum CharacterType
+	{
+		Player,
+		Enemy,
+		Ally,
+		Neutral,
+	}
+
 	#region Fields
 	//Primary Vital Bars
 	protected VitalBar healthBar;
@@ -34,19 +42,14 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	//ActionsModule (This will connect to charEquipment to become a list of all available actions a character may perform.)
 
 	//[SerializeField] protected IAnimation charAnimation;
-//	[SerializeField] 
 	protected Material charAnimation;
-
-//	[SerializeField] 
 	protected BaseInputModule charInput;
-//	[SerializeField] 
 	protected BaseCharacterStateModule charState;
-
-//	[SerializeField]
 	protected CharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
-//	[SerializeField]
 	protected CharacterMovesetModule charMoveSet;
 	protected BaseEquipmentLoadoutModule charEquipment;
+
+	[SerializeField] protected CharacterType charType;
 
 //	[SerializeField]
 //	protected BaseEquipment primaryWeapon;
@@ -58,6 +61,8 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 	#endregion
 
 	#region Properties
+
+	public CharacterType CharType { get { return charType; } }
 	public Transform Coordinates 
 	{
 		get {return _coordinates;}
@@ -77,8 +82,8 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 //	public IAnimation CharAnimation {
 //		get {return charAnimation;}
 //	}
-	public abstract BaseInputModule CharInput {
-		get;
+	public BaseInputModule CharInput {
+		get {return charInput;}
 	}
 	public BaseCharacterStateModule CharState {
 		get {return charState;}
@@ -123,24 +128,37 @@ public abstract class BaseCharacter : MonoBehaviour, ICharacter
 //	}
 
 	/// <summary>
-	/// Initialization method for the character, from which all components and members are defined and set. </summary>
-	protected virtual void Initialization () {
-		//Get Components in Physics Module
-		//Create attributes and vitals in Stats Module
-		//Create all actions/abilities
-	}
-
-	/// <summary>
 	/// Initializes the values associated to this character instance. </summary>
 	protected virtual void Awake () 
 	{
-		Initialization();
+		//Unity Components
 		_coordinates = GetComponent<Transform>();
 		_controller = GetComponent<CharacterController>();
 		_rigidbody = GetComponent<Rigidbody>();
 
+		//Basic Character Components
 		charStats = GetComponent<CharacterStats>();
 		charMoveSet = GetComponent<CharacterMovesetModule>();
+
+		//Add specialized character components
+		switch (charType) {
+		case CharacterType.Player:
+			charState = gameObject.AddComponent <PlayerStateModule> ();			//dictates character's moveset and availble actions
+			charInput = gameObject.AddComponent <PlayerInput> ();				//dictates characters focus and behaviour
+			break;
+
+		case CharacterType.Enemy:
+			charState = gameObject.AddComponent <EnemyStateModule> ();
+			charInput = gameObject.AddComponent <AIInput> ();
+//			charAnimation.color = Color.red;
+//			charAnimation.color = ;
+//			charAnimation.color = 
+			break;
+
+		default:
+			break;
+		}
+
 
 		//primaryWeapon = transform.GetComponentInChildren<>();
 	}	
@@ -228,6 +246,7 @@ public interface ICharacter {
 	//IGUI (will turn into a full module down the line, handle health bars and other gui elements)
 
 	//USER
+	BaseCharacter.CharacterType CharType {get;}
 	CharacterStats CharStats {get;}
 	CharacterMovesetModule CharActions {get;}
 	BaseEquipmentLoadoutModule CharEquipment { get;}

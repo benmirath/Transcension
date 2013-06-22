@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IStatus {
+	void ApplyAttack (AttackProperties attack, Transform instigator);
 	void ApplyDamage (float damage);
 	void ApplyHitStun (float hitStrength, Vector3 hitDir);
+
 }
 
 [System.Serializable]
@@ -13,7 +15,7 @@ public class CharacterStatusModule : IStatus {
 	#region Properties
 	protected BaseCharacter user;
 //	protected IPhysics charPhysics;
-	protected ICharacterClassicStats charStats;
+	protected CharacterStats charStats;
 	
 	[SerializeField] protected MovementProperties hitStun;			//when enough hits max out the stun meter, puts the character in hitstun
 	[SerializeField] protected MovementProperties knockback;			//when an attack has knockback and stuns/hits a stunned character, puts the character in knockback
@@ -27,12 +29,27 @@ public class CharacterStatusModule : IStatus {
 //	public IPhysics CharPhysics {
 //		get {return charPhysics;}
 //	}
-	public ICharacterClassicStats CharStats {
+	public CharacterStats CharStats {
 		get {return charStats;}
 	}
 	#endregion
 
+	#region Initialization
+	public void Setup (BaseCharacter _user) {
+		user = _user;
+		charStats = user.CharStats;
+	}
+	#endregion
+
 	#region Methods
+	public void ApplyAttack (AttackProperties attack, Transform instigator) {
+		Vector3 attackDir = user.transform.position - instigator.position;
+
+		//Apply attack damage
+		ApplyVitalUse (attack.AdjustedDamageValue, charStats.Health);
+		//Apply attack stun
+		ApplyHitStun (attack.AdjustedImpactValue, attackDir);
+	}
 	public void ApplyVitalUse (float cost, IVital vit) {
 		vit.CurValue -= cost;
 	}
@@ -47,7 +64,7 @@ public class CharacterStatusModule : IStatus {
 	/// <param name='hitStrength'> Strength (physical, not statistical) of the attack. </param>
 	/// <param name='hitDir'> Direction in which the attack pushes the character. </param>
 	public void ApplyHitStun (float hitStrength, Vector3 hitDir) {
-		ApplyVitalUse (hitStrength, charStats.StunResistance);
+		ApplyVitalUse (-hitStrength, charStats.StunResistance);
 //		if (charStats.StunResistance.CurValue >= charStats.StunResistance.MaxValue)
 //		{
 //			Debug.Log ("Beginning stunned");
@@ -58,10 +75,7 @@ public class CharacterStatusModule : IStatus {
 //			//TransitionToStunned();
 //		}
 	}
-	public void ApplyAttack (AttackProperties attack) {
-		ApplyDamage (attack.AdjustedDamageValue);
-//		ApplyHitStun (attack.ImpactModifier)
-	}
+
 	
 	protected IEnumerator HitStun () {
 #if DEBUG
@@ -104,6 +118,33 @@ public class CharacterStatusModule : IStatus {
 		yield break;
 
 	}
+	#endregion
+
+	#region Vital Effect Modifiers
+	public void SetVitalEffects () {
+		user.CharStats.Health.MinValueEffect += Death;
+		user.CharStats.StunResistance.MaxValueEffect += Stunned;
+	}
+
+	protected void Death () {
+		Debug.LogError (user.name+" has been destroyed!");
+		GameObject.Destroy (user.gameObject);
+	}
+
+	protected void Stunned () {
+		Debug.LogError ("stunned");
+		user.StartCoroutine(hitStun.ActivateAbility());
+	}
+
+	protected void Knockback () {
+
+	}
+
+	protected void Poisoned () {
+
+	}
+
+
 	#endregion
 }
 

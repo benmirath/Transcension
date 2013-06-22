@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
-	[SerializeField]protected ICharacter user;
+	[SerializeField]protected BaseCharacter user;
 
 	[SerializeField] protected BaseMovementModule charMovement;
 	[SerializeField] protected BaseEquipmentLoadoutModule charEquipment;
@@ -34,7 +34,8 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 		Debug.Log("MoveSet: Setting Values");
 		if (user == null)
 			Debug.Log ("Moveset user is currently null");
-		charMovement.Setup(user);
+		charMovement.Setup (user);
+		charStatus.Setup (user);
 		charEquipment.Setup ();
 	}
 

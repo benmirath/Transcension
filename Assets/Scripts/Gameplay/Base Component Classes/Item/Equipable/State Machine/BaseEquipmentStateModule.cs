@@ -70,7 +70,7 @@ public class BaseEquipmentStateModule : StateMachineBehaviourEx
 
 	protected override void OnAwake ()
 	{
-		user = transform.parent.GetComponent<BasePlayer> ();
+		user = transform.parent.GetComponent<BaseCharacter> ();
 		userState = transform.parent.GetComponent<PlayerStateModule> ();
 		anim = GetComponent<MeshRenderer> ();
 //		Debug.LogError ("EQUIPMENT SETUP");

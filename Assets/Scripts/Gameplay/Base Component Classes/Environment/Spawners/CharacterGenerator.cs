@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 public class CharacterGenerator : MonoBehaviour {
-	private BasePlayer _player;
+//	private BasePlayer _player;
 	private const int STARTING_POINTS = 350;
 	private const int MIN_STARTING_ATTRIBUTE_VALUE = 10;
 	private const int STARTING_VALUE = 50;
@@ -28,7 +28,7 @@ public class CharacterGenerator : MonoBehaviour {
 		
 		//_player = new PlayerCharacter();
 		//_player.Awake();
-		_player = pc.GetComponent<BasePlayer>();
+//		_player = pc.GetComponent<BasePlayer>();
 				
 		pointsLeft = STARTING_POINTS;
 		
@@ -52,15 +52,15 @@ public class CharacterGenerator : MonoBehaviour {
 //		DisplayVitals();
 //		DisplaySkills();
 		
-		if(_player.name == "" || pointsLeft > 0)
-			DisplayCreateLabel();
-		else
-			DisplayCreateButton();
+////		if(_player.name == "" || pointsLeft > 0)
+//			DisplayCreateLabel();
+//		else
+//			DisplayCreateButton();
 	}
 
 	private void DisplayName () {
 		GUI.Label(new Rect(10, 10, 50, 25), "Name:");
-		_player.name = GUI.TextField (new Rect(65, 10, 100, 25), _player.name);
+//		_player.name = GUI.TextField (new Rect(65, 10, 100, 25), _player.name);
 	}
 	
 /*	private void DisplayAttributes () {

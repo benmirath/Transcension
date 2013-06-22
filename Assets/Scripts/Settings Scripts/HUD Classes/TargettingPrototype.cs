@@ -66,7 +66,7 @@ public class TargettingPrototype : MonoBehaviour {
 			Debug.LogError("Could not find the Name on " + selectedTarget.name);
 			return;
 		}
-		name.GetComponent<TextMesh>().text = selectedTarget.GetComponent<BaseEnemy>().name;
+//		name.GetComponent<TextMesh>().text = selectedTarget.GetComponent<BaseEnemy>().name;
 		name.GetComponent<MeshRenderer>().enabled = true;
 
 		//Messenger<bool>.Broadcast("show enemy vitalbars", true);

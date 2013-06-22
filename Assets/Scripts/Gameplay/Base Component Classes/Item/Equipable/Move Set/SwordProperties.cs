@@ -81,40 +81,34 @@ public class SwordProperties : BaseEquipmentProperties
 	protected IEnumerator Combo1_EnterState ()
 	{
 		//Attack Initialization
-		float _timer;
+//		float _timer;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
+		curEquipment.ActiveAttack = attack;
+		yield return StartCoroutine( attack.ActivateAbility ());
+
 
 		//Attack Startup
-		if (user == null)
-			Debug.LogError ("User is null");
-		if (user.CharActions == null)
-			Debug.LogError ("User Actions are null");
-		if (user.CharActions.CharMovement == null)
-			Debug.LogError ("User Movement is null");
-		if (user.CharActions.CharMovement.Aim == null)
-			Debug.LogError ("User Aim is null");
-
-		_timer = Time.time + attack.EnterLength;
-		do {
-			//attack info
-			anim.material.color = Color.grey;
+//		_timer = Time.time + attack.EnterLength;
+//		do {
+//			//attack info
+//			anim.material.color = Color.grey;
 //			attack.Aim ();
-			yield return null;
-		} while (Time.time < _timer);
-
-		//Attack Activte
-		_timer = Time.time + attack.ActiveLength;
-		do {
-			//attack info
-			attack.ActiveAbility();
-			anim.material.color = Color.red;
-			yield return null;
-		} while (Time.time < _timer);
-
-		//Attack Cooldown
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.ExitLength);
-
+//			yield return null;
+//		} while (Time.time < _timer);
+//
+//		//Attack Activte
+//		_timer = Time.time + attack.ActiveLength;
+//		do {
+//			//attack info
+//			attack.ActiveAbility();
+//			anim.material.color = Color.red;
+//			yield return null;
+//		} while (Time.time < _timer);
+//
+//		//Attack Cooldown
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.ExitLength);
+//
 		switch (followup) {
 		case FollowupType.Primary:
 			currentState = BaseEquipmentProperties.EquipmentActions.Combo2;
@@ -143,23 +137,25 @@ public class SwordProperties : BaseEquipmentProperties
 	{
 		//Attack Initialization
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo2);
+		curEquipment.ActiveAttack = attack;
+		yield return StartCoroutine (attack.ActivateAbility ());
 
-		//Attack Startup
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.EnterLength);
-
-		//Attack Activte
-		float _timer = Time.time + attack.ActiveLength;
-		do {
-			//attack info
-			attack.ActiveAbility();
-			anim.material.color = Color.magenta;
-			yield return null;
-		} while (Time.time < _timer);
-
-		//Attack Cooldown
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.ExitLength);
+//		//Attack Startup
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.EnterLength);
+//
+//		//Attack Activte
+//		float _timer = Time.time + attack.ActiveLength;
+//		do {
+//			//attack info
+//			attack.ActiveAbility();
+//			anim.material.color = Color.magenta;
+//			yield return null;
+//		} while (Time.time < _timer);
+//
+//		//Attack Cooldown
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.ExitLength);
 
 		switch (followup) {
 		case FollowupType.Primary:
@@ -190,25 +186,25 @@ public class SwordProperties : BaseEquipmentProperties
 	{
 		//Attack Initialization
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
+		curEquipment.ActiveAttack = attack;
+		yield return StartCoroutine (attack.ActivateAbility ());
 
-		//Attack Startup
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.EnterLength);
-
-		//Attack Activte
-		float _timer = Time.time + attack.ActiveLength;
-		do {
-			//attack info
-			attack.ActiveAbility();
-			anim.material.color = Color.blue;
-			yield return null;
-		} while (Time.time < _timer);
-
-		//Attack Cooldown
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.ExitLength);
-
-
+//		//Attack Startup
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.EnterLength);
+//
+//		//Attack Activte
+//		float _timer = Time.time + attack.ActiveLength;
+//		do {
+//			//attack info
+//			attack.ActiveAbility();
+//			anim.material.color = Color.blue;
+//			yield return null;
+//		} while (Time.time < _timer);
+//
+//		//Attack Cooldown
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.ExitLength);
 		switch (followup) {
 		case FollowupType.Primary:
 			currentState = BaseEquipmentProperties.EquipmentActions.Combo4;
@@ -238,23 +234,25 @@ public class SwordProperties : BaseEquipmentProperties
 	{
 		//Attack Initialization
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
+		curEquipment.ActiveAttack = attack;
+		yield return StartCoroutine (attack.ActivateAbility ());
 
-		//Attack Startup
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.EnterLength);
-
-		//Attack Activte
-		float _timer = Time.time + attack.ActiveLength;
-		do {
-			//attack info
-			attack.ActiveAbility();
-			anim.material.color = Color.cyan;
-			yield return null;
-		} while (Time.time < _timer);
-
-		//Attack Cooldown
-		anim.material.color = Color.grey;
-		yield return new WaitForSeconds (attack.ExitLength);
+//		//Attack Startup
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.EnterLength);
+//
+//		//Attack Activte
+//		float _timer = Time.time + attack.ActiveLength;
+//		do {
+//			//attack info
+//			attack.ActiveAbility();
+//			anim.material.color = Color.cyan;
+//			yield return null;
+//		} while (Time.time < _timer);
+//
+//		//Attack Cooldown
+//		anim.material.color = Color.grey;
+//		yield return new WaitForSeconds (attack.ExitLength);
 
 		switch (followup) {
 		case FollowupType.Dodge:
