@@ -84,7 +84,8 @@ public class SwordProperties : BaseEquipmentProperties
 //		float _timer;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
 		curEquipment.ActiveAttack = attack;
-		yield return StartCoroutine( attack.ActivateAbility ());
+//		if (userState.CheckAbilityVital (attack))
+			yield return StartCoroutine( attack.ActivateAbility ());
 
 
 		//Attack Startup
@@ -138,7 +139,8 @@ public class SwordProperties : BaseEquipmentProperties
 		//Attack Initialization
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo2);
 		curEquipment.ActiveAttack = attack;
-		yield return StartCoroutine (attack.ActivateAbility ());
+//		if (userState.CheckAbilityVital (attack))
+			yield return StartCoroutine (attack.ActivateAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;
@@ -187,7 +189,8 @@ public class SwordProperties : BaseEquipmentProperties
 		//Attack Initialization
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
 		curEquipment.ActiveAttack = attack;
-		yield return StartCoroutine (attack.ActivateAbility ());
+//		if (userState.CheckAbilityVital (attack))
+			yield return StartCoroutine (attack.ActivateAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;
@@ -235,7 +238,8 @@ public class SwordProperties : BaseEquipmentProperties
 		//Attack Initialization
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
 		curEquipment.ActiveAttack = attack;
-		yield return StartCoroutine (attack.ActivateAbility ());
+//		if (userState.CheckAbilityVital (attack))
+			yield return StartCoroutine (attack.ActivateAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;

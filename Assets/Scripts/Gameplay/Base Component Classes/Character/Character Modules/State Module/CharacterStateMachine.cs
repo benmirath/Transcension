@@ -146,7 +146,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	/// </summary>
 	/// <returns><c>true</c>, if ability meets activation parameters, <c>false</c> otherwise.</returns>
 	/// <param name="ability">Ability.</param>
-	private bool CheckAbilityVital (AbilityProperties ability)
+	public bool CheckAbilityVital (AbilityProperties ability)
 	{
 		Debug.Log ("3");
 		if (ability.Cost > 0) {
@@ -266,9 +266,10 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 
 		if (input.MoveDir == Vector3.zero) 					//no directional input, stop walking
 			currentState = CharacterActions.Idle;
-		else if (!armed)									//not armed, simply walk
+
+		else if (!armed)							//not armed, simply walk
 			moveSet.CharMovement.Walk.ActiveAbility ();
-		else 												//armed, will walk/strafe
+		else 									//armed, will walk/strafe
 			moveSet.CharMovement.Strafe.ActiveAbility ();
 	}
 	protected void Walk_ExitState ()
@@ -321,7 +322,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	{
 		Debug.Log ("Attempting Transition: Dodge");
 		if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Walk.ToString () || currentState.ToString () == CharacterActions.Run.ToString ()) 
-			if (CheckAbilityVital (moveSet.CharMovement.Dodge))
+			if (moveSet.CharMovement.Dodge.UserVital.CurValue > moveSet.CharMovement.Dodge.Cost)
 				currentState = CharacterActions.Dodge;
 		else {
 		}
@@ -329,7 +330,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 	protected IEnumerator Dodge_EnterState ()
 	{
-		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
+//		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
 		_animation.material.color = Color.gray;
 		yield return StartCoroutine (moveSet.CharMovement.Dodge.ActivateAbility());
 

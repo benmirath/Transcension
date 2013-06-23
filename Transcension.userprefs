@@ -1,20 +1,21 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/PlayerInput.cs">
     <Files>
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Base/__Base/BaseCharacter.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/AIInput.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Combat Module/CharacterStatusModule.cs" Line="70" Column="21" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/PlayerInput.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs" Line="260" Column="42" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/State Machine/BaseEquipmentStateModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/BaseInputModule.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/PlayerInput.cs" Line="25" Column="16" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/State Module/CharacterStateMachine.cs" Line="325" Column="87" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/State Machine/BaseEquipmentStateModule.cs" Line="10" Column="20" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Input Module/BaseInputModule.cs" Line="68" Column="26" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Equipment Loadout Module/BaseEquipmentLoadoutModule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Stats Module/CharacterStats.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Editor/Stat Drawers/VitalDrawers.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/CharacterMovesetModule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Character/Character Modules/Actions Module/Movement Module/BaseMovementModule.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="280" Column="9" />
+      <File FileName="Assets/Scripts/Gameplay/Base Module Classes/Action/Ability Stats/AbilityProperties.cs" Line="137" Column="15" />
+      <File FileName="Assets/Scripts/Gameplay/Base Component Classes/Item/Equipable/Move Set/SwordProperties.cs" Line="87" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

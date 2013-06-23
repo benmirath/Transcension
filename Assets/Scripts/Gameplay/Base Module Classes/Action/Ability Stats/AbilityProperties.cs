@@ -98,33 +98,42 @@ public interface IAttack
 	public virtual IEnumerator ActivateAbility () {
 		float timer;
 
-		if (cost > 0)
-			_userVital.StopRegen = true;
+		if (User.CharState.CheckAbilityVital(this)) {
+			if (cost > 0) {
+				_user.CharState.CheckAbilityVital (this);
+				_userVital.StopRegen = true;
+			}
 
-		if (enterLength > 0) {
-			timer = Time.time + enterLength;
-			while (timer > Time.time) {
+			if (enterLength > 0) {
+				timer = Time.time + enterLength;
+				while (timer > Time.time) {
+					enterAbility ();
+					yield return null;
+				}
+			} else
 				enterAbility ();
-				yield return null;
-			}
-		}
-		if (activeLength > 0) {
-			timer = Time.time + activeLength;
-			while (timer > Time.time) {
+			if (activeLength > 0) {
+				timer = Time.time + activeLength;
+				while (timer > Time.time) {
+					activeAbility ();
+					yield return null;
+				}
+			} else
 				activeAbility ();
-				yield return null;
-			}
-		}
-		if (exitLength > 0) {
-			timer = Time.time + exitLength;
-			while (timer > Time.time) {
+			if (exitLength > 0) {
+				timer = Time.time + exitLength;
+				while (timer > Time.time) {
+					exitAbility ();
+					yield return null;
+				}
+			} else
 				exitAbility ();
-				yield return null;
-			}
 		}
-
 		if (_userVital.StopRegen = true)
 			_userVital.StopRegen = false;
+		yield break;
+	}
+	public IEnumerator ActivateSustainedAbility (Input _input) {
 		yield break;
 	}
 
@@ -284,14 +293,13 @@ public interface IAttack
 
 		case MovementPropertyType.Dodge:
 			enterAbility += delegate {
-				BurstMove (enterMoveSpeed);
-				Turn ();
-			
+				direction = CharInput.MoveDir;
+//				BurstMove (enterMoveSpeed);
+//				Turn ();
 			};
 			activeAbility += delegate {
 				BurstMove (activeMoveSpeed);
 				Turn ();
-			
 			};
 			exitAbility += delegate {
 				BurstMove (exitMoveSpeed);
@@ -333,8 +341,6 @@ public interface IAttack
 
 	protected void BurstMove (float speed)
 	{
-//		User.Rigid.isKinematic = false;
-//		User.Rigid.AddForce ((User.CharInput))
 		User.Controller.Move (speed * direction.normalized * Time.deltaTime);		
 		//will be worked on later, will be used for movements that are a quick acceleration that degrades over time
 	}
@@ -446,7 +452,6 @@ public class StealthProperties : MovementProperties
 	protected BoxCollider _hitbox;
 
 	[SerializeField] protected BaseEquipmentProperties.EquipmentActions attackName;
-//	public override string name { get { return attackName.ToString(); } }
 	[SerializeField] protected AttackPropertyType attackType;
 
 	[SerializeField] protected DamageEffectType primaryDamageType;
@@ -496,25 +501,6 @@ public class StealthProperties : MovementProperties
 		_weapon = weapon;
 		_hitbox = weapon.HitBox;
 		attackName = name;
-		//		switch (attackType) {
-		//			case AttackPropertyType.Standard:
-		//			activeAbility = delegate {
-		//				_hitbox.enabled = true;
-		//				Aim ();
-		//				BurstMove (activeMoveSpeed);
-		//			};
-		//			exitAbility = delegate {
-		//				_hitbox.enabled = false;
-		//			};
-		//			break;
-		//			case AttackPropertyType.Charge:
-		//			case AttackPropertyType.Multi:
-		//			case AttackPropertyType.Counter:
-		//			default:
-		//			Debug.LogError ("Attack Type was not set properly!");
-		//			break;
-		//		}
-
 	}
 	#endregion Initialization
 
@@ -525,11 +511,6 @@ public class StealthProperties : MovementProperties
 
 	//has features of normal attack, but it's startup continues while activation button is held. Effect amplifies while held as well
 	protected abstract void ChargeAttack ();
-
-	//releases multiple distinct attacks (hitboxes) in succession
-//	protected abstract void MultiAttack ();
-
-//	protected abstract void CounterAttack ();
 	#endregion
 }
 
@@ -543,7 +524,6 @@ public class StealthProperties : MovementProperties
 		if (hit.transform.GetComponent<BaseCharacter>().CharType != User.CharType) {
 			Debug.LogError ("LANDED A HIT!!!");
 			target = hit.transform.GetComponent<BaseCharacter>();
-//			target.CharStats.ApplyDamage(AdjustedDamageValue);
 			target.CharActions.CharStatus.ApplyAttack (this, User.Coordinates);
 		}
 	}
@@ -555,7 +535,10 @@ public class StealthProperties : MovementProperties
 		switch (attackType) {
 		case AttackPropertyType.Standard:
 			enterAbility = delegate {
-				_weapon.ActiveAttack = this;
+				direction = (CharInput.LookDir - User.Coordinates.position);
+				if (_weapon.ActiveAttack != this) 
+					_weapon.ActiveAttack = this;
+
 				_weapon.WeaponProperties.anim.material.color = Color.grey;
 			};
 			activeAbility = delegate {
