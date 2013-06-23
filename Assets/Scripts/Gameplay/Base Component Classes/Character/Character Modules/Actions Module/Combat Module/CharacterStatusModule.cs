@@ -15,20 +15,16 @@ public class CharacterStatusModule : IStatus {
 	#region Properties
 	protected BaseCharacter user;
 	protected CharacterStats charStats;
-	
-	[SerializeField] protected MovementProperties hitStun;			//when enough hits max out the stun meter, puts the character in hitstun
+
+	protected Vector3 knockDir;
+	[SerializeField] protected MovementProperties hitStun;				//when enough hits max out the stun meter, puts the character in hitstun
 	[SerializeField] protected MovementProperties knockback;			//when an attack has knockback and stuns/hits a stunned character, puts the character in knockback
 	[SerializeField] protected MovementProperties attackRecoil;			//when an attack is deflected, puts the character in attackRecoil
 
-	public MovementProperties HitStun {
-		get { return hitStun; }
-	}
-	public MovementProperties Knockback {
-		get { return knockback; }
-	}
-	public MovementProperties AttackRecoil {
-		get { return attackRecoil; }
-	}		
+	public Vector3 KnockDir { get { return knockDir; } }
+	public MovementProperties HitStun { get { return hitStun; } }
+	public MovementProperties Knockback { get { return knockback; } }
+	public MovementProperties AttackRecoil { get { return attackRecoil; } }	
 
 
 
@@ -71,7 +67,7 @@ public class CharacterStatusModule : IStatus {
 	/// <param name='hitStrength'> Strength (physical, not statistical) of the attack. </param>
 	/// <param name='hitDir'> Direction in which the attack pushes the character. </param>
 	public void ApplyHitStun (float hitStrength, Vector3 hitDir) {
-
+		knockDir = hitDir;
 		ApplyVitalUse (-hitStrength, charStats.Stun);
 
 	}

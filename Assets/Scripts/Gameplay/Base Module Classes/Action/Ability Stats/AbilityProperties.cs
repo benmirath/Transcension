@@ -182,6 +182,14 @@ public interface IAttack
 [System.Serializable]public class MovementProperties : AbilityProperties
 {
 	#region Properties
+	public enum MovementType {
+		BurstMove,
+		ConstantMove,
+		BurstStrafe,
+		ConstantStrafe,
+		FreeAim,
+
+	}
 	public enum MovementPropertyType
 	{
 		Aim
@@ -243,14 +251,14 @@ public interface IAttack
 
 		case MovementPropertyType.Walk:
 			activeAbility += delegate {
-				ConstantMove (activeMoveSpeed);
+				ControlledMove (activeMoveSpeed);
 				Turn ();
 			};
 			break;
 
 		case MovementPropertyType.Strafe:
 			activeAbility += delegate {
-				ConstantMove (activeMoveSpeed);
+				ControlledMove (activeMoveSpeed);
 				Aim ();
 			};
 			break;
@@ -259,12 +267,12 @@ public interface IAttack
 		case MovementPropertyType.Run:
 			enterAbility += delegate {
 				//will be the code to accelerate the character from walking to running speed.
-				ConstantMove (enterMoveSpeed);
+				ControlledMove (enterMoveSpeed);
 				Turn ();
 				UserVital.StopRegen = true;
 			};
 			activeAbility += delegate {
-				ConstantMove (activeMoveSpeed);
+				ControlledMove (activeMoveSpeed);
 				Turn ();
 				//if (UserVital.CurValue < cost) user.CharState.currentState = BaseCharacterStateModule.CharacterActions.Idle;
 				UserVital.CurValue -= (cost * Time.deltaTime);
@@ -285,6 +293,21 @@ public interface IAttack
 				Turn ();
 			
 			};
+			exitAbility += delegate {
+				BurstMove (exitMoveSpeed);
+				Turn ();
+			};
+			break;
+
+		case MovementPropertyType.Stun:
+			enterAbility += delegate {
+				Debug.LogError ("STUNNED");
+				ExternalMove (enterMoveSpeed);
+			};
+			activeAbility += delegate {
+				ExternalMove (activeMoveSpeed);
+			};
+
 			break;
 
 
@@ -299,13 +322,19 @@ public interface IAttack
 	#endregion
 	
 	#region Effects
-	protected void ConstantMove (float speed)
+	protected void ControlledMove (float speed)
 	{
 		User.Controller.Move (speed * CharInput.MoveDir.normalized * Time.deltaTime);		
+	}
+	protected void ExternalMove (float speed) {
+
+		User.Controller.Move (speed * User.CharActions.CharStatus.KnockDir * Time.deltaTime);		
 	}
 
 	protected void BurstMove (float speed)
 	{
+//		User.Rigid.isKinematic = false;
+//		User.Rigid.AddForce ((User.CharInput))
 		User.Controller.Move (speed * direction.normalized * Time.deltaTime);		
 		//will be worked on later, will be used for movements that are a quick acceleration that degrades over time
 	}
