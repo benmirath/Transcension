@@ -1,0 +1,1 @@
+Unable to locate texture file "C:/Users/HP/Desktop/Unity_Work/Robot/New folder/Robot_Color.tga".
