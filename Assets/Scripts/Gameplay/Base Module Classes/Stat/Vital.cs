@@ -9,6 +9,7 @@ public interface IVital
 	float MaxValue 		{ get; }
 	float CurValue 		{ get; set; }
 	float BuffValue 	{ get; set; }
+	ScalingStat RegenScaling { get; set;}
 	bool StopRegen 		{ get; set; }
 
 	Action MinValueEffect { get; set;}
@@ -56,43 +57,43 @@ public abstract class Vital : IVital
 		Shock
 	}
 		//Inspector Fields
+	public abstract string Name {
+		get;
+	}
 
 	[SerializeField] protected float 	minValue;
-	public virtual float	MinValue { get { return minValue; } }
-	protected Action		minValueEffect;
-
-	public Action MinValueEffect {
+	public virtual float			MinValue { 
+		get { return minValue; } 
+	}
+	protected Action			minValueEffect;
+	public Action 				MinValueEffect {
 		get { return minValueEffect;}
 		set { minValueEffect = value;}
 	}
 	
 	[SerializeField] protected float 	maxValue;
-	public virtual float 	MaxValue { get { return maxValue; } }
-	protected Action 		maxValueEffect;
-
-	public Action MaxValueEffect {
+	public virtual float 			MaxValue { 
+		get { return maxValue; } 
+	}
+	protected Action 			maxValueEffect;
+	public Action 				MaxValueEffect {
 		get { return maxValueEffect;}
 		set { maxValueEffect = value;}
 	}
-
-	[SerializeField] protected float curValue;
-
-	public abstract string Name {
-		get;
-	}
-
-	public float CurValue {
+	
+	[SerializeField] protected float 	curValue;
+	public float 				CurValue {
 		get { return curValue; }
 		set {
 			float val = value;
-				
+
 			if (val > MaxValue) {
-				Debug.LogError ("Max value of "+Name+" reached!");
+//				Debug.LogError ("Max value of "+Name+" reached!");
 				if (maxValueEffect != null) {
-					Debug.LogError ("Vital "+Name+"'s max value effect has been activated");
+//					Debug.LogError ("Vital "+Name+"'s max value effect has been activated");
 					maxValueEffect ();
 				}
-				else Debug.LogError ("no max value effect for "+Name);
+//				else Debug.LogError ("no max value effect for "+Name);
 				val = MaxValue;
 			}
 
@@ -109,8 +110,19 @@ public abstract class Vital : IVital
 		}
 	}
 
-	[SerializeField] protected ScalingStat regenScaling;
+
+	[SerializeField] protected ScalingStat 	regenScaling;
+	public ScalingStat 			RegenScaling {
+		get { return regenScaling; }
+		set {regenScaling = value;}
+	}
+
 	protected float buffValue;
+
+
+
+
+
 	public delegate void VitalChangedHandler (Vital vital);
 
 	public event VitalChangedHandler VitalChanged;

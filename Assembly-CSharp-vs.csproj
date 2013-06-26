@@ -130,13 +130,12 @@
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Movement Module\BaseMovementModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Actions Module\Stealth Module\BaseStealthModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Animation Module\BaseAnimationModule.cs" />
+     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\AI Behaviours\AINavigation.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\AIInput.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\BaseInputModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerInput.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Input Module\PlayerTargetting.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\CharacterStateMachine.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\EnemyStateModule.cs" />
-     <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\State Module\PlayerStateModule.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Character\Character Modules\Stats Module\CharacterStats.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\CharacterGenerator.cs" />
      <Compile Include="Assets\Scripts\Gameplay\Base Component Classes\Environment\Spawners\EnemyGenerator.cs" />

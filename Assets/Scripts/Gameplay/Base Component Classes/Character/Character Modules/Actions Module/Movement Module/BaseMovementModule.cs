@@ -69,6 +69,7 @@ public interface IMovement {
 		_user = user;
 		//_coordinates = _user.Coordinates;
 
+		aim.SetValue (user);
 		walk.SetValue (user);
 		strafe.SetValue(user);
 		run.SetValue(user);

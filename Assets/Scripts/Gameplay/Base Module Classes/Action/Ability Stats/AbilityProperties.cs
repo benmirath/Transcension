@@ -88,21 +88,16 @@ public interface IAttack
 				_userVital.StopRegen = false;
 			};
 		}
-
-//		Debug.LogError (_userVital.Name);
 	}
 	#endregion
 
 	#region Effects
 
-	public virtual IEnumerator ActivateAbility () {
+	public virtual IEnumerator ActivateDurationalAbility () {
 		float timer;
 
 		if (User.CharState.CheckAbilityVital(this)) {
-			if (cost > 0) {
-				_user.CharState.CheckAbilityVital (this);
-				_userVital.StopRegen = true;
-			}
+			_userVital.StopRegen = true;
 
 			if (enterLength > 0) {
 				timer = Time.time + enterLength;
@@ -133,11 +128,44 @@ public interface IAttack
 			_userVital.StopRegen = false;
 		yield break;
 	}
-	public IEnumerator ActivateSustainedAbility (Input _input) {
+	public IEnumerator ActivateSustainedAbility (IInputAction _input) {
+		float timer;
+
+		if (User.CharState.CheckAbilityVital(this)) {
+			_userVital.StopRegen = true;
+
+			if (enterLength > 0) {
+				timer = Time.time + enterLength;
+				while (timer > Time.time) {
+					enterAbility ();
+					yield return null;
+				}
+			} else
+				enterAbility ();
+
+		
+			while (_input.Active) {
+				if (User.CharState.CheckAbilityVital (this)) {
+					activeAbility ();
+					yield return null;
+				} 
+				else 
+					break;
+			}
+
+			if (exitLength > 0) {
+				timer = Time.time + exitLength;
+				while (timer > Time.time) {
+					exitAbility ();
+					yield return null;
+				}
+			} else
+				exitAbility ();
+		}
+		if (_userVital.StopRegen == true)
+			_userVital.StopRegen = false;
 		yield break;
 	}
-
-	//public Action ActivateAbility;
 	#endregion
 	
 	#region  Propertiess
@@ -310,10 +338,14 @@ public interface IAttack
 		case MovementPropertyType.Stun:
 			enterAbility += delegate {
 				Debug.LogError ("STUNNED");
+				UserVital.RegenScaling.ScalingRatio *= 2;
 				ExternalMove (enterMoveSpeed);
 			};
 			activeAbility += delegate {
 				ExternalMove (activeMoveSpeed);
+			};
+			exitAbility += delegate {
+				UserVital.RegenScaling.ScalingRatio /= 2;
 			};
 
 			break;
@@ -402,19 +434,6 @@ public class StealthProperties : MovementProperties
 	#region Properties
 	public enum AttackPropertyType
 	{
-//		StandardMelee
-//,
-//		ChargeMelee
-//,
-//		MultiMelee
-//,
-//		StandardRanged
-//,
-//		ChargeRanged
-//,
-//		MultiRanged
-//,
-//
 		Standard
 ,
 		Charge
@@ -621,7 +640,28 @@ public class RangedProperties : AttackProperties
 	#endregion
 }
 
+//TODO flesh out utility abilities, and create additional moveset options
+public class DefendProperties : MovementProperties 
+{
+	float damageReduction;
+}
+
 public class UtilityProperties : MovementProperties
 {
+	public enum UtilityPropertyTypes {
+		/// <summary>
+		/// Defend ability. Will either reduce or totally deflect an attack. </summary>
+		Defend,
+		/// <summary>
+		/// Counter ability. Will activate an attack sequence if attacked while active. </summary>
+		Counter,
+		Evade,
+	}
 
+
+	public override void SetValue (ICharacter user)
+	{
+		base.SetValue (user);
+//		switch ()
+	}
 }

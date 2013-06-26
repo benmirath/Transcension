@@ -85,7 +85,7 @@ public class SwordProperties : BaseEquipmentProperties
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine( attack.ActivateAbility ());
+			yield return StartCoroutine( attack.ActivateDurationalAbility ());
 
 
 		//Attack Startup
@@ -140,7 +140,7 @@ public class SwordProperties : BaseEquipmentProperties
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo2);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine (attack.ActivateAbility ());
+			yield return StartCoroutine (attack.ActivateDurationalAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;
@@ -190,7 +190,7 @@ public class SwordProperties : BaseEquipmentProperties
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine (attack.ActivateAbility ());
+			yield return StartCoroutine (attack.ActivateDurationalAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;
@@ -239,7 +239,7 @@ public class SwordProperties : BaseEquipmentProperties
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine (attack.ActivateAbility ());
+			yield return StartCoroutine (attack.ActivateDurationalAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;
@@ -280,9 +280,10 @@ public class SwordProperties : BaseEquipmentProperties
 	}
 
 	protected IEnumerator RunAttack_EnterState ()
-	{
-		anim.material.color = Color.yellow;
-		yield return new WaitForSeconds (.5f);
+	{	
+		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.RunAttack);
+		curEquipment.ActiveAttack = attack;
+
 		switch (followup) {
 		case FollowupType.Dodge:
 			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
@@ -306,9 +307,12 @@ public class SwordProperties : BaseEquipmentProperties
 
 	protected IEnumerator DodgeAttack_EnterState ()
 	{
-		anim.material.color = Color.grey;
+//		anim.material.color = Color.grey;
+//
+//		yield return new WaitForSeconds (.5f);
+		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.DodgeAttack);
+		curEquipment.ActiveAttack = attack;
 
-		yield return new WaitForSeconds (.5f);
 		switch (followup) {
 		case FollowupType.Dodge:
 			currentState = BaseEquipmentProperties.EquipmentActions.Idle;

@@ -97,14 +97,9 @@ public interface IEquipmentProperties
 	{
 		Idle
 		,
-		//		ActivateWeapon
-		//,
-		//		//Primary Actions
-		//Basic startup attack for weapon. Might start a combo, fire a projectile, etc.
+		//Primary Actions
 		Combo1
-		,		//The alt attack for the primary moveset. 			
-		AltPrimary
-		,					
+		,
 		Combo2
 		,
 		Combo3
@@ -113,6 +108,8 @@ public interface IEquipmentProperties
 		,
 		Combo5
 		,
+		AltPrimary
+		,	
 		RunAttack
 		,
 		DodgeAttack
@@ -120,6 +117,10 @@ public interface IEquipmentProperties
 		RangeAttack
 		,
 		//Secondary Actions
+		Defend
+		,
+		Counter
+		,
 		StartSecondary
 		,					//Basic secondary moveset attack. Might activate a shield, use a finisher, or start a counter.
 		AltSecondary

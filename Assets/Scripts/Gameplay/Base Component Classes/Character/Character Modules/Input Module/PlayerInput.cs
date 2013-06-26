@@ -1,8 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 [System.Serializable] public class PlayerInput : BaseInputModule {
+	protected IInputAction key_tab;
+	protected IInputAction key_shift;
+	protected IInputAction key_primary;
+	protected IInputAction key_secondary;
+
+	protected List<IInputAction> inputActions = new List<IInputAction>();
+	public override List<IInputAction> InputActions { get { return inputActions; } }
+
 	private PlayerTargetting _targetting;	
 	public PlayerTargetting Targetting {
 		get {return _targetting;}
@@ -10,7 +19,13 @@ using System;
 
 	public void Awake () 
 	{
+
 		user = GetComponent<BaseCharacter>();
+		key_tab = new ButtonInput ("DrawWeapon");
+		key_shift = new ButtonInput ("Evasion");
+		key_primary = new ButtonInput ("Primary");
+		key_secondary = new ButtonInput ("Secondary");
+		inputActions.AddRange (new List <IInputAction> {key_tab, key_shift, key_primary, key_secondary});
 	}
 
 	public void Start () {
@@ -22,9 +37,9 @@ using System;
 		moveDir = UpdateDirection ();
 		lookDir = _targetting.UpdateMouse ();
 
-		if (Input.GetButtonDown("Evasion")) StartCoroutine(CheckInput(1, "Evasion", delegate {ActivateDodge();}, delegate {ActivateRun();}));
+		if (Input.GetButtonDown("Evasion")) StartCoroutine(key_shift.CheckInput(1, delegate {ActivateDodge();}, delegate {ActivateRun();}));
 
-		if (Input.GetButtonDown("DrawWeapon")) StartCoroutine(CheckInput(1, "DrawWeapon", delegate {ActivateLockOn();}, delegate {ActivateSheathe();}));
+		if (Input.GetButtonDown("DrawWeapon")) StartCoroutine(key_tab.CheckInput(1, delegate {ActivateLockOn();}, delegate {ActivateSheathe();}));
 
 		if (Input.GetButtonDown("Primary")) ActivatePrimary();
 	}
@@ -46,30 +61,71 @@ using System;
 		return d;
 	}
 
-	private IEnumerator CheckInput (float time, string buttonName, Action tapActivate, Action chargeActivate) {
-		bool _chargedToggle;
-		_chargedToggle = false;
-		float _timer;
-		if (time == 0) _timer = time;
-		else _timer = time + Time.time;
+//	private IEnumerator CheckInput (float time, string buttonName, Action tapActivate, Action chargeActivate) {
+//		bool _chargedToggle;
+//		_chargedToggle = false;
+//		float _timer;
+//		if (time == 0) _timer = time;
+//		else _timer = time + Time.time;
+//
+//		while (Input.GetButton(buttonName)) {
+//			while (_timer <= Time.time && time != 0 && _chargedToggle == false) {
+//				if (chargeActivate != null) {
+//					chargeActivate();		//input charged
+//				}
+//				_chargedToggle = true;
+//				yield return null;
+//			}
+//			yield return null;			
+//		}
+//
+//		if (Input.GetButtonUp(buttonName) && _timer >= Time.time) {
+//			if (tapActivate != null) tapActivate();
+//		}
+//		yield break;
+//	}
 
-		while (Input.GetButton(buttonName)) {
-			while (_timer <= Time.time && time != 0 && _chargedToggle == false) {
-				if (chargeActivate != null) {
-					chargeActivate();		//input charged
+	public class ButtonInput : IInputAction {
+		string name;
+		public string Name { get { return name; } }
+		bool active;
+		public bool Active { get { return active; } }
+
+		public ButtonInput (string _name) {
+			name = _name;
+		}
+
+
+		public IEnumerator CheckInput (float time, Action tapActivate, Action chargeActivate) {
+			bool _chargedToggle;
+			_chargedToggle = false;
+			active = true;
+			float _timer;
+			if (time == 0) _timer = time;
+			else _timer = time + Time.time;
+
+			if (active = true) {
+				while (Input.GetButton(name)) {
+					while (_timer <= Time.time && time != 0 && _chargedToggle == false) {
+						if (chargeActivate != null) {
+							chargeActivate ();		//input charged
+						}
+						_chargedToggle = true;
+						yield return null;
+					}
+					yield return null;			
 				}
-				_chargedToggle = true;
-				yield return null;
+				
+				if (Input.GetButtonUp (name) && _timer >= Time.time) {
+					if (tapActivate != null)
+						tapActivate ();
+				}
 			}
-			yield return null;			
+			active = false;
+			yield break;
 		}
 
-		if (Input.GetButtonUp(buttonName) && _timer >= Time.time) {
-			if (tapActivate != null) tapActivate();
-		}
-		yield break;
 	}
-	
 
 	[System.Serializable] public class PlayerTargetting {	
 		protected ICharacter _user;						//character using targetting component

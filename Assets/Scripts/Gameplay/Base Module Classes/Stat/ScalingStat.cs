@@ -10,6 +10,16 @@ public class ScalingStat
 		//Inspector Members
 		[SerializeField] private CharacterAttribute.AttributeName scalingAttribute;
 		[SerializeField] private float scalingRatio;
+		public float ScalingRatio {
+			get { return scalingRatio; }
+			set { scalingRatio = value; }
+		}
+		public float scalingBuff;
+		public float ScalingBuff {
+			get {return scalingBuff;}
+			set {scalingBuff = value;}
+		}
+
 		private IAttribute _scalingAtt;
 
 		public float BaseValue {		

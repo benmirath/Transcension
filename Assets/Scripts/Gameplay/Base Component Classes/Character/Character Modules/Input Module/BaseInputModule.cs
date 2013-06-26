@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -7,6 +9,7 @@ public interface IInput {
 	Vector3 LookDir {get;}
 	bool LockedOn {get;}
 
+	List <IInputAction> InputActions {get;}
 	//void Setup (ICharacter user);
 
 	event Action walkSignal;
@@ -32,13 +35,24 @@ public interface IEnemyInput : IInput {
 
 }
 
+public interface IInputAction {
+	string Name {get;}
+	bool Active { get;}
+	IEnumerator CheckInput (float time, Action tapActivate, Action chargeActivate);
+}
+public interface IInputReaction : IInputAction {
+	float Value { get;}
+}
+
 public abstract class BaseInputModule : MonoBehaviour, IInput 
 {
-	protected ICharacter user;
+	protected BaseCharacter user;
 	[SerializeField]protected Vector3 moveDir;
 	[SerializeField]protected Vector3 lookDir;
 	protected bool lockedOn;
-	
+
+	public BaseCharacter User { get { return user; } }
+	public abstract List <IInputAction> InputActions { get;}
 	public virtual Vector3 MoveDir {get {return moveDir;}}
 	public virtual Vector3 LookDir {get {return lookDir;}}
 

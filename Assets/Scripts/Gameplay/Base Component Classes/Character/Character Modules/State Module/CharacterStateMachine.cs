@@ -183,39 +183,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		#endregion
 
 
-	protected IEnumerator ActivateStateAbility (AbilityProperties ability) {
-		float timer;
-
-		if (ability.Cost > 0)
-			ability.UserVital.StopRegen = true;
-
-		if (ability.EnterLength > 0) {
-			timer = Time.time + ability.EnterLength;
-			while (timer > Time.time) {
-				ability.EnterAbility ();
-				yield return null;
-			}
-		}
-		if (ability.ActiveLength > 0) {
-			timer = Time.time + ability.ActiveLength;
-			while (timer > Time.time) {
-				ability.ActiveAbility ();
-				yield return null;
-			}
-		}
-		if (ability.ExitLength > 0) {
-			timer = Time.time + ability.ExitLength;
-			while (timer > Time.time) {
-				ability.ExitAbility ();
-				yield return null;
-			}
-		}
-
-		if (ability.UserVital.StopRegen == true)
-			ability.UserVital.StopRegen = false;
-		yield break;
-	}
-
 	#region Movement States
 	protected void Idle_EnterState ()
 	{
@@ -233,7 +200,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		Debug.Log ("Currently idling");
 		Debug.Log ("Current velocity is :"+input.MoveDir);
 
-		if (input.LockedOn) {
+		if (armed) {
 			moveSet.CharMovement.Aim.ActiveAbility ();
 		}
 		if (input.MoveDir != Vector3.zero) {
@@ -290,29 +257,31 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	{
 		_animation.material.color = Color.blue;
 		Debug.Log ("1");
-		float timer = moveSet.CharMovement.Run.EnterLength + Time.time;
-		while (timer >= Time.time) {
-			moveSet.CharMovement.Run.EnterAbility ();
-			yield return null;
-		}
-		yield break;
-	}
-	protected void Run_FixedUpdate ()
-	{
-		Debug.Log ("2");
+		yield return StartCoroutine (moveSet.CharMovement.Run.ActivateSustainedAbility(input.InputActions.Find(i => i.Name == "Evasion")));
 
-		if (input.MoveDir == Vector3.zero)					//Character stopped moving
+		if (input.MoveDir != Vector3.zero)
+			currentState = CharacterActions.Walk;
+		else
 			currentState = CharacterActions.Idle;
-		else {
-			if (moveSet.CharMovement.Run.UserVital.CurValue > moveSet.CharMovement.Run.Cost)//Character has enough stamina to activate run
-				moveSet.CharMovement.Run.ActiveAbility ();
-			else 											//otherwise return to walk
-				TransitionToWalk ();
-		}
 	}
+//	protected void Run_FixedUpdate ()
+//	{
+//		Debug.Log ("2");
+//
+//		if (input.MoveDir == Vector3.zero)					//Character stopped moving
+//			currentState = CharacterActions.Idle;
+//		else {
+//			if (moveSet.CharMovement.Run.UserVital.CurValue > moveSet.CharMovement.Run.Cost)//Character has enough stamina to activate run
+//				moveSet.CharMovement.Run.ActiveAbility ();
+//			else 											//otherwise return to walk
+//				TransitionToWalk ();
+//		}
+//	}
 	protected void Run_ExitState ()
 	{
-		moveSet.CharMovement.Run.ExitAbility ();
+//		moveSet.CharMovement.Run.ExitAbility ();
+
+
 	}
 
 	/// <summary>
@@ -332,7 +301,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	{
 //		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
 		_animation.material.color = Color.gray;
-		yield return StartCoroutine (moveSet.CharMovement.Dodge.ActivateAbility());
+		yield return StartCoroutine (moveSet.CharMovement.Dodge.ActivateDurationalAbility());
 
 		currentState = CharacterActions.Idle;
 		yield break;
@@ -366,7 +335,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 	protected IEnumerator Stun_EnterState () 
 	{
-		yield return StartCoroutine (moveSet.CharStatus.HitStun.ActivateAbility());
+		yield return StartCoroutine (moveSet.CharStatus.HitStun.ActivateDurationalAbility());
 		currentState = CharacterActions.Idle;
 		Return ();
 	}

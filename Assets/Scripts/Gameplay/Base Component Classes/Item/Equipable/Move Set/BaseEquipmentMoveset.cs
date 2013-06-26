@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-//TODO Fold entire moveset into properties class, and rename as proper moveset class
-
 /// <summary>
 /// Base equipment moveset module. Any given weapon will contain multiple objects of this
 /// class, containing each of its particular actions for a specied loadout style.</summary>

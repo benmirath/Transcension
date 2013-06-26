@@ -51,7 +51,6 @@ using System.Collections.Generic;
 			Debug.LogWarning ("Should be good to go");
 #endif
 
-		//TODO set primary and secondary moveset from equipped weapons movesets based on the selected loadout style. 
 		switch (loadoutType) {
 		case EquipmentLoadoutType.OneHandedWithOffHand:
 			primaryMoveset = Primary.WeaponProperties.AvailableMovesets.Find (i => i.LoadoutType == BaseEquipmentMoveset.MovesetType.OneHanded_MainHand);
