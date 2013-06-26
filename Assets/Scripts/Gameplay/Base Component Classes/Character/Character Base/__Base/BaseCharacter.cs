@@ -11,7 +11,7 @@ using System.Collections.Generic;
 /// Base Character script that acts as the foundation for all other character related scripts and components.
 /// This script lays down the basic functionality (stats, movement, basic states)for any in-game character, 
 /// which will be fine tuned in later derived scripts. </summary>
-[RequireComponent (typeof(IAnimation), typeof(CharacterController), typeof(Rigidbody))]		//Engine Logic
+[RequireComponent (typeof(IAnimation), typeof(CharacterController))]		//Engine Logic
 [RequireComponent (typeof(CharacterStats), typeof(CharacterMovesetModule))]
 public class BaseCharacter : MonoBehaviour, ICharacter 
 {
@@ -49,6 +49,7 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	protected CharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
 	protected CharacterMovesetModule charMoveSet;
 	protected BaseEquipmentLoadoutModule charEquipment;
+	protected Animator mecanim;
 	#endregion
 
 	#region Properties
@@ -75,6 +76,7 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	public CharacterMovesetModule CharActions 		{ get { return charMoveSet; } }
 	public CharacterStats CharStats 			{ get { return charStats; } }
 	public BaseEquipmentLoadoutModule CharEquipment 	{ get { return charEquipment; } }
+	public Animator Mecanim { get { return mecanim; } }
 	#endregion Properites
 	
 	#region Initialization
@@ -88,7 +90,8 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 		_rigidbody = GetComponent<Rigidbody>();
 
 		//Basic Character Components
-		charStats = GetComponent<CharacterStats>();
+		mecanim = GetComponent<Animator> ();
+		charStats = GetComponent<CharacterStats> ();
 		charMoveSet = GetComponent<CharacterMovesetModule>();
 
 		//Add specialized character components

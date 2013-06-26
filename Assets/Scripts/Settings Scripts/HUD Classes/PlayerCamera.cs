@@ -14,8 +14,8 @@ public class PlayerCamera : MonoBehaviour {
 	protected float trackingSpeed;
 	protected float minX;
 	protected float maxX;
-	protected float minY;
-	protected float maxY;
+	protected float minZ;
+	protected float maxZ;
 
 //	protected Vector2 CameraCoordinates {
 //		get {return Camera.main.WorldToScreenPoint(target.Coordinates.position)}
@@ -35,7 +35,8 @@ public class PlayerCamera : MonoBehaviour {
 	}
 
 	private void LockedCameraUpdate () {
-		transform.position = new Vector3(target.Coordinates.position.x, target.Coordinates.position.y, target.Coordinates.position.z + cameraHeight);
+		transform.position = new Vector3(target.Coordinates.position.x, target.Coordinates.position.y + cameraHeight, target.Coordinates.position.z);
+		transform.LookAt (target.transform);
 	}
 
 	private void LooseCameraUpdate () {
@@ -45,8 +46,8 @@ public class PlayerCamera : MonoBehaviour {
 		if (temp.x > maxX) temp.x = maxX;
 		if (temp.x < Mathf.Abs(minX)) temp.x = minX;
 		
-		if (temp.y > maxY) temp.y = maxY;
-		if (temp.y < Mathf.Abs(minY)) temp.y = minY;
+		if (temp.y > maxZ) temp.z = maxZ;
+		if (temp.y < Mathf.Abs(minZ)) temp.z = minZ;
 	}
 }
 

@@ -114,11 +114,6 @@
      <Compile Include="Assets\RagePixel\Code\RagePixelSettings.cs" />
      <Compile Include="Assets\RagePixel\Code\RagePixelSprite.cs" />
      <Compile Include="Assets\RagePixel\Code\RagePixelSpriteSheet.cs" />
-     <Compile Include="Assets\RobotModelAssets\Scripts\AnimTriggers.cs" />
-     <Compile Include="Assets\RobotModelAssets\Scripts\BotControlScript.cs" />
-     <Compile Include="Assets\RobotModelAssets\Scripts\LaserEyes.cs" />
-     <Compile Include="Assets\RobotModelAssets\Scripts\Samoflange.cs" />
-     <Compile Include="Assets\RobotModelAssets\Scripts\ThirdPersonCamera.cs" />
      <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\CharacterAttAttribute.cs" />
      <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\IntRangeAttribute.cs" />
      <Compile Include="Assets\Scripts\Editor Attributes\_Class Attributes\PopupAttribute.cs" />
@@ -164,7 +159,7 @@
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\_Example Scenes.txt" />
-     <None Include="Assets\RobotModelAssets\Finished\Models\Robot.obj.txt" />
+     <None Include="Assets\AnimationAssets\Finished\Models\Robot.obj.txt" />
      <None Include="Assets\Additional Assets\UnlitFade.shader" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
      <None Include="Assets\RagePixel\readme.txt" />

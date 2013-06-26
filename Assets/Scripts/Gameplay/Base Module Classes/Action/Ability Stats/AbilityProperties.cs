@@ -315,6 +315,8 @@ public interface IAttack
 				UserVital.CurValue -= (cost * Time.deltaTime);
 			};
 			exitAbility += delegate {
+				ControlledMove (exitMoveSpeed);
+				Turn ();
 				UserVital.StopRegen = false;
 			};
 			break;
@@ -383,8 +385,8 @@ public interface IAttack
 		if (dir == Vector3.zero)
 			return;
 		
-		float aim = Mathf.Atan2 (-dir.x, dir.y) * Mathf.Rad2Deg;						//holds direction the character should be facing
-		User.Coordinates.rotation = Quaternion.Euler (0, 0, aim);
+		float aim = Mathf.Atan2 (dir.x, dir.z) * Mathf.Rad2Deg;						//holds direction the character should be facing
+		User.Coordinates.rotation = Quaternion.Euler (0, aim, 0);
 	}
 
 	protected void Aim ()
@@ -394,11 +396,11 @@ public interface IAttack
 
 		Vector3 target = CharInput.LookDir;
 		float angleX = target.x - User.Coordinates.position.x;
-		float angleY = target.y - User.Coordinates.position.y;
-		float targetAngle = Mathf.Atan2 (angleY, angleX) * Mathf.Rad2Deg;
+		float angleZ = target.z - User.Coordinates.position.z;
+		float targetAngle = Mathf.Atan2 (angleZ, - angleX) * Mathf.Rad2Deg;
 		
 		Quaternion fromRotation = User.Coordinates.rotation;
-		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle - 90, Vector3.forward);
+		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle - 90, Vector3.up);
 		User.Coordinates.rotation = Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed);
 
 		Debug.Log (fromRotation);

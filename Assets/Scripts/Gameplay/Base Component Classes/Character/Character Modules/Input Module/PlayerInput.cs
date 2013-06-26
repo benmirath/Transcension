@@ -48,13 +48,13 @@ using System;
 		Vector3 d;
 		
 		if(Input.GetButton("Vertical") || Input.GetButton("Horizontal")) {
-			if (Input.GetAxis("Vertical") != 0) d.y = Input.GetAxis("Vertical");
-			else d.y = 0;
+			if (Input.GetAxis("Vertical") != 0) d.z = Input.GetAxis("Vertical");
+			else d.z = 0;
 			
 			if (Input.GetAxis("Horizontal") != 0) d.x = Input.GetAxis("Horizontal");
 			else d.x = 0;
 			
-			d = new Vector3(d.x, d.y, 0);
+			d = new Vector3(d.x, 0, d.z);
 		}
 		else d = Vector3.zero;
 		
@@ -151,7 +151,7 @@ using System;
 		
 		//updates location of mouse cursor
 		public Vector3 UpdateMouse() {						//player aim
-			Plane playerPlane = new Plane(Vector3.back, _user.Coordinates.position);
+			Plane playerPlane = new Plane(Vector3.up, _user.Coordinates.position);
 			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 			float hitdist = 0.0f;	
 			
