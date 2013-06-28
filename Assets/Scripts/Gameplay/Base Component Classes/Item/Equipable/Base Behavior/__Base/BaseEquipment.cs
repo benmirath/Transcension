@@ -75,7 +75,7 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 	protected virtual void Awake ()
 	{
 		hitBox = GetComponent<BoxCollider> ();
-		user = transform.parent.GetComponent<BaseCharacter> ();
+		user = transform.root.GetComponent<BaseCharacter> ();
 		weaponProperties = GetComponent<BaseEquipmentProperties> ();
 	}
 
@@ -89,7 +89,10 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 	void OnTriggerEnter (Collider hit) {
 		Debug.LogError("First level of hit activation!");
 		Debug.LogError (activeAttack);
-		activeAttack.OnTriggerEnter (hit);
+
+		if (hit.GetComponent<BaseCharacter> ().CharType != user.CharType) {
+			hit.GetComponent<BaseCharacter> ().CharActions.CharStatus.ApplyAttack (activeAttack, transform);
+		}
 	}
 	#endregion Initialization
 

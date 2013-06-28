@@ -200,11 +200,7 @@ public abstract class Vital : IVital
 
 	public override IEnumerator StartRegen () {
 		while (true) {
-			if (_stopRegen == true) 
-				Debug.LogError ("regenerating paused");
-
-			else {
-				Debug.LogWarning("regenerating...");
+			if (_stopRegen != true) {
 				CurValue += (RegenRate * Time.deltaTime);	//apply regen rate at steady time increments
 
 			}
@@ -243,7 +239,7 @@ public abstract class Vital : IVital
 				Debug.LogError ("regenerating paused");
 
 			else {
-				Debug.LogWarning("regenerating...");
+//				Debug.LogWarning("regenerating...");
 				CurValue -= (RegenRate * Time.deltaTime);	//apply regen rate at steady time increments
 
 			}

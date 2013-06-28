@@ -43,13 +43,13 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 
 	//[SerializeField] protected IAnimation charAnimation;
 	[SerializeField] protected CharacterType charType;
-	protected Material charAnimation;
+	public Material oldCharAnimation;
 	protected BaseInputModule charInput;
 	protected CharacterStateMachine charState;
 	protected CharacterStats charStats; //This holds all gameplay and combat stats that are inherent to the character
 	protected CharacterMovesetModule charMoveSet;
 	protected BaseEquipmentLoadoutModule charEquipment;
-	protected Animator mecanim;
+	protected Animator charAnimation;
 	#endregion
 
 	#region Properties
@@ -76,7 +76,7 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	public CharacterMovesetModule CharActions 		{ get { return charMoveSet; } }
 	public CharacterStats CharStats 			{ get { return charStats; } }
 	public BaseEquipmentLoadoutModule CharEquipment 	{ get { return charEquipment; } }
-	public Animator Mecanim { get { return mecanim; } }
+	public Animator CharAnimation 				{ get { return charAnimation; } }
 	#endregion Properites
 	
 	#region Initialization
@@ -90,9 +90,18 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 		_rigidbody = GetComponent<Rigidbody>();
 
 		//Basic Character Components
-		mecanim = GetComponent<Animator> ();
+		charAnimation = GetComponent<Animator> ();
 		charStats = GetComponent<CharacterStats> ();
-		charMoveSet = GetComponent<CharacterMovesetModule>();
+		charMoveSet = GetComponent<CharacterMovesetModule> ();
+		if (charType == CharacterType.Enemy)
+			oldCharAnimation = GetComponent <MeshRenderer> ().material;
+		else
+			oldCharAnimation = transform.Find ("Renderer").GetComponent<SkinnedMeshRenderer>().material;
+
+		if (oldCharAnimation == null)
+			Debug.LogError (name+"'s material is null");
+
+//			GetComponentInChildren<MeshRenderer> ().material;
 
 		//Add specialized character components
 		switch (charType) {

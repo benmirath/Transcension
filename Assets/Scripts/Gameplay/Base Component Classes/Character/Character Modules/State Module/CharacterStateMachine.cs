@@ -45,7 +45,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	[SerializeField]protected BaseCharacter user;
 	[SerializeField]protected CharacterStats stats;
 	[SerializeField]protected CharacterMovesetModule moveSet;
-	[SerializeField]protected MeshRenderer _animation;
+	[SerializeField]protected Material _animation;
 	[SerializeField]protected BaseInputModule input;			//used to monitor advanced state timing and activation
 
 	public string LatestState;
@@ -60,6 +60,12 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	#region State Flags
 	[SerializeField] bool armed;
 	[SerializeField] bool attacking;
+	protected bool running;
+	protected bool evading;
+
+	public bool Running { get { return running; } }
+	public bool Evading { get { return evading; } }
+
 	#endregion
 
 	#region Setup
@@ -70,14 +76,15 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		stats = GetComponent<CharacterStats> ();
 		moveSet = GetComponent<CharacterMovesetModule> ();									//used to access actions for state activation
 
-		_animation = GetComponent<MeshRenderer> ();
-		input = GetComponent<BaseInputModule> ();
+//		_animation = transform.Find ("Renderer").GetComponent<SkinnedMeshRenderer>();
+		_animation = user.oldCharAnimation;
 
 		input = GetComponent<BaseInputModule> ();
 
 
 		armed = false;
 		attacking = false;
+		running = false;
 	}
 
 
@@ -189,16 +196,16 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		attacking = false;
 
 		if (user.CharType == BaseCharacter.CharacterType.Player)
-			_animation.material.color = Color.white;
+			_animation.color = Color.white;
 		else if (user.CharType == BaseCharacter.CharacterType.Enemy)
-			_animation.material.color = Color.red; 
+			_animation.color = Color.red; 
 		//initialization for the state happens here
 		Debug.Log ("entering idle state");
 	}
 	protected void Idle_Update ()
 	{
-		Debug.Log ("Currently idling");
-		Debug.Log ("Current velocity is :"+input.MoveDir);
+//		Debug.Log ("Currently idling");
+//		Debug.Log ("Current velocity is :"+input.MoveDir);
 
 		if (armed) {
 			moveSet.CharMovement.Aim.ActiveAbility ();
@@ -224,12 +231,10 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 	protected void Walk_EnterState ()
 	{
-		_animation.material.color = Color.cyan;
-		Debug.LogWarning ("Entering Walk State");
+		_animation.color = Color.cyan;
 	}
 	public void Walk_FixedUpdate ()
 	{
-		Debug.Log ("currently walking");
 
 		if (input.MoveDir == Vector3.zero) 					//no directional input, stop walking
 			currentState = CharacterActions.Idle;
@@ -255,8 +260,9 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 	protected IEnumerator Run_EnterState ()
 	{
-		_animation.material.color = Color.blue;
-		Debug.Log ("1");
+		_animation.color = Color.blue;
+		running = true;
+
 		yield return StartCoroutine (moveSet.CharMovement.Run.ActivateSustainedAbility(input.InputActions.Find(i => i.Name == "Evasion")));
 
 		if (input.MoveDir != Vector3.zero)
@@ -279,6 +285,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 //	}
 	protected void Run_ExitState ()
 	{
+		running = false;
 //		moveSet.CharMovement.Run.ExitAbility ();
 
 
@@ -300,7 +307,8 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	protected IEnumerator Dodge_EnterState ()
 	{
 //		moveSet.CharMovement.Dodge.Direction = input.MoveDir;
-		_animation.material.color = Color.gray;
+		_animation.color = Color.gray;
+		evading = true;
 		yield return StartCoroutine (moveSet.CharMovement.Dodge.ActivateDurationalAbility());
 
 		currentState = CharacterActions.Idle;
@@ -308,6 +316,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 	protected void Dodge_ExitState ()
 	{
+		evading = false;
 		Debug.Log ("Exiting Dodge");
 	}
 	#endregion
@@ -322,7 +331,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	protected IEnumerator SheatheWeapon_EnterState ()
 	{
 		armed = !armed;
-		_animation.material.color = Color.magenta;
+		_animation.color = Color.magenta;
 		yield return new WaitForSeconds (.2f);
 		currentState = CharacterActions.Idle;
 		yield break;
@@ -352,7 +361,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	{
 		if (armed) {
 			Debug.Log ("Entering Primary Attack");
-			_animation.material.color = Color.green;
+			_animation.color = Color.green;
 			attacking = true;	
 
 			if (moveSet == null) Debug.LogError("no moveset set");

@@ -17,10 +17,9 @@ using System;
 		get {return _targetting;}
 	}
 
-	public void Awake () 
+	public override void Awake () 
 	{
-
-		user = GetComponent<BaseCharacter>();
+		base.Awake();
 		key_tab = new ButtonInput ("DrawWeapon");
 		key_shift = new ButtonInput ("Evasion");
 		key_primary = new ButtonInput ("Primary");
@@ -42,6 +41,28 @@ using System;
 		if (Input.GetButtonDown("DrawWeapon")) StartCoroutine(key_tab.CheckInput(1, delegate {ActivateLockOn();}, delegate {ActivateSheathe();}));
 
 		if (Input.GetButtonDown("Primary")) ActivatePrimary();
+	}
+
+	//
+	public void FixedUpdate () {
+		if (animator == null) Debug.LogError ("animator null");
+//		animator.SetFloat ("V Move Input", moveDir.z);
+//		animator.SetFloat ("H Move Input", moveDir.x);
+
+		if (moveDir != Vector3.zero && animator.GetBool ("Walking") == false)	//checks the character has move input, but isn't walking
+			animator.SetBool ("Walking", true);
+		else if (moveDir == Vector3.zero && animator.GetBool ("Walking") == true)				//if the c
+			animator.SetBool ("Walking", false);
+
+		if (user.CharState.Running == true && animator.GetBool ("Running") == false)
+			animator.SetBool ("Running", true);
+		else if (user.CharState.Running == false && animator.GetBool ("Running") == true)
+			animator.SetBool ("Running", false);
+
+		if (user.CharState.Evading == true && animator.GetBool ("Dodging") == false)
+			animator.SetBool ("Dodging", true);
+		else if (user.CharState.Evading == false && animator.GetBool ("Dodging") == true)
+			animator.SetBool ("Dodging", false);
 	}
 	
 	private Vector3 UpdateDirection () {

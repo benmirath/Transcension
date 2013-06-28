@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: c34991a17fea2492d9020bd01db80ce6
 ModelImporter:
-  serializedVersion: 14
+  serializedVersion: 15
   fileIDToRecycleName:
     100000: Spine
     100002: Root
@@ -485,9 +485,8 @@ ModelImporter:
     materialName: 0
     materialSearch: 1
   animations:
-    generateAnimations: 4
+    legacyGenerateAnimations: 4
     bakeSimulation: 0
-    splitAnimations: 1
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
@@ -535,17 +534,19 @@ ModelImporter:
             tangentMode: 0
           preInfinity: 2
           postInfinity: 2
+      transformMask: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
     meshCompression: 0
     addColliders: 0
+    importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMesh: 0
-    keepQuads: 0
+    optimizeMeshForGPU: 1
+    weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
@@ -555,6 +556,8 @@ ModelImporter:
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 1
   humanDescription:
     human:
     - boneName: Hips
@@ -1386,7 +1389,9 @@ ModelImporter:
     armStretch: .0500000007
     legStretch: .0500000007
     feetSpacing: 0
+    rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: e194d39a231e29a489a36758f9fb175e,
     type: 3}
-  createAvatar: 0
+  additionalBone: 1
+  animationType: 3
   userData: 

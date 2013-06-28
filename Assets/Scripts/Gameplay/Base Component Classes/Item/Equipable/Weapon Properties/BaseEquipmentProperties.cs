@@ -195,8 +195,8 @@ public interface IEquipmentProperties
 	#region Initializers
 	protected override void OnAwake ()
 	{
-		user = transform.parent.GetComponent<BaseCharacter> ();
-		userState = transform.parent.GetComponent<CharacterStateMachine> ();
+		user = transform.root.GetComponent<BaseCharacter> ();
+		userState = transform.root.GetComponent<CharacterStateMachine> ();
 		curEquipment = GetComponent<BaseEquipment>();
 		anim = GetComponent<MeshRenderer> ();
 	}

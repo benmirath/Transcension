@@ -47,6 +47,7 @@ public interface IInputReaction : IInputAction {
 public abstract class BaseInputModule : MonoBehaviour, IInput 
 {
 	protected BaseCharacter user;
+	protected Animator animator;
 	[SerializeField]protected Vector3 moveDir;
 	[SerializeField]protected Vector3 lookDir;
 	protected bool lockedOn;
@@ -60,8 +61,10 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 
 //	public abstract void Setup (ICharacter user);
 
-	void Awake ()
+	public virtual void Awake ()
 	{
+		user = GetComponent<BaseCharacter>();
+		animator = GetComponent <Animator> ();
 		moveDir = Vector3.zero;
 		lookDir = Vector3.zero;
 	}

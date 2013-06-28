@@ -28,15 +28,16 @@ public class CharacterMovesetModule : MonoBehaviour, IMoveSet {
 	{
 		user = GetComponent<BaseCharacter>();
 		//construct ability classes
+		charMovement.Setup (user);
+		charStatus.Setup (user);
+		charEquipment.Setup ();
 	}
 	public void Start()
 	{
 		Debug.Log("MoveSet: Setting Values");
 		if (user == null)
 			Debug.Log ("Moveset user is currently null");
-		charMovement.Setup (user);
-		charStatus.Setup (user);
-		charEquipment.Setup ();
+
 	}
 }
 

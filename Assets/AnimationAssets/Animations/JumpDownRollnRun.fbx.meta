@@ -508,7 +508,6 @@ ModelImporter:
       keepOriginalPositionXZ: 0
       heightFromFeet: 1
       mirror: 0
-      keepAdditionalBonesAnimation: 1
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves:
       - name: ColliderY
@@ -527,7 +526,7 @@ ModelImporter:
             tangentMode: 0
           preInfinity: 2
           postInfinity: 2
-      skeletonMaskElements: []
+      transformMask: []
     - name: JumpDown
       takeName: Run_JumpDownHigh_Roll_Run
       firstFrame: 181
@@ -546,7 +545,6 @@ ModelImporter:
       keepOriginalPositionXZ: 0
       heightFromFeet: 1
       mirror: 0
-      keepAdditionalBonesAnimation: 1
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves:
       - name: ColliderY
@@ -596,7 +594,7 @@ ModelImporter:
             tangentMode: 0
           preInfinity: 2
           postInfinity: 2
-      skeletonMaskElements: []
+      transformMask: []
     - name: Roll
       takeName: Run_JumpDownHigh_Roll_Run
       firstFrame: 212
@@ -615,7 +613,6 @@ ModelImporter:
       keepOriginalPositionXZ: 0
       heightFromFeet: 1
       mirror: 0
-      keepAdditionalBonesAnimation: 1
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves:
       - name: ColliderHeight
@@ -680,17 +677,19 @@ ModelImporter:
             tangentMode: 0
           preInfinity: 2
           postInfinity: 2
-      skeletonMaskElements: []
+      transformMask: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: .00999999978
     meshCompression: 0
     addColliders: 0
+    importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
+    weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88

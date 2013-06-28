@@ -107,14 +107,16 @@ public interface IAttack
 				}
 			} else
 				enterAbility ();
+
 			if (activeLength > 0) {
 				timer = Time.time + activeLength;
 				while (timer > Time.time) {
 					activeAbility ();
-					yield return null;
+					yield return new WaitForFixedUpdate();
 				}
 			} else
 				activeAbility ();
+
 			if (exitLength > 0) {
 				timer = Time.time + exitLength;
 				while (timer > Time.time) {
@@ -124,10 +126,11 @@ public interface IAttack
 			} else
 				exitAbility ();
 		}
-		if (_userVital.StopRegen = true)
+		if (_userVital.StopRegen == true)
 			_userVital.StopRegen = false;
 		yield break;
 	}
+
 	public IEnumerator ActivateSustainedAbility (IInputAction _input) {
 		float timer;
 
@@ -339,7 +342,6 @@ public interface IAttack
 
 		case MovementPropertyType.Stun:
 			enterAbility += delegate {
-				Debug.LogError ("STUNNED");
 				UserVital.RegenScaling.ScalingRatio *= 2;
 				ExternalMove (enterMoveSpeed);
 			};
@@ -391,7 +393,7 @@ public interface IAttack
 
 	protected void Aim ()
 	{
-		Debug.LogWarning ("aim activating");
+//		Debug.LogWarning ("aim activating");
 		//User.Coordinates.rotation = Quaternion.Euler (CharInput.LookDir);
 
 		Vector3 target = CharInput.LookDir;
@@ -403,8 +405,8 @@ public interface IAttack
 		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle - 90, Vector3.up);
 		User.Coordinates.rotation = Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed);
 
-		Debug.Log (fromRotation);
-		Debug.Log (finalRotation);
+//		Debug.Log (fromRotation);
+//		Debug.Log (finalRotation);
 	}
 	#endregion
 }
@@ -510,7 +512,7 @@ public class StealthProperties : MovementProperties
 	protected override void Awake ()
 	{
 		base.Awake ();
-		_hitbox = _weapon.GetComponent<BoxCollider> ();
+//		_hitbox = _weapon.HitBox;
 		primaryDamageType = DamageEffectType.Standard;
 		damageModifier = 1f;
 		impactModifier = 1f;
@@ -526,7 +528,6 @@ public class StealthProperties : MovementProperties
 	#endregion Initialization
 
 	#region Effects
-	public abstract void OnTriggerEnter (Collider hit);
 	//normal attack, single activation.
 	protected abstract void StandardAttack ();
 
@@ -538,18 +539,21 @@ public class StealthProperties : MovementProperties
 [System.Serializable]public class MeleeProperties : AttackProperties
 {
 	#region Effects 
-	public override void OnTriggerEnter (Collider hit) {
-		Debug.Log ("Hit Registered!");
-		BaseCharacter target;
+//	public override void OnTriggerEnter (Collider hit) {
+//		Debug.Log ("Hit Registered!");
+//		BaseCharacter target;
+//
+//		if (hit.transform.GetComponent<BaseCharacter>()) {
+//			Debug.LogError ("LANDED A HIT!!!");
+//			target = hit.transform.GetComponent<BaseCharacter> ();
+//			if (target.CharType != User.CharType)
+//				target.CharActions.CharStatus.ApplyAttack (this, User.Coordinates);
+//		} else 
+//			Debug.LogError ("Well something weird is going on...");
+////		_weapon.ActiveAttack = null;
+//	}
 
-		if (hit.transform.GetComponent<BaseCharacter>().CharType != User.CharType) {
-			Debug.LogError ("LANDED A HIT!!!");
-			target = hit.transform.GetComponent<BaseCharacter>();
-			target.CharActions.CharStatus.ApplyAttack (this, User.Coordinates);
-		}
-	}
-
-	public virtual void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
+	public override void SetValue (BaseEquipment weapon, BaseEquipmentProperties.EquipmentActions name)
 	{
 		base.SetValue (weapon, name);
 //		Debug.LogError ("Setting weapon values...");
@@ -614,11 +618,6 @@ public class RangedProperties : AttackProperties
 	#endregion
 
 	#region Effects
-
-	public override void OnTriggerEnter (Collider hit)
-	{
-
-	}
 
 	protected override void StandardAttack ()
 	{

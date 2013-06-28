@@ -35,8 +35,10 @@ using System.Collections.Generic;
 	public void Setup ()
 	{
 #if DEBUG
-		if (Primary == null)
+		if (Primary == null) {
+			return;
 			Debug.LogError ("Primary is null");
+		}
 		else
 			Debug.LogWarning ("Should be good to go");
 

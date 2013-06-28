@@ -53,11 +53,10 @@ public class AIInput : BaseInputModule {
 
 	#endregion
 	// Use this for initialization
-	void Awake () {
-
+	public override void Awake () {
+		base.Awake ();
 //		_seeker = gameObject.AddComponent <Seeker>();
-		user = GetComponent<BaseCharacter>();
-		pathfinder = new AINavigation (this);
+
 //		_tr = transform;
 //		_seeker.pathCallback += pathfinder.OnPathComplete;
 		
@@ -79,6 +78,7 @@ public class AIInput : BaseInputModule {
 	}
 	private void Start ()
 	{
+		pathfinder = new AINavigation (this);
 	}
 
 	private void BeginSeeking() {

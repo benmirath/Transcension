@@ -47,7 +47,9 @@ public class CharacterStatusModule : IStatus {
 	#region Methods
 	public void ApplyAttack (AttackProperties attack, Transform instigator) {
 		Vector3 attackDir = user.transform.position - instigator.position;
+		attackDir.y = 0;
 
+		Debug.LogWarning ("Attack has landed! Should deal "+attack.AdjustedDamageValue+" damage and "+attack.AdjustedImpactValue+" stun.");
 		//Apply attack damage
 		ApplyVitalUse (attack.AdjustedDamageValue, charStats.Health);
 		//Apply attack stun

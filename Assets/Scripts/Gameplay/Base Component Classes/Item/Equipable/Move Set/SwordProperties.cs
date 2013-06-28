@@ -67,14 +67,13 @@ public class SwordProperties : BaseEquipmentProperties
 		availableMovesets.Add (oneHandedPrimary);
 		availableMovesets.Add (twoHandedPrimary);
 		availableMovesets.Add (twoHandedSecondary);
-
-		oneHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.OneHanded_MainHand);
-		twoHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_MainHand);
-		twoHandedSecondary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_OffHand);
 	}
 
 	protected override void Start () {
 		base.Start ();
+		oneHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.OneHanded_MainHand);
+		twoHandedPrimary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_MainHand);
+		twoHandedSecondary.Setup (curEquipment, BaseEquipmentMoveset.MovesetType.TwoHanded_OffHand);
 	}
 
 	#region Moveset States
@@ -83,9 +82,10 @@ public class SwordProperties : BaseEquipmentProperties
 		//Attack Initialization
 //		float _timer;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
+//		if (attack == null) Debug.LogError ("Attack is null");
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine( attack.ActivateDurationalAbility ());
+		yield return StartCoroutine( attack.ActivateDurationalAbility ());
 
 
 		//Attack Startup
@@ -128,6 +128,12 @@ public class SwordProperties : BaseEquipmentProperties
 		}
 		yield break;
 	}
+//	protected void Combo1_OnTriggerEnter (Collider hit ) {
+//		Debug.LogError ("!!!HIIIIIIT!!!!");
+//		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
+//		attack.OnTriggerEnter (hit);
+//
+//	}
 	//will check for whether a followup was signaled, and branch the combo into the next branch, and play the appropriate animation (swing followthrough or a second strike)
 	protected void Combo1_ExitState ()
 	{
@@ -190,7 +196,7 @@ public class SwordProperties : BaseEquipmentProperties
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine (attack.ActivateDurationalAbility ());
+		yield return StartCoroutine (attack.ActivateDurationalAbility ());
 
 //		//Attack Startup
 //		anim.material.color = Color.grey;

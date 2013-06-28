@@ -70,9 +70,6 @@
      <Compile Include="Assets\RagePixel\Editor\RagePixelTransformInspector.cs" />
      <Compile Include="Assets\RagePixel\Editor\RagePixelUtil.cs" />
      <Compile Include="Assets\Scripts\Editor\Ability Drawers\AbilityDrawers.cs" />
-     <Compile Include="Assets\Scripts\Editor\BaseCharacterEquipmentDrawer.cs" />
-     <Compile Include="Assets\Scripts\Editor\Character Inspector\BaseCharacterDrawer.cs" />
-     <Compile Include="Assets\Scripts\Editor\IntRangeDrawer.cs" />
      <Compile Include="Assets\Scripts\Editor\Stat Drawers\CharacterAttributeDrawer.cs" />
      <Compile Include="Assets\Scripts\Editor\Stat Drawers\ScalingStatDrawer.cs" />
      <Compile Include="Assets\Scripts\Editor\Stat Drawers\VitalDrawers.cs" />
