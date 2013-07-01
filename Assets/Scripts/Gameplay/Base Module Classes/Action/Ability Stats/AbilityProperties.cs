@@ -112,7 +112,7 @@ public interface IAttack
 				timer = Time.time + activeLength;
 				while (timer > Time.time) {
 					activeAbility ();
-					yield return new WaitForFixedUpdate();
+					yield return null;
 				}
 			} else
 				activeAbility ();
@@ -134,7 +134,7 @@ public interface IAttack
 	public IEnumerator ActivateSustainedAbility (IInputAction _input) {
 		float timer;
 
-		if (User.CharState.CheckAbilityVital(this)) {
+		if (User.CharState.MonitorAbilityVital(this)) {
 			_userVital.StopRegen = true;
 
 			if (enterLength > 0) {
@@ -326,9 +326,10 @@ public interface IAttack
 
 		case MovementPropertyType.Dodge:
 			enterAbility += delegate {
-				direction = CharInput.MoveDir;
-//				BurstMove (enterMoveSpeed);
-//				Turn ();
+				if (CharInput.MoveDir != Vector3.zero) direction = CharInput.MoveDir;
+				else direction = user.Coordinates.forward;
+				BurstMove (enterMoveSpeed);
+				Turn ();
 			};
 			activeAbility += delegate {
 				BurstMove (activeMoveSpeed);
@@ -371,8 +372,10 @@ public interface IAttack
 		User.Controller.Move (speed * CharInput.MoveDir.normalized * Time.deltaTime);		
 	}
 	protected void ExternalMove (float speed) {
+//		if (direction == Vector3.zero)
+//			direction = User.Coordinates.forward;
+		User.Controller.Move (speed * User.CharActions.CharStatus.KnockDir * Time.deltaTime);	
 
-		User.Controller.Move (speed * User.CharActions.CharStatus.KnockDir * Time.deltaTime);		
 	}
 
 	protected void BurstMove (float speed)

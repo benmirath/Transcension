@@ -63,6 +63,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	protected bool running;
 	protected bool evading;
 
+	public bool Armed { get { return armed; } }
 	public bool Running { get { return running; } }
 	public bool Evading { get { return evading; } }
 
@@ -155,16 +156,29 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	/// <param name="ability">Ability.</param>
 	public bool CheckAbilityVital (AbilityProperties ability)
 	{
-		Debug.Log ("3");
 		if (ability.Cost > 0) {
 			if (ability.UserVital.CurValue >= ability.Cost) {
-				Debug.LogWarning ("Ability activated");
 				ability.UserVital.CurValue -= ability.Cost;
-				StartCoroutine (ability.UserVital.PauseRegen());
+//				StartCoroutine (ability.UserVital.PauseRegen());
 				return true;
 			} else 
 				Debug.LogWarning ("Not enough points in vital");
 				return false;
+		} else {
+			Debug.LogWarning ("Ability has no cost");
+			return true;
+		}
+	}
+	public bool MonitorAbilityVital (AbilityProperties ability)
+	{
+		if (ability.Cost > 0) {
+			if (ability.UserVital.CurValue >= ability.Cost) {
+				ability.UserVital.CurValue -= ability.Cost * Time.deltaTime;
+				//				StartCoroutine (ability.UserVital.PauseRegen());
+				return true;
+			} else 
+				Debug.LogWarning ("Not enough points in vital");
+			return false;
 		} else {
 			Debug.LogWarning ("Ability has no cost");
 			return true;

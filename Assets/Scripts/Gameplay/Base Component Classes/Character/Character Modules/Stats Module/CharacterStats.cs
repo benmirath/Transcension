@@ -164,8 +164,8 @@ public class CharacterStats : MonoBehaviour
 //		energy.SetScaling(_user);
 //
 //		stunResistance.SetScaling(_user);
-		Debug.LogWarning (charVitals);
-		Debug.LogWarning (charAtts);
+//		Debug.LogWarning (charVitals);
+//		Debug.LogWarning (charAtts);
 	}
 	#endregion
 

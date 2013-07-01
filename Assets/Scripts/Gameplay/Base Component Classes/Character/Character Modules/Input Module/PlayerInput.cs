@@ -34,7 +34,13 @@ using System;
 	
 	public void Update () {
 		moveDir = UpdateDirection ();
-		lookDir = _targetting.UpdateMouse ();
+
+		if (user.CharState.Armed)
+			lookDir = _targetting.UpdateMouse ();
+		else if (moveDir != Vector3.zero)
+			lookDir = moveDir;
+		else
+			lookDir = transform.forward;
 
 		if (Input.GetButtonDown("Evasion")) StartCoroutine(key_shift.CheckInput(1, delegate {ActivateDodge();}, delegate {ActivateRun();}));
 

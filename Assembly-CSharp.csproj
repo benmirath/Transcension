@@ -44,6 +44,8 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AI\Resources\Custom Actions\UpdateCharacterCoordinates.cs" />
+     <Compile Include="Assets\AI\Resources\Custom Actions\UpdateCharacterStats.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\AI\AIPath.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\AI\NavmeshController.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\AI\Seeker.cs" />
@@ -152,8 +154,10 @@
      <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\TargettingPrototype.cs" />
      <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\VitalBar.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\btdemo.xml" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemyMind.xml" />
      <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\DiffuseAlwaysVisible.shader" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
@@ -165,8 +169,11 @@
      <None Include="Assets\RagePixel\readme.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Light.shader" />
      <None Include="Assets\AstarPathfindingProject\Readme.txt" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\complexmove.xml" />
+     <None Include="Assets\RAIN\Editor\ScriptTemplates\BehaviorTreeTemplate.xml" />
      <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\License.txt" />
      <None Include="Assets\AstarPathfindingProject\Plugins\JsonFx\Readme.txt" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\simplemove.xml" />
      <None Include="Assets\RagePixel\Code\RagePixelBasicFlash.shader" />
      <None Include="Assets\RagePixel\Code\RagePixelBasic.shader" />
      <None Include="Assets\AstarPathfindingProject\link.xml" />
@@ -175,6 +182,12 @@
  </Reference>
  <Reference Include="Assets\AstarPathfindingProject\Plugins\JsonFx\JsonFx.Json">
  <HintPath>Assets\AstarPathfindingProject\Plugins\JsonFx\JsonFx.Json.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\RAIN\RAINIndie">
+ <HintPath>Assets\RAIN\RAINIndie.dll</HintPath>
+ </Reference>
+ <Reference Include="Assets\RAIN\Recast">
+ <HintPath>Assets\RAIN\Recast.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

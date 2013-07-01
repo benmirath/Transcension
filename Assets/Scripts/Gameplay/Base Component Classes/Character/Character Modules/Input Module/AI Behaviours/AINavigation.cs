@@ -52,8 +52,8 @@ public class AINavigation
 	public AINavigation (AIInput input) {
 		_user = input.User;
 		_tr = _user.transform;
-		_seeker = _tr.gameObject.AddComponent<Seeker> ();
-		_seeker.pathCallback += OnPathComplete;
+//		_seeker = _tr.gameObject.AddComponent<Seeker> ();
+//		_seeker.pathCallback += OnPathComplete;
 
 		GameObject go = GameObject.FindGameObjectWithTag("Player");	
 
@@ -61,7 +61,7 @@ public class AINavigation
 			Debug.LogError("Could not find the player");
 		target = go.transform;
 
-		_user.StartCoroutine (RepeatTrySearchPath ());
+//		_user.StartCoroutine (RepeatTrySearchPath ());
 
 
 	}
