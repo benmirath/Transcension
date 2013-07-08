@@ -8,6 +8,8 @@ using RAIN.Belief;
 using RAIN.Action;
 using RAIN.Sensors;
 
+//TODO Need to sort out best approach to coordinate non-direct, tactical movement.
+
 public class UpdateCharacterStats : RAIN.Action.Action
 {
 	CharacterStats stats;
@@ -35,7 +37,7 @@ public class UpdateCharacterStats : RAIN.Action.Action
 		actionContext.SetContextItem<float> ("maxEnergy", energy.MaxValue);
 		actionContext.SetContextItem<float> ("curEnergy", energy.CurValue);
 
-		Debug.LogError ("The character's state is " + actionContext.GetContextItem<string> ("currentState"));
+//		Debug.LogError ("The character's state is " + actionContext.GetContextItem<string> ("currentState"));
 
 		var target = actionContext.GetContextItem<GameObject> ("playerPos");
 		if (target != null) Debug.LogError ("The target's location is " + target);

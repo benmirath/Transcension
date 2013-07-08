@@ -44,8 +44,8 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\AI\Resources\Custom Actions\UpdateCharacterCoordinates.cs" />
-     <Compile Include="Assets\AI\Resources\Custom Actions\UpdateCharacterStats.cs" />
+     <Compile Include="Assets\AI\Actions\UpdateCharacterCoordinates.cs" />
+     <Compile Include="Assets\AI\Actions\UpdateCharacterStats.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\AI\AIPath.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\AI\NavmeshController.cs" />
      <Compile Include="Assets\AstarPathfindingProject\Core\AI\Seeker.cs" />
@@ -154,6 +154,7 @@
      <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\TargettingPrototype.cs" />
      <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\VitalBar.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemy3.xml" />
      <None Include="Assets\AI\Resources\BehaviorTrees\btdemo.xml" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
@@ -163,6 +164,7 @@
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\_Example Scenes.txt" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemy2.xml" />
      <None Include="Assets\AnimationAssets\Finished\Models\Robot.obj.txt" />
      <None Include="Assets\Additional Assets\UnlitFade.shader" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />

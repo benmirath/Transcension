@@ -78,7 +78,6 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 
 	public event Action runSignal;
 	protected void ActivateRun() {
-		Debug.Log ("Activating Run");
 		runSignal();
 	}
 

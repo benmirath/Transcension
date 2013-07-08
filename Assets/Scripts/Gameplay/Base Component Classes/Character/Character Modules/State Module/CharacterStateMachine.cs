@@ -214,7 +214,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		else if (user.CharType == BaseCharacter.CharacterType.Enemy)
 			_animation.color = Color.red; 
 		//initialization for the state happens here
-		Debug.Log ("entering idle state");
 	}
 	protected void Idle_Update ()
 	{
@@ -231,12 +230,10 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 	protected void Idle_ExitState ()
 	{
-		Debug.LogWarning ("leaving idle state");
 	}
 
 	protected void TransitionToWalk ()
 	{
-		Debug.Log ("Attempting Transition: Walk");
 		if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Run.ToString ()) {
 			currentState = CharacterActions.Walk;
 
@@ -265,7 +262,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 		
 	protected void TransitionToRun ()
 	{
-		Debug.Log ("Attempting Transition: Run");
 		if (currentState.ToString () == CharacterActions.Walk.ToString ()) {
 			currentState = CharacterActions.Run;
 		} else {
@@ -310,7 +306,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	/// </summary>
 	protected void TransitionToDodge ()
 	{
-		Debug.Log ("Attempting Transition: Dodge");
 		if (currentState.ToString () == CharacterActions.Idle.ToString () || currentState.ToString () == CharacterActions.Walk.ToString () || currentState.ToString () == CharacterActions.Run.ToString ()) 
 			if (moveSet.CharMovement.Dodge.UserVital.CurValue > moveSet.CharMovement.Dodge.Cost)
 				currentState = CharacterActions.Dodge;
@@ -331,7 +326,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	protected void Dodge_ExitState ()
 	{
 		evading = false;
-		Debug.Log ("Exiting Dodge");
 	}
 	#endregion
 
@@ -352,7 +346,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	}
 
 	protected void TransitionToStun () {
-		Debug.LogError ("Should be stunned");
 //		Call (CharacterActions.Stun);
 		Return (CharacterActions.Stun);
 	}
@@ -374,7 +367,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	protected void TransitionToPrimary ()
 	{
 		if (armed) {
-			Debug.Log ("Entering Primary Attack");
 			_animation.color = Color.green;
 			attacking = true;	
 
@@ -383,7 +375,6 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 			if (moveSet.CharEquipment.PrimaryMoveset == null) Debug.LogError("no primary moveset set");
 
 			moveSet.CharEquipment.PrimaryMoveset.ActivateMoveset ();
-			Debug.Log ("Succesfully returned from equipment action");
 		}
 
 	}

@@ -75,6 +75,7 @@
      <Compile Include="Assets\Scripts\Editor\Stat Drawers\ScalingStatDrawer.cs" />
      <Compile Include="Assets\Scripts\Editor\Stat Drawers\VitalDrawers.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemy3.xml" />
      <None Include="Assets\AI\Resources\BehaviorTrees\btdemo.xml" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
@@ -84,6 +85,7 @@
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />
      <None Include="Assets\AstarPathfindingProject\Plugins\dependencies.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\_Example Scenes.txt" />
+     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemy2.xml" />
      <None Include="Assets\AnimationAssets\Finished\Models\Robot.obj.txt" />
      <None Include="Assets\Additional Assets\UnlitFade.shader" />
      <None Include="Assets\AstarPathfindingProject\Readme_upgrading.txt" />
