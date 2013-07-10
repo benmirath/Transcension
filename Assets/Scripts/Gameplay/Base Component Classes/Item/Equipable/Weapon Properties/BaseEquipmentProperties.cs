@@ -196,13 +196,14 @@ public interface IEquipmentProperties
 	protected override void OnAwake ()
 	{
 		user = transform.root.GetComponent<BaseCharacter> ();
-		userState = transform.root.GetComponent<CharacterStateMachine> ();
 		curEquipment = GetComponent<BaseEquipment>();
 		anim = GetComponent<MeshRenderer> ();
 	}
 
 	protected virtual void Start ()
 	{
+		userState = user.CharState;
+
 		scalingBuff.SetScaling(user);
 
 		availableActions = activeMoveset.Moveset;
@@ -214,6 +215,7 @@ public interface IEquipmentProperties
 	protected void Idle_EnterState ()
 	{
 		anim.material.color = Color.white;
+		userState.Attacking = false;
 		Return ();
 	}
 

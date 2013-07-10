@@ -66,6 +66,10 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	public bool Armed { get { return armed; } }
 	public bool Running { get { return running; } }
 	public bool Evading { get { return evading; } }
+	public bool Attacking { 
+		get { return attacking; } 
+		set { attacking = value; }
+	}
 
 	#endregion
 
@@ -339,11 +343,18 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	protected IEnumerator SheatheWeapon_EnterState ()
 	{
 		armed = !armed;
+
+		if (armed == true)
+			user.CharAnimation.SetBool ("Armed", true);
+		else
+			user.CharAnimation.SetBool ("Armed", false);
+
 		_animation.color = Color.magenta;
 		yield return new WaitForSeconds (.2f);
 		currentState = CharacterActions.Idle;
 		yield break;
 	}
+
 
 	protected void TransitionToStun () {
 //		Call (CharacterActions.Stun);
@@ -368,7 +379,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	{
 		if (armed) {
 			_animation.color = Color.green;
-			attacking = true;	
+//			attacking = true;	
 
 			if (moveSet == null) Debug.LogError("no moveset set");
 			if (moveSet.CharEquipment == null) Debug.LogError("no moveset equipment set");

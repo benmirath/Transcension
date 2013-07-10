@@ -23,9 +23,6 @@ public interface IEquippable
 		get;
 	}
 
-	BaseEquipmentStateModule WeaponState {
-		get;
-	}
 }
 /// <summary>
 /// Base equipment.
@@ -43,7 +40,6 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 	protected BoxCollider hitBox;
 	[SerializeField] protected BaseEquipmentProperties weaponProperties;				//Holds the raw stats for the weapon
 	[SerializeField] protected BaseEquipmentMoveset moveset;				//Holds the various moves a given weapon can utilize
-	[SerializeField] protected BaseEquipmentStateModule weaponState;			//Coordinates use of moveset by controlling character
 	protected AttackProperties activeAttack;
 
 
@@ -61,9 +57,7 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 	public BaseEquipmentProperties WeaponProperties { get { return weaponProperties;} }
 
 	public BaseEquipmentMoveset Moveset { get { return moveset;} }
-
-	public BaseEquipmentStateModule WeaponState { get { return weaponState;} }
-
+	
 	public AttackProperties ActiveAttack { 
 		get { return activeAttack; } 
 		set { activeAttack = value;}

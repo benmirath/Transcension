@@ -69,6 +69,11 @@ using System;
 			animator.SetBool ("Dodging", true);
 		else if (user.CharState.Evading == false && animator.GetBool ("Dodging") == true)
 			animator.SetBool ("Dodging", false);
+
+		if (user.CharState.Attacking == true && animator.GetBool ("Attacking") == false)
+			animator.SetBool ("Attacking", true);
+		else if (user.CharState.Attacking == false && animator.GetBool ("Attacking") == true)
+			animator.SetBool ("Attacking", false);
 	}
 	
 	private Vector3 UpdateDirection () {

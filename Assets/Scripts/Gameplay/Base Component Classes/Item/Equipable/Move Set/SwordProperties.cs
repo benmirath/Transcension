@@ -81,6 +81,7 @@ public class SwordProperties : BaseEquipmentProperties
 	{
 		//Attack Initialization
 //		float _timer;
+		userState.Attacking = true;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo1);
 //		if (attack == null) Debug.LogError ("Attack is null");
 		curEquipment.ActiveAttack = attack;
@@ -116,6 +117,7 @@ public class SwordProperties : BaseEquipmentProperties
 			break;
 
 		case FollowupType.Dodge:
+			userState.Attacking = false;
 			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = CharacterStateMachine.CharacterActions.Dodge;
@@ -123,6 +125,7 @@ public class SwordProperties : BaseEquipmentProperties
 
 		case FollowupType.None:
 		default:
+			userState.Attacking = false;
 			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			break;
 		}
@@ -143,6 +146,7 @@ public class SwordProperties : BaseEquipmentProperties
 	protected IEnumerator Combo2_EnterState ()
 	{
 		//Attack Initialization
+		userState.Attacking = true;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo2);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
@@ -171,6 +175,7 @@ public class SwordProperties : BaseEquipmentProperties
 			break;
 
 		case FollowupType.Dodge:
+			userState.Attacking = false;
 			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
 			Return ();
 			currentState = CharacterStateMachine.CharacterActions.Dodge;
@@ -179,6 +184,7 @@ public class SwordProperties : BaseEquipmentProperties
 		case FollowupType.None:
 			//break;
 		default:
+			userState.Attacking = false;
 			currentState = SwordActions.Idle;
 			break;
 		}
@@ -193,44 +199,27 @@ public class SwordProperties : BaseEquipmentProperties
 	protected IEnumerator Combo3_EnterState ()
 	{
 		//Attack Initialization
+		userState.Attacking = true;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
 		curEquipment.ActiveAttack = attack;
 //		if (userState.CheckAbilityVital (attack))
 		yield return StartCoroutine (attack.ActivateDurationalAbility ());
 
-//		//Attack Startup
-//		anim.material.color = Color.grey;
-//		yield return new WaitForSeconds (attack.EnterLength);
-//
-//		//Attack Activte
-//		float _timer = Time.time + attack.ActiveLength;
-//		do {
-//			//attack info
-//			attack.ActiveAbility();
-//			anim.material.color = Color.blue;
-//			yield return null;
-//		} while (Time.time < _timer);
-//
-//		//Attack Cooldown
-//		anim.material.color = Color.grey;
-//		yield return new WaitForSeconds (attack.ExitLength);
 		switch (followup) {
-		case FollowupType.Primary:
-			currentState = BaseEquipmentProperties.EquipmentActions.Combo4;
-			break;
+			case FollowupType.Dodge:
+				userState.Attacking = false;
+				currentState = BaseEquipmentProperties.EquipmentActions.Idle;
+				Return ();
+				currentState = CharacterStateMachine.CharacterActions.Dodge;
+				break;
 
-		case FollowupType.Dodge:
-			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
-			Return ();
-			currentState = CharacterStateMachine.CharacterActions.Dodge;
-			break;
-
-		case FollowupType.None:
-			//break;
-		default:
-			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
-			break;
-		}
+			case FollowupType.Primary:
+			case FollowupType.None:
+			default:
+				userState.Attacking = false;
+				currentState = BaseEquipmentProperties.EquipmentActions.Idle;
+				break;
+			}
 		yield break;
 	}
 
@@ -239,46 +228,31 @@ public class SwordProperties : BaseEquipmentProperties
 		followup = FollowupType.None;
 	}
 
-	protected IEnumerator Combo4_EnterState ()
-	{
-		//Attack Initialization
-		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
-		curEquipment.ActiveAttack = attack;
-//		if (userState.CheckAbilityVital (attack))
-			yield return StartCoroutine (attack.ActivateDurationalAbility ());
-
-//		//Attack Startup
-//		anim.material.color = Color.grey;
-//		yield return new WaitForSeconds (attack.EnterLength);
+//	protected IEnumerator Combo4_EnterState ()
+//	{
+//		//Attack Initialization
+//		userState.Attacking = true;
+//		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.Combo3);
+//		curEquipment.ActiveAttack = attack;
+////		if (userState.CheckAbilityVital (attack))
+//		yield return StartCoroutine (attack.ActivateDurationalAbility ());
 //
-//		//Attack Activte
-//		float _timer = Time.time + attack.ActiveLength;
-//		do {
-//			//attack info
-//			attack.ActiveAbility();
-//			anim.material.color = Color.cyan;
-//			yield return null;
-//		} while (Time.time < _timer);
 //
-//		//Attack Cooldown
-//		anim.material.color = Color.grey;
-//		yield return new WaitForSeconds (attack.ExitLength);
-
-		switch (followup) {
-		case FollowupType.Dodge:
-			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
-			Return ();
-			currentState = CharacterStateMachine.CharacterActions.Dodge;
-			break;
-
-		case FollowupType.Primary:
-		case FollowupType.None:
-		default:
-			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
-			break;
-		}
-		yield break;
-	}
+//		switch (followup) {
+//		case FollowupType.Dodge:
+//			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
+//			Return ();
+//			currentState = CharacterStateMachine.CharacterActions.Dodge;
+//			break;
+//
+//		case FollowupType.Primary:
+//		case FollowupType.None:
+//		default:
+//			currentState = BaseEquipmentProperties.EquipmentActions.Idle;
+//			break;
+//		}
+//		yield break;
+//	}
 
 	protected void Combo4_ExitState ()
 	{
@@ -287,6 +261,7 @@ public class SwordProperties : BaseEquipmentProperties
 
 	protected IEnumerator RunAttack_EnterState ()
 	{	
+		userState.Attacking = true;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.RunAttack);
 		curEquipment.ActiveAttack = attack;
 
@@ -313,9 +288,7 @@ public class SwordProperties : BaseEquipmentProperties
 
 	protected IEnumerator DodgeAttack_EnterState ()
 	{
-//		anim.material.color = Color.grey;
-//
-//		yield return new WaitForSeconds (.5f);
+		userState.Attacking = true;
 		var attack = availableActions.Find (i => i.AttackName == EquipmentActions.DodgeAttack);
 		curEquipment.ActiveAttack = attack;
 
