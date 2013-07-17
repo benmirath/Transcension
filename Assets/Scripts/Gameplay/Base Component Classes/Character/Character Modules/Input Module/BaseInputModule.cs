@@ -7,6 +7,7 @@ using UnityEngine;
 public interface IInput {
 	Vector3 MoveDir {get;}
 	Vector3 LookDir {get;}
+	float TurnDir {get;}
 	bool LockedOn {get;}
 
 	List <IInputAction> InputActions {get;}
@@ -50,12 +51,16 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 	protected Animator animator;
 	[SerializeField]protected Vector3 moveDir;
 	[SerializeField]protected Vector3 lookDir;
+	protected float turnDir;
 	protected bool lockedOn;
 
 	public BaseCharacter User { get { return user; } }
 	public abstract List <IInputAction> InputActions { get;}
 	public virtual Vector3 MoveDir {get {return moveDir;}}
 	public virtual Vector3 LookDir {get {return lookDir;}}
+	public virtual float TurnDir {
+		get {return turnDir;}
+		set {turnDir = value;}}
 
 	public bool LockedOn {get { return lockedOn;}}
 
@@ -67,6 +72,10 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 		animator = GetComponent <Animator> ();
 		moveDir = Vector3.zero;
 		lookDir = Vector3.zero;
+	}
+	public virtual void FixedUpdate () {
+		turnDir = UpdateTurnDir ();
+		Debug.LogError ("the turn dir is : " + turnDir);
 	}
 
 	#region Ability Signals
@@ -106,9 +115,39 @@ public abstract class BaseInputModule : MonoBehaviour, IInput
 	protected void ActivateSheathe() {
 		sheatheSignal();
 	}
+	#endregion
+
+	#region Movement Data
+	protected float UpdateTurnDir ()
+	{
+		//		Debug.LogWarning ("aim activating");
+		//User.Coordinates.rotation = Quaternion.Euler (CharInput.LookDir);
+
+		Vector3 target; 
+		if (User.CharState.Armed)
+			target = lookDir;
+		else
+			target = User.transform.position + moveDir;
+
+		Vector3 newAngle = new Vector3 (target.x - User.Coordinates.position.x, 0, target.z - User.Coordinates.position.z);
+		float targetAngle = Mathf.Atan2 (newAngle.z, - newAngle.x) * Mathf.Rad2Deg;
+		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle + 90, Vector3.up);
+
+//		float angleX = target.x - User.Coordinates.position.x;
+//		float angleZ = target.z - User.Coordinates.position.z;
+//
+//		float targetAngle = Mathf.Atan2 (angleZ, - angleX) * Mathf.Rad2Deg;
+
+		float newTurnDir = Quaternion.Dot (User.Coordinates.rotation, finalRotation);
+		return newTurnDir;
 
 
+//		Quaternion fromRotation = User.Coordinates.rotation;
+//		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle - 90, Vector3.up);
+//		User.Coordinates.rotation = Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed);
 
+
+	}
 	#endregion
 }
 

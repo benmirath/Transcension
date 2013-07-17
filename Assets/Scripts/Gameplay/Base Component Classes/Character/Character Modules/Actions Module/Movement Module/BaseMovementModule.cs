@@ -64,7 +64,7 @@ public interface IMovement {
 	/// Setup both this module, and all the abilities stored within.
 	/// </summary>
 	/// <param name="user">User.</param>
-	public void Setup (ICharacter user) {
+	public void Setup (BaseCharacter user) {
 		Debug.Log("BaseMovementModule: Setting Values");
 		_user = user;
 		//_coordinates = _user.Coordinates;

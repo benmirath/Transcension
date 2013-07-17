@@ -12,6 +12,10 @@ public class UpdateCharacterCoordinates : RAIN.Action.Action
 {
 	BaseInputModule input;
 
+//	private void UpdateTargetting (out float speed, out float bearing) {
+////		bearing = Vector3.Dot ()
+//	}
+
 	public override ActionResult Start(Agent agent, float deltaTime)
 	{
 
@@ -22,10 +26,19 @@ public class UpdateCharacterCoordinates : RAIN.Action.Action
 	public override ActionResult Execute(Agent agent, float deltaTime)
 	{
 		var tr = input.transform;
+		var target = actionContext.GetContextItem<GameObject> ("PlayerPos");
 
 		var forward = input.transform.localPosition - tr.forward;
 		var right = input.transform.localPosition - tr.right;
 		var left = input.transform.localPosition - (-tr.right);
+	
+//		float speed;
+//		float bearing;
+//		if (target != null)  {
+//			bearing = Vector3.Dot (forward, target.transform.position);
+//			Debug.LogError ("the target discrepancy is " + bearing);
+//		}
+
 //		left.x = -right.x;
 //		left.z = -left.z;
 		Debug.LogError(right);

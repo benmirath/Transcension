@@ -148,7 +148,7 @@ public class CharacterStateMachine : StateMachineBehaviourEx
 	private IEnumerator monitorState ()
 	{
 		while (true) {
-			LatestState = currentState.ToString ();
+			LatestState = name +" : "+ currentState.ToString ();
 //						LastState = lastState.ToString ();
 			yield return null;
 		}

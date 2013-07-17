@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// Base interface for all Equipment. Acceses basic functionality. </summary>
 public interface IEquippable
 {
-	ICharacter User {
+	BaseCharacter User {
 		get;
 	}
 
@@ -36,7 +36,7 @@ public interface IEquippable
 public class BaseEquipment : MonoBehaviour, IEquippable
 {
 
-	protected ICharacter user;
+	protected BaseCharacter user;
 	protected BoxCollider hitBox;
 	[SerializeField] protected BaseEquipmentProperties weaponProperties;				//Holds the raw stats for the weapon
 	[SerializeField] protected BaseEquipmentMoveset moveset;				//Holds the various moves a given weapon can utilize
@@ -44,7 +44,7 @@ public class BaseEquipment : MonoBehaviour, IEquippable
 
 
 	#region Properties
-	public ICharacter User {
+	public BaseCharacter User {
 		get { return user;}
 		set { user = value;}
 	}

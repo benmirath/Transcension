@@ -37,7 +37,7 @@ public interface IAttack
 //	}
 
 	#region Properties
-	private ICharacter _user;
+	private BaseCharacter _user;
 	private IInput _userInput;
 	private IVital _userVital;
 	protected Action enterAbility;
@@ -67,7 +67,7 @@ public interface IAttack
 	/// Sets the primary values and variables required for the ability.
 	/// </summary>
 	/// <param name="user">User.</param>
-	public virtual void SetValue (ICharacter user)
+	public virtual void SetValue (BaseCharacter user)
 	{
 		_user = user;
 		_userInput = _user.CharInput;
@@ -91,8 +91,53 @@ public interface IAttack
 	}
 	#endregion
 
-	#region Effects
+	#region  Propertiess
+//	protected string name;
+//	public abstract string name { get;}
+//		get {}
+//	}
 
+	public BaseCharacter User { get { return _user; } }
+
+	public IInput CharInput { get { return _userInput; } }
+
+	public IVital UserVital { get { return _userVital; } }
+
+	public Vital.PrimaryVitalName VitalType { get { return vitalType; } }
+
+	public float Cost {
+		get { return cost;}
+		set { cost = value;}
+	}
+	public Action EnterAbility {
+		get { return enterAbility;}
+	}
+	public Action ActiveAbility {
+		get { return activeAbility;}
+	}
+	public Action ExitAbility {
+		get { return exitAbility;}
+	}
+
+
+	//How long each phase of the ability lasts. If duration is 0, then it will be an updating ability.
+	public float EnterLength {
+		get { return enterLength;}
+		set { enterLength = value;}
+	}
+
+	public float ActiveLength {
+		get { return activeLength;}
+		set { activeLength = value;}
+	}
+
+	public float ExitLength {
+		get { return exitLength;}
+		set { exitLength = value;}
+	}
+	#endregion Properties
+
+	#region Effects
 	public virtual IEnumerator ActivateDurationalAbility () {
 		float timer;
 
@@ -146,7 +191,7 @@ public interface IAttack
 			} else
 				enterAbility ();
 
-		
+
 			while (_input.Active) {
 				if (User.CharState.CheckAbilityVital (this)) {
 					activeAbility ();
@@ -170,52 +215,6 @@ public interface IAttack
 		yield break;
 	}
 	#endregion
-	
-	#region  Propertiess
-//	protected string name;
-//	public abstract string name { get;}
-//		get {}
-//	}
-
-	public ICharacter User { get { return _user; } }
-
-	public IInput CharInput { get { return _userInput; } }
-
-	public IVital UserVital { get { return _userVital; } }
-
-	public Vital.PrimaryVitalName VitalType { get { return vitalType; } }
-
-	public float Cost {
-		get { return cost;}
-		set { cost = value;}
-	}
-	public Action EnterAbility {
-		get { return enterAbility;}
-	}
-	public Action ActiveAbility {
-		get { return activeAbility;}
-	}
-	public Action ExitAbility {
-		get { return exitAbility;}
-	}
-
-
-	//How long each phase of the ability lasts. If duration is 0, then it will be an updating ability.
-	public float EnterLength {
-		get { return enterLength;}
-		set { enterLength = value;}
-	}
-
-	public float ActiveLength {
-		get { return activeLength;}
-		set { activeLength = value;}
-	}
-
-	public float ExitLength {
-		get { return exitLength;}
-		set { exitLength = value;}
-	}
-	#endregion Properties
 }
 /// <summary> 
 /// Movement properties for abilities. Many (anything integrating movement into the action) will derive from this property. </summary>
@@ -278,7 +277,7 @@ public interface IAttack
 	#endregion
 
 	#region Initialization
-	public override void SetValue (ICharacter user)
+	public override void SetValue (BaseCharacter user)
 	{
 //		Debug.Log ("AbilityProperty: Setting Values");
 		base.SetValue (user);
@@ -292,7 +291,8 @@ public interface IAttack
 		case MovementPropertyType.Walk:
 			activeAbility += delegate {
 				ControlledMove (activeMoveSpeed);
-				Turn ();
+				Aim ();
+
 			};
 			break;
 
@@ -329,15 +329,15 @@ public interface IAttack
 				if (CharInput.MoveDir != Vector3.zero) direction = CharInput.MoveDir;
 				else direction = user.Coordinates.forward;
 				BurstMove (enterMoveSpeed);
-				Turn ();
+				Aim ();
 			};
 			activeAbility += delegate {
 				BurstMove (activeMoveSpeed);
-				Turn ();
+//				Turn ();
 			};
 			exitAbility += delegate {
 				BurstMove (exitMoveSpeed);
-				Turn ();
+				Aim ();
 			};
 			break;
 
@@ -386,12 +386,27 @@ public interface IAttack
 
 	protected void Turn ()
 	{
-		Vector3 dir = CharInput.MoveDir;
-		if (dir == Vector3.zero)
+		Vector3 curDir = User.transform.position;
+		Vector3 newDir = CharInput.MoveDir;
+		if (newDir == Vector3.zero)
 			return;
-		
-		float aim = Mathf.Atan2 (dir.x, dir.z) * Mathf.Rad2Deg;						//holds direction the character should be facing
-		User.Coordinates.rotation = Quaternion.Euler (0, aim, 0);
+
+		float aim = Mathf.Atan2 (newDir.x, newDir.z) * Mathf.Rad2Deg;						//holds direction the character should be facing
+
+
+		Quaternion fromRotation = User.Coordinates.rotation;
+		Quaternion finalRotation = Quaternion.AngleAxis (aim, Vector3.up);
+		User.Coordinates.rotation = Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed);
+
+//		float deltaAngle = Vector3.Angle (curDir, newDir);
+//		Vector3 axisOfRotation = Vector3.Cross (curDir, newDir);
+//		Quaternion deltaRotation = Quaternion.AngleAxis (deltaAngle, axisOfRotation);
+//
+//		User.transform.rotation = Quaternion.Lerp (User.transform.rotation, deltaRotation, Time.);
+//
+//
+//		User.Coordinates.rotation = Quaternion.Euler (0, aim, 0);
+//		User.Coordinates.rotation.
 	}
 
 	protected void Aim ()
@@ -399,17 +414,55 @@ public interface IAttack
 //		Debug.LogWarning ("aim activating");
 		//User.Coordinates.rotation = Quaternion.Euler (CharInput.LookDir);
 
-		Vector3 target = CharInput.LookDir;
-		float angleX = target.x - User.Coordinates.position.x;
-		float angleZ = target.z - User.Coordinates.position.z;
-		float targetAngle = Mathf.Atan2 (angleZ, - angleX) * Mathf.Rad2Deg;
+		Vector3 target; 
+		if (User.CharState.Armed)
+			target = CharInput.LookDir;
+		else
+			target = User.transform.position + CharInput.MoveDir;
+
+		Vector3 newAngle = new Vector3 (target.x - User.Coordinates.position.x, User.Coordinates.position.y, target.z - User.Coordinates.position.z);
+
+
+		float targetAngle = Mathf.Atan2 (newAngle.z, -newAngle.x) * Mathf.Rad2Deg;
+
+//		if (User.transform.forward != newAngle) User.CharInput.TurnDir = Vector3.Dot (User.Coordinates.forward, new Vector3 (angleX, 0, angleZ).normalized);
 		
 		Quaternion fromRotation = User.Coordinates.rotation;
 		Quaternion finalRotation = Quaternion.AngleAxis (targetAngle - 90, Vector3.up);
 		User.Coordinates.rotation = Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed);
 
+//		if (fromRotation == finalRotation)
+//			return;
+//		else
+//			User.transform.Rotate (new Vector3 (0, targetAngle - 90, 0), lookSpeed);
+//		User.transform.Rotate (Quaternion.RotateTowards (fromRotation, finalRotation, lookSpeed).eulerAngles * Time.deltaTime);
+//		User.transform.LookAt (new Vector3(target.x, User.transform.position.y, target.z));
+//		User.transform.Rotate (Quaternion.AngleAxis (targetAngle - 90, Vector3.up).eulerAngles, targetAngle * lookSpeed * Time.deltaTime);
+
 //		Debug.Log (fromRotation);
 //		Debug.Log (finalRotation);
+	}
+
+	protected void _Aim ()
+	{
+		//		Debug.LogWarning ("aim activating");
+		//User.Coordinates.rotation = Quaternion.Euler (CharInput.LookDir);
+
+		Vector3 target; 
+		if (User.CharState.Armed)
+			target = CharInput.LookDir;
+		else
+			target = User.transform.position + CharInput.MoveDir;
+
+		float targetRot = Vector3.Dot (User.transform.position, target);
+		Debug.LogError ("the current turn bearing is :" + targetRot);
+
+		if (targetRot <=.1f && targetRot >= -.1f)
+			return;
+		else if (targetRot > .1f)
+			User.rigidbody.AddTorque (Vector3.left * lookSpeed * Time.deltaTime);
+		else if (targetRot < -.1f)
+			User.rigidbody.AddTorque (Vector3.right * lookSpeed * Time.deltaTime);
 	}
 	#endregion
 }
@@ -663,7 +716,7 @@ public class UtilityProperties : MovementProperties
 	}
 
 
-	public override void SetValue (ICharacter user)
+	public override void SetValue (BaseCharacter user)
 	{
 		base.SetValue (user);
 //		switch ()

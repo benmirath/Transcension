@@ -49,7 +49,6 @@
      <Compile Include="Assets\Plugins\whydoidoit.com\FSM\StateMachineBehaviourEx.cs" />
      <Compile Include="Assets\Standard Assets\Character Controllers\Sources\Scripts\MouseLook.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
-     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemy3.xml" />
      <None Include="Assets\AI\Resources\BehaviorTrees\btdemo.xml" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />

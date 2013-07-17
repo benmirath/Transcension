@@ -18,7 +18,7 @@ public class AIInput : BaseInputModule {
 	
 	public float disengageTimer;
 
-	AINavigation pathfinder;
+//	AINavigation pathfinder;
 
 	//Cached components - improves efficiency
 //	protected Transform _tr;
@@ -33,15 +33,15 @@ public class AIInput : BaseInputModule {
 	
 	#region Properties
 	public override List<IInputAction> InputActions { get { return null; } }
-	public override Vector3 MoveDir {
-		get {if (pathfinder != null)
-				return pathfinder.CalculateVelocity (pathfinder.GetFeetPosition());
-			else
-				return Vector3.zero;}
-	}
-	public override Vector3 LookDir {
-		get {return pathfinder.TargetPoint;}
-	}
+//	public override Vector3 MoveDir {
+//		get {if (pathfinder != null)
+//				return pathfinder.CalculateVelocity (pathfinder.GetFeetPosition());
+//			else
+//				return Vector3.zero;}
+//	}
+//	public override Vector3 LookDir {
+//		get {return pathfinder.TargetPoint;}
+//	}
 
 	public Transform Target
 	{
@@ -76,18 +76,18 @@ public class AIInput : BaseInputModule {
 			
 		
 	}
-	private void Start ()
-	{
-		pathfinder = new AINavigation (this);
-	}
-
-	private void BeginSeeking() {
-		pathfinder.canMove = true;	
-	}
-	
-	private void EndSeeking() {
-		pathfinder.canMove = false;	
-	}
-	
+//	private void Start ()
+//	{
+//		pathfinder = new AINavigation (this);
+//	}
+//
+//	private void BeginSeeking() {
+//		pathfinder.canMove = true;	
+//	}
+//	
+//	private void EndSeeking() {
+//		pathfinder.canMove = false;	
+//	}
+//	
 
 }

@@ -32,7 +32,7 @@ using System;
 		_targetting.Setup (user);
 	}
 	
-	public void Update () {
+	public virtual void Update () {
 		moveDir = UpdateDirection ();
 
 		if (user.CharState.Armed)
@@ -51,6 +51,7 @@ using System;
 
 	//
 	public void FixedUpdate () {
+		base.FixedUpdate ();
 		if (animator == null) Debug.LogError ("animator null");
 //		animator.SetFloat ("V Move Input", moveDir.z);
 //		animator.SetFloat ("H Move Input", moveDir.x);

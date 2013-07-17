@@ -91,12 +91,11 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 
 		//Basic Character Components
 		charAnimation = GetComponent<Animator> ();
+		if (charAnimation != null) charAnimation.SetLayerWeight (1, 1);
 		charStats = GetComponent<CharacterStats> ();
 		charMoveSet = GetComponent<CharacterMovesetModule> ();
-		if (charType == CharacterType.Enemy)
-			oldCharAnimation = GetComponent <MeshRenderer> ().material;
-		else
-			oldCharAnimation = transform.Find ("Renderer").GetComponent<SkinnedMeshRenderer>().material;
+
+		oldCharAnimation = transform.Find ("Renderer").GetComponent<SkinnedMeshRenderer>().material;
 
 		if (oldCharAnimation == null)
 			Debug.LogError (name+"'s material is null");
@@ -124,6 +123,25 @@ public class BaseCharacter : MonoBehaviour, ICharacter
 	/// Starts the instance of this character, beginning a coroutine for both determing 
 	/// and executing character actions as well as their associated animations. </summary>
 	protected virtual void Start () {
+		Debug.LogError ("Starting Mecanim Updater");
+		StartCoroutine (UpdateMecanimVariables ());
+	}
+
+	protected virtual IEnumerator UpdateMecanimVariables () {
+		while (true){
+
+			charAnimation.SetFloat ("Velocity", rigidbody.velocity.sqrMagnitude);
+			charAnimation.SetFloat ("Bearing", charInput.TurnDir);
+			Debug.LogError("the velocity : "+rigidbody.velocity);
+			Debug.LogError("the velocity magnitude: "+rigidbody.velocity.sqrMagnitude);
+//			Debug.LogError("the turn dir is: "+charInput.TurnDir);
+			yield return null;
+		}
+		yield break;
+	}
+
+	protected void UpdateTurnSpeed () {
+
 	}
 	#endregion
 }

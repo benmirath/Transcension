@@ -153,7 +153,6 @@
      <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\TargettingPrototype.cs" />
      <Compile Include="Assets\Scripts\Settings Scripts\HUD Classes\VitalBar.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh2.shader" />
-     <None Include="Assets\AI\Resources\BehaviorTrees\TestEnemy3.xml" />
      <None Include="Assets\AI\Resources\BehaviorTrees\btdemo.xml" />
      <None Include="Assets\AstarPathfindingProject\Plugins\DotNetZip\License.txt" />
      <None Include="Assets\AstarPathfindingProject\ExampleScenes\Materials\Projector Multiply.shader" />
